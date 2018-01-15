@@ -17,23 +17,6 @@
 #' contingency(Infected ~ Ulcer, data = Brenner, method = "cross.sectional")
 "Brenner"
 
-#' Case-control study of oral contraceptives and breast cancer.
-#'
-#' A data set about a case control study of oral contraceptives and breast cancer.
-#' The cases were of recently diagnosed and histologically proven breast cancer in women aged 16-50 years,
-#' in certain hospitals. The controls were married women inpatients in the same hospital,
-#' who had acute medical or surgical conditions.
-#' @format A data frame with 863 rows and 2 variables:
-#' \describe{
-#' \item{OC}{Exposure to oral contraceptives, factor with levels "No" and "Yes".}
-#' \item{Cancer}{Diagnosed with breast cancer, factor with levels "No" and "Yes".}
-#' }
-#' @source Vessey M, Baron J, Doll R, Mc Pheson K, Yeates D (1983) Oral contraceptives and breast cancer:
-#' Final report of an epidemiological study. Brit J Cancer, 47:455-462.
-#' @examples
-#' contingency(Cancer ~ OC, data = Vassey, method = "case.control")
-"Vassey"
-
 #' Extracorporeal membrane oxygenation in neonates.
 #'
 #' A clinical trial on the value of extracorporeal membrane oxygenation for term neonates with severe

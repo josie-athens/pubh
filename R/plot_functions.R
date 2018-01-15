@@ -83,6 +83,7 @@ xymultiple <- function(model.glht, method = "Westfall", Exp = FALSE, dg = 2, plo
 #'              xlab = "Mean expiratory flow rate (l/min)")
 bland_altman <- function(formula, data, transform = FALSE, aspect = 3/4, ...)
 {
+  y <- NULL; rm(y)
   vars <- all.vars(formula)
   resp <- vars[1]
   expl <- vars[2]
@@ -167,6 +168,7 @@ box_plot <- function(formula, data, box.fill = "gray70", box.ratio = 0.7, aspect
 #' qq_plot(~ dl.milk|sex, data = kfm, ylab = "Breast-milk intake (dl/day)", aspect = 1)
 qq_plot <- function(formula, data = NULL, pch = 20, col = 1, aspect = 3/4, ...)
 {
+  x <- NULL; rm(x)
   qqmath(formula, data = data, aspect = aspect, pch = pch, col = col, ...) +
     layer(panel.qqmathline(x, col = 2, lwd = 1.5))
 }

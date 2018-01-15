@@ -1,6 +1,6 @@
 Package: pubh
-Title: A toolbox for Public Health and Epidemiology
-Version: 0.1.2
+Title: A Toolbox for Public Health and Epidemiology
+Version: 0.1.3
 Author: Josie Athens
 Maintainer: Josie Athens <josie.athens@otago.ac.nz>
 Description: A toolbox for making R functions and capabilities more
