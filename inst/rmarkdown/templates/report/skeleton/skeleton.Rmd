@@ -1,0 +1,50 @@
+---
+title: "My Title"
+author: "My Name"
+date: "Date"
+output:
+  html_document:
+    highlight: kate
+    number_sections: yes
+    fig_height: 5
+    fig_width: 6
+    theme: united
+    toc_float:
+      collapsed: yes
+      smooth_scroll: no
+  word_document:
+    toc: yes
+    number_sections: yes
+    fig_height: 5
+    fig_width: 6
+  bookdown::pdf_document2: null
+  pdf_document:
+    fig_height: 5
+    fig_width: 6
+    highlight: kate
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+link-citations: yes
+fontsize: 12pt
+---
+
+```{r echo = FALSE, message = FALSE}
+rm(list = ls())
+library(knitr)
+opts_chunk$set(comment=NA, message=F, warning=F)
+figs <- captioner::captioner("Figure")
+tbl <- captioner::captioner("Table")
+```
+
+```{r echo = FALSE, message = FALSE}
+library(pubh, warn.conflicts = FALSE)
+library(car, warn.conflicts = FALSE)
+library(descr, warn.conflicts = FALSE)
+library(multcomp, warn.conflicts = FALSE)
+library(pander, warn.conflicts = FALSE)
+library(visreg, warn.conflicts = FALSE)
+
+set.alignment("right", row.names = "left", permanent = TRUE)
+```
+
