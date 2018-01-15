@@ -1,0 +1,12 @@
+exportPattern("^[[:alpha:]]+")
+importFrom("stats", "addmargins", "binomial", "chisq.test", "coef",
+             "confint", "df.residual", "dnorm", "family", "fisher.test",
+             "fitted", "glm", "influence.measures", "lm.wfit",
+             "mantelhaen.test", "median", "pnorm", "prop.trend.test",
+             "qnorm", "qt", "quantile", "sd")
+importFrom("lattice", "barchart", "bwplot", "histogram", "panel.abline", "panel.grid",
+           "panel.histogram", "panel.mathdensity", "panel.qqmathline",
+           "panel.segments", "panel.xyplot", "qqmath", "stripplot",
+           "xyplot")
+importFrom("latticeExtra", "layer", "panel.smoother")
+importFrom("multcomp", "adjusted")

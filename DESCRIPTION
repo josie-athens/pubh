@@ -1,0 +1,49 @@
+Package: pubh
+Title: A toolbox for Public Health and Epidemiology
+Version: 0.1.2
+Author: Josie Athens
+Maintainer: Josie Athens <josie.athens@otago.ac.nz>
+Description: A toolbox for making R functions and capabilities more
+    accessible to students and professionals from epidemiology and
+    public health related disciplines. Please note that use of the 
+    provided data sets is for educational purposes only.
+Depends:
+    R (>= 3.4.0),
+    lattice,
+    latticeExtra,
+		stats
+Imports:
+    car,
+		Epi,
+		epiR,
+		epitools,
+		gee,
+		lmtest,
+		lme4,
+		MASS,
+		multcomp,
+		nlme,
+		nnet,
+		ordinal,
+		sandwich,
+		survival
+Suggests:
+		captioner,
+		descr,
+		epibasix,
+		epiDisplay,
+		haven,
+		ISwR,
+		knitr,
+		pander,
+		papeR,
+		psych,
+		rmarkdown, 
+		visreg
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
+VignetteBuilder: knitr
+URL: https://github.com/josie-athens/pubh
+BugReports: https://github.com/josie-athens/pubh/issues

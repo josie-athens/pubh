@@ -1,0 +1,381 @@
+---
+title: "Introduction to the `pubh` package"
+author: "Josie Athens"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    number_sections: yes
+    fig_height: 5
+    fig_width: 6
+vignette: >
+  %\VignetteIndexEntry{Introduction to the pubh package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning = FALSE)
+```
+
+# Introduction
+
+## Rationale for the package
+
+There has been a long relationship between the disciplines of Epidemiology / Public Health and Biostatistics. Students frequently find introductory textbooks explaining statistical methods and the maths behind them, but how to implement those techniques in a computer is most of the time not explained.
+
+One of the most popular statistical software's in public health settings is $Stata$. $Stata$ has the advantage of offering a solid interface with functions that can be accessed via the use of commands or by selecting the proper input in the graphical unit interface (GUI). Furthermore, $Stata$ offers *"Grad Plans"* to postgraduate students, making it relatively affordable from an economic point of view.
+
+$R$ is a free alternative to $Stata$. The use of $R$ keeps growing; furthermore, with the relatively high number of packages and textbooks available, it's popularity is also increasing.
+
+In the case of epidemiology, there are already some good packages available for $R$, including: `Epi`, `epibasix`, `epiDisplay`, `epiR` and `epitools`. The `pubh` package does not intend to replace any of them, but to only provide a common syntax for the most frequent statistical analysis in epidemiology. 
+
+## Syntax: the use of formulas
+
+Most students and professionals from the disciplines of Epidemiology and Public Health analyse variables in terms of outcome, exposure and confounders. The following table shows the most common names used in the literature to characterise variables in a cause-effect relationships:
+
+**Response variable**|**Explanatory variable(s)**
+---|---
+Outcome|Exposure and confounders
+Outcome|Predictors
+Dependent variable|Independent variable(s)
+y|x
+
+In $R$, `formulas` are used to declare relationships between variables. Formulas are common in classic statistical tests and in regression methods.
+
+Formulas have the following standard syntax:
+
+```{r eval=FALSE}
+y ~ x, data = my_data
+```
+
+Where `y` is the outcome or response variable, `x` is the exposure or predictor of interest and `my_data` specifies the name of the data frame where `x` and `y` can be found.
+
+The symbol `~` is used in $R$ for formulas. It can be interpreted as *depends on*. In the most typical scenario, `y~x` means `y` depends on `x` or `y` is a function of `x`:
+
+$$y=f(x)$$
+
+Using epidemiology friendly terms:
+
+$$
+\text{Outcome} = f(\text{Exposure})
+$$
+
+Is worth to mention that $Stata$ requires for variables to be given in the same order as in formulas: outcome first, predictors next.
+
+### Stratification
+
+One way to control for confounders is the use of stratification. In $Stata$ stratification is done by including the `by` option as part of the command. In the `lattice` package, one way of doing stratification is with a formula like:
+
+```{r eval=FALSE}
+y ~ x|z, data = my_data
+```
+
+Where `y` is the outcome or response variable, `x` is the exposure or predictor of interest, `z` is the stratification variable (a factor) and `my_data` specifies the name of the data frame where `x`, `y` and `z` can be found.
+
+## Contributions of the `pubh` package
+
+The main contributions of the `pubh` package to students and professionals from the disciplines of Epidemiology and Public Health are:
+
+1. Use of a common syntax for the most used analysis.
+2. A function, `glm_coef` that displays coefficients from most common regression analysis in a way that can be easy interpreted and used for publications.
+3. Integration with the `lattice` package, introducing plotting functions with a relatively simple syntax.
+4. Integration with the most common epidemiological analysis, using the standard formula syntax explained in the previous section.
+
+# Descriptive statistics
+
+Many options currently exists for displaying descriptive statistics. I recommend the function `summarise` from the `papeR` package. It does a great job for both continuous and categorical (factors) outcomes. 
+
+The `estat` function from the `pubh` package displays descriptive statistics of continuous outcomes and like `summarise`, it can use *labels* to display nice tables. `estat` has less options than summarise and as such, is simpler to use, which is the main intention of the `pubh` package. Furthermore, as a way to aid in the understanding of the variability, `estat` displays also the relative dispersion (coefficient of variation) which is of particular interest for comparing variance between groups (factors).
+
+Some examples. We start by loading packages and setting alignment in `pander` tables (as suggested in the Template of this package).
+
+```{r, message=FALSE}
+library(pubh, warn.conflicts = FALSE)
+library(car, warn.conflicts = FALSE)
+library(descr, warn.conflicts = FALSE)
+library(multcomp, warn.conflicts = FALSE)
+library(pander, warn.conflicts = FALSE)
+library(visreg, warn.conflicts = FALSE)
+
+set.alignment("right", row.names = "left", permanent = TRUE)
+```
+
+We will use a data set about blood counts of T cells from patients in remission from Hodgkin's disease or in remission from disseminated malignancies.
+
+```{r}
+data(Hodgkin)
+Hodgkin$Ratio <- Hodgkin$CD4/Hodgkin$CD8
+pander(head(Hodgkin))
+```
+
+Descriptive statistics for CD4$^+$ T cells:
+
+```{r}
+estat(~ CD4, data = Hodgkin)
+```
+
+In the previous code, the left-hand side of the formula is empty as it's the case when working with only one variable.
+
+We can use either `pander` or `kable` (from the `knitr` package) to display nice tables with labels.
+
+```{r}
+pander(estat(~ CD4, data = Hodgkin, label = "CD4^+^ T cells (cells / mm^3^)"))
+```
+
+In the previous command, we used the Markup language for the superscripts in the label. For subscripts, the syntax is (for example): `H~2~O`.
+
+For stratification, `estat` recognises the following two syntaxes:
+
+- `outcome ~ categorical predictor`
+- `~ outcome | categorical predictor`
+
+For example:
+
+```{r}
+pander(estat(~ Ratio|Group, data = Hodgkin, label = "CD4^+^/CD8^+^ T cells"))
+```
+
+```{r}
+pander(estat(Ratio ~ Group, data = Hodgkin, label = "CD4^+^/CD8^+^ T cells"))
+```
+
+## Inferential statistics
+
+From the descriptive statistics of *Ratio* we know that the relative dispersion in the Hodgkin group is almost as double as the relative dispersion in the Non-Hodgkin group.
+
+For new users of $R$ it helps to have a common syntax in most of the commands, as $R$ could be challenging and even intimidating at times. We can test if the difference in variance is statistically significant with the `var.test` command, which uses can use a formula syntax:
+
+```{r}
+pander(var.test(Ratio ~ Group, data = Hodgkin), split.table = Inf)
+```
+
+What about normality? We can look at the QQ-plots against the standard normal distribution.
+
+```{r}
+qq_plot(~ Ratio|Group, data = Hodgkin, ylab = "CD4+ / CD8+ T cells", aspect = 1)
+```
+
+Let's say we choose a non-parametric test to compare the groups:
+
+```{r}
+pander(wilcox.test(Ratio ~ Group, data = Hodgkin), split.table = Inf)
+```
+
+## Graphical output
+
+For relatively small samples (for example, less than 30 observations per group) is a standard practice to show the actual data in dot plots with error bars. The `pubh` package offers two options to show graphically differences in continuous outcomes among groups:
+
+- For small samples: `strip_error`
+- For medium to large samples: `bar_error`
+
+For our current example:
+
+```{r}
+strip_error(Ratio ~ Group, data = Hodgkin, ylab = "CD4+ / CD8+ T cells")
+```
+
+The error bars represent 95% confidence intervals around mean values.
+
+Is relatively easy to add a line on top, to show that the two groups are significantly different. With the `latticeExtra` package (loaded by default with `pubh`) allows the use of *layers*. We will draw a line using `panel.segments` and text with `panel.text`.
+
+For `panel.segments` we provide the coordinates of the two points at the ends of the line in the following order: $x_1$, $y_1$, $x_2$, $y_2$. $x$ coordinates are easy: from $1$ to $2$. For the $y$ coordinates, we choose a value higher than the maximum observation (from our descriptives, higher than 3.82). We also need to adjust the limits of the $y$-axis to accommodate for our line and text. It could be some trial and error one has the plot that is more visually appealing.
+
+The commands are as follows:
+
+```{r}
+strip_error(Ratio ~ Group, data = Hodgkin, ylab = "CD4+ / CD8+ T cells", ylim = c(0, 4.5)) +
+  layer(panel.segments(1, 4, 2, 4, lwd=1.5)) +
+  layer(panel.text(1.5, 4.1, "**"))
+```
+
+For larger samples we would use bar charts with error bars. For example:
+
+```{r}
+data(birthwt, package = "MASS")
+birthwt$smoke <- factor(birthwt$smoke, labels = c("Non-smoker", "Smoker"))
+birthwt$race <- factor(birthwt$race, labels = c("White", "African American", "Other"))
+```
+
+Bar charts should always start at the origin, the upper limit on the $y$ scale should be higher than the maximum upper confidence limit. For example:
+
+```{r}
+pander(gen_bst_df(bwt ~ smoke, data = birthwt))
+```
+
+```{r}
+bar_error(bwt ~ smoke, data = birthwt, ylab = "Birth weight (g)", ylim = c(0, 3500))
+```
+
+Quick normality check:
+
+```{r}
+qq_plot(~ bwt|smoke, data = birthwt, ylab = "Birth weight (g)", aspect = 1)
+```
+
+The (unadjusted) test:
+
+```{r}
+pander(t.test(bwt ~ smoke, data = birthwt))
+```
+
+The final plot showing (unadjusted) difference:
+
+```{r}
+bar_error(bwt ~ smoke, data = birthwt, ylab = "Birth weight (g)", ylim = c(0, 3500)) +
+  layer(panel.segments(1, 3300, 2, 3300, lwd=1.5)) +
+  layer(panel.text(1.5, 3350, "**"))
+```
+
+Both `strip_error` and `bar_error` can generate plots stratified by a third variable, for example:
+
+```{r}
+bar_error(bwt ~ smoke|race, data = birthwt, ylab = "Birth weight (g)", ylim = c(0, 3800),
+          col = c("gray80", "gray30"))
+```
+
+```{r}
+strip_error(bwt ~ smoke|race, data = birthwt, ylab = "Birth weight (g)", cex = 0.3)
+```
+
+# Regression models
+
+The `pubh` package includes the function `glm_coef` for displaying coefficients from regression models and the function `xymultiple` to help in the visualisation of multiple comparisons. 
+
+> **Note:** Please read the vignette on **Regression Examples** for a more comprehensive use of `glm_coef`.
+
+For simplicity, here we show the analysis of the linear model of smoking on birth weight, adjusting by race (and not by other potential confounders).
+
+```{r}
+model_bwt <- lm(bwt ~ smoke + race, data = birthwt)
+glm_coef(model_bwt)
+```
+
+```{r}
+unadj <- glm_coef(model_bwt, labels = c("Constant",
+                                      "Smoking: smoker - non-smoker",
+                                      "Race: African American - White",
+                                      "Race: Other - White"))
+pander(unadj, split.table = Inf)
+```
+
+In the previous table of coefficients confidence intervals and p-values for race had not been adjusted for multiple comparisons. We use the `multcomp` to make the corrections.
+
+```{r}
+model_glht <- glht(model_bwt, linfct  = mcp(race = "Tukey"))
+xymultiple(model_glht)
+```
+
+We can incorporate the adjusted results into our final table:
+
+```{r}
+race_glht <- xymultiple(model_glht, plot = FALSE)
+pander(race_glht)
+```
+
+```{r}
+final <- unadj
+final[, 5] <- as.character(final[, 5])
+race_glht[, 5] <- as.character(race_glht[, 5])
+final[3:4, 3:5] <- race_glht[1:2, 3:5]
+```
+
+```{r}
+pander(final, split.table = Inf)
+```
+
+The effect plot:
+
+```{r}
+visreg(model_bwt, "race", by = "smoke", partial = FALSE, overlay = TRUE, band = FALSE, 
+       rug = FALSE, ylab = "Birth weight (g)", xlab = "Race/Ethnicity")
+```
+
+# Epidemiology functions
+
+The `pubh` package offers two wrappers to `epiR` functions. 
+
+1. `contingency` calls `epi.2by2` and it's used to analyse two by two contingency tables.
+2. `diag_test` calls `epi.tests` to compute statistics related with screening tests.
+
+## Contingency tables
+
+Let's say we want to look at the effect of ibuprofen on preventing death in patients with sepsis.
+
+```{r}
+data(Bernard)
+pander(head(Bernard), split.table = Inf)
+```
+
+Let's look at the table:
+
+```{r}
+pander(with(Bernard, crosstab(treat, fate, prop.r = TRUE, plot = FALSE)), digits = 2)
+```
+
+For `epi.2by2` we need to provide the table of counts in the correct order, so we would type something like:
+
+```{r}
+dat <- matrix(c(84, 140 , 92, 139), nrow = 2, byrow = TRUE)
+epiR::epi.2by2(as.table(dat))
+```
+
+For `contingency` we only need to provide the information in a formula:
+
+```{r}
+contingency(fate ~ treat, data = Bernard)
+```
+
+Advantages of `contingency`:
+
+1. Easier input without the need to create the table.
+2. Displays the standard epidemiological table at the start of the output. This aids to check what are the reference levels on each category.
+3. In the case that the $\chi^2$-test is not appropriate, `contingency` would show the results of the Fisher exact test at the end of the output.
+
+### Mantel-Haenszel odds ratio
+
+For `mhor` the formula has the following syntax:
+
+```{r eval=FALSE}
+outcome ~ stratum/exposure, data = my_data
+```
+
+Thus, `mhor` displays the odds ratio of *exposure yes* against *exposure no* on *outcome yes* for different levels of *stratum*, as well as the Mantel-Haenszel pooled odds ratio.
+
+Example: effect of eating chocolate ice cream on being ill by sex from the `oswego` data set.
+
+```{r}
+data(oswego, package = "epitools")
+oswego$ill <- factor(oswego$ill)
+oswego$sex <- factor(oswego$sex)
+oswego$chocolate.ice.cream <- factor(oswego$chocolate.ice.cream)
+mhor(ill ~ sex/chocolate.ice.cream, data = oswego)
+```
+
+### Odds trend
+
+Example: An international case-control study to test the hypothesis that breast cancer is related to the age that a woman gives childbirth.
+
+```{r}
+odds_trend(Cancer ~ Age, data = Macmahon)
+```
+
+## Diagnostic tests
+
+Example: We compare the use of lung’s X-rays on the screening of TB against the gold standard test.
+
+```{r}
+Freq <- c(1739, 8, 51, 22)
+BCG <- gl(2, 1, 4, labels=c("Negative", "Positive"))
+Xray <- gl(2, 2, labels=c("Negative", "Positive"))
+tb <- data.frame(Freq, BCG, Xray)
+tb <- expand_df(tb)
+
+diag_test(BCG ~ Xray, data=tb)
+```
+
+Using the immediate version (direct input):
+
+```{r}
+diag_test2(22, 51, 8, 1739)
+```
+
