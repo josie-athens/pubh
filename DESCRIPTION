@@ -1,7 +1,16 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 0.1.3
-Author: Josie Athens
+Version: 0.1.4
+Authors@R: c(
+    person("Josie", "Athens", email = "josie.athens@otago.ac.nz", role = c("aut", "cre")),
+    person("Simon", "Firestone", role = "ctb"),
+    person("Mark", "Stevenson", email = "mark.stevenson1@unimelb.edu.au", role = "ctb"),
+    person("Cord", "Heuer", role = "ctb"),
+    person("Jim", "Robison-Cox", role = "ctb"),
+    person("Frank", "Harell", email = "f.harrell@vanderbilt.edu", role = "ctb"),
+    person("Deepayan", "Sarkar", email = "deepayan.sarkar@r-project.org", role = "ctb"),
+    person("John", "Fox", email = "jfox@mcmaster.ca", role = "ctb"),
+    person("R-Core", role="ctb"))
 Maintainer: Josie Athens <josie.athens@otago.ac.nz>
 Description: A toolbox for making R functions and capabilities more
     accessible to students and professionals from epidemiology and
