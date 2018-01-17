@@ -8,6 +8,6 @@ Information on use with examples can be found in "vignettes".
 
 To install, type in R console:
 
-devtools::install_github("josie-athens/pubh")
+devtools::install_github("josie-athens/pubh", build_vignettes = TRUE)
 
 Package "devtools" is required to install "pubh" from the GitHub repositories.
