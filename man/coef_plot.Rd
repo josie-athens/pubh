@@ -36,4 +36,6 @@ coef_plot(model1)
 }
 \author{
 Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+
+Deepayan Sarkar, R-Core.
 }

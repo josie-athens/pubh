@@ -23,11 +23,11 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning 
 
 There has been a long relationship between the disciplines of Epidemiology / Public Health and Biostatistics. Students frequently find introductory textbooks explaining statistical methods and the maths behind them, but how to implement those techniques in a computer is most of the time not explained.
 
-One of the most popular statistical software's in public health settings is $Stata$. $Stata$ has the advantage of offering a solid interface with functions that can be accessed via the use of commands or by selecting the proper input in the graphical unit interface (GUI). Furthermore, $Stata$ offers *"Grad Plans"* to postgraduate students, making it relatively affordable from an economic point of view.
+One of the most popular statistical software's in public health settings is `Stata`. `Stata` has the advantage of offering a solid interface with functions that can be accessed via the use of commands or by selecting the proper input in the graphical unit interface (GUI). Furthermore, `Stata` offers *"Grad Plans"* to postgraduate students, making it relatively affordable from an economic point of view.
 
-$R$ is a free alternative to $Stata$. The use of $R$ keeps growing; furthermore, with the relatively high number of packages and textbooks available, it's popularity is also increasing.
+`R` is a free alternative to `Stata`. The use of `R` keeps growing; furthermore, with the relatively high number of packages and textbooks available, it's popularity is also increasing.
 
-In the case of epidemiology, there are already some good packages available for $R$, including: `Epi`, `epibasix`, `epiDisplay`, `epiR` and `epitools`. The `pubh` package does not intend to replace any of them, but to only provide a common syntax for the most frequent statistical analysis in epidemiology. 
+In the case of epidemiology, there are already some good packages available for `R`, including: `Epi`, `epibasix`, `epiDisplay`, `epiR` and `epitools`. The `pubh` package does not intend to replace any of them, but to only provide a common syntax for the most frequent statistical analysis in epidemiology. 
 
 ## Syntax: the use of formulas
 
@@ -40,7 +40,7 @@ Outcome|Predictors
 Dependent variable|Independent variable(s)
 y|x
 
-In $R$, `formulas` are used to declare relationships between variables. Formulas are common in classic statistical tests and in regression methods.
+In `R`, `formulas` are used to declare relationships between variables. Formulas are common in classic statistical tests and in regression methods.
 
 Formulas have the following standard syntax:
 
@@ -50,21 +50,19 @@ y ~ x, data = my_data
 
 Where `y` is the outcome or response variable, `x` is the exposure or predictor of interest and `my_data` specifies the name of the data frame where `x` and `y` can be found.
 
-The symbol `~` is used in $R$ for formulas. It can be interpreted as *depends on*. In the most typical scenario, `y~x` means `y` depends on `x` or `y` is a function of `x`:
+The symbol `~` is used in `R` for formulas. It can be interpreted as *depends on*. In the most typical scenario, `y~x` means `y` depends on `x` or `y` is a function of `x`:
 
-$$y=f(x)$$
+`y = f(x)`
 
 Using epidemiology friendly terms:
 
-$$
-\text{Outcome} = f(\text{Exposure})
-$$
+`Outcome = f(Exposure)`
 
-Is worth to mention that $Stata$ requires for variables to be given in the same order as in formulas: outcome first, predictors next.
+Is worth to mention that `Stata` requires for variables to be given in the same order as in formulas: outcome first, predictors next.
 
 ### Stratification
 
-One way to control for confounders is the use of stratification. In $Stata$ stratification is done by including the `by` option as part of the command. In the `lattice` package, one way of doing stratification is with a formula like:
+One way to control for confounders is the use of stratification. In `Stata` stratification is done by including the `by` option as part of the command. In the `lattice` package, one way of doing stratification is with a formula like:
 
 ```{r eval=FALSE}
 y ~ x|z, data = my_data
@@ -108,7 +106,7 @@ Hodgkin$Ratio <- Hodgkin$CD4/Hodgkin$CD8
 pander(head(Hodgkin))
 ```
 
-Descriptive statistics for CD4$^+$ T cells:
+Descriptive statistics for CD4+ T cells:
 
 ```{r}
 estat(~ CD4, data = Hodgkin)
@@ -143,13 +141,13 @@ pander(estat(Ratio ~ Group, data = Hodgkin, label = "CD4^+^/CD8^+^ T cells"))
 
 From the descriptive statistics of *Ratio* we know that the relative dispersion in the Hodgkin group is almost as double as the relative dispersion in the Non-Hodgkin group.
 
-For new users of $R$ it helps to have a common syntax in most of the commands, as $R$ could be challenging and even intimidating at times. We can test if the difference in variance is statistically significant with the `var.test` command, which uses can use a formula syntax:
+For new users of `R` it helps to have a common syntax in most of the commands, as `R` could be challenging and even intimidating at times. We can test if the difference in variance is statistically significant with the `var.test` command, which uses can use a formula syntax:
 
 ```{r}
 pander(var.test(Ratio ~ Group, data = Hodgkin), split.table = Inf)
 ```
 
-What about normality? We can look at the QQ-plots against the standard normal distribution.
+What about normality? We can look at the QQ-plots against the standard Normal distribution.
 
 ```{r}
 qq_plot(~ Ratio|Group, data = Hodgkin, ylab = "CD4+ / CD8+ T cells", aspect = 1)
@@ -178,7 +176,7 @@ The error bars represent 95% confidence intervals around mean values.
 
 Is relatively easy to add a line on top, to show that the two groups are significantly different. With the `latticeExtra` package (loaded by default with `pubh`) allows the use of *layers*. We will draw a line using `panel.segments` and text with `panel.text`.
 
-For `panel.segments` we provide the coordinates of the two points at the ends of the line in the following order: $x_1$, $y_1$, $x_2$, $y_2$. $x$ coordinates are easy: from $1$ to $2$. For the $y$ coordinates, we choose a value higher than the maximum observation (from our descriptives, higher than 3.82). We also need to adjust the limits of the $y$-axis to accommodate for our line and text. It could be some trial and error one has the plot that is more visually appealing.
+For `panel.segments` we provide the coordinates of the two points at the ends of the line in the following order: `x1`, `y1`, `x2`, `y2`. `x` coordinates are easy: from `1` to `2`. For the `y` coordinates, we choose a value higher than the maximum observation (from our descriptives, higher than 3.82). We also need to adjust the limits of the `y`-axis to accommodate for our line and text. It could be some trial and error one has the plot that is more visually appealing.
 
 The commands are as follows:
 
@@ -191,7 +189,7 @@ strip_error(Ratio ~ Group, data = Hodgkin, ylab = "CD4+ / CD8+ T cells", ylim = 
 For larger samples we would use bar charts with error bars. For example:
 
 ```{r}
-data(birthwt, package = "MASS")
+data(birthwt)
 birthwt$smoke <- factor(birthwt$smoke, labels = c("Non-smoker", "Smoker"))
 birthwt$race <- factor(birthwt$race, labels = c("White", "African American", "Other"))
 ```

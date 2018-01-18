@@ -19,7 +19,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning 
 
 # Introduction
 
-The aim of this vignette is to illustrate the use/functionality of the `glm_coef` function. `glm_coef` can be used to display model coefficients with confidence intervals and $p$-values. The advantages and limitations of `glm_coef` are:
+The aim of this vignette is to illustrate the use/functionality of the `glm_coef` function. `glm_coef` can be used to display model coefficients with confidence intervals and p-values. The advantages and limitations of `glm_coef` are:
 
 1. Recognises the main models used in epidemiology/public health.
 2. Automatically back transforms estimates and confidence intervals, when the model requires it.

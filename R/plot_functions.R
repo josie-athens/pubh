@@ -5,6 +5,7 @@
 #' \code{xymultiple} displays results from post-doc analysis and constructs corresponding plot.
 #'
 #' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+#' @author Deepayan Sarkar, R-Core.
 #' @param model.glht An object of class "glht" (from multiple comparisons).
 #' @param method Method passed to \link{summary.glht} (see details).
 #' @param Exp Logical, should results be exponentiated? (default = FALSE).
@@ -70,6 +71,7 @@ xymultiple <- function(model.glht, method = "Westfall", Exp = FALSE, dg = 2, plo
 #' outcomes (difference in the log scale) by using option \code{transform = TRUE}.
 #'
 #' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+#' @author Deepayan Sarkar, R-Core.
 #' @param formula A formula of the form y ~ x (see details).
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param transform Logical, should ratios instead of difference be used to construct the plot?
@@ -108,6 +110,7 @@ bland_altman <- function(formula, data, transform = FALSE, aspect = 3/4, ...)
 #'
 #' \code{rvf_plot} plots studentized residuals against fitted values from \link{glm} objects using package \code{lattice}.
 #' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+#' @author Deepayan Sarkar, R-Core.
 #' @param model A \link{glm} or \link{lm} object with a numerical outcome.
 #' @param pch Point character passed to \link{xyplot}.
 #' @param col Colour passed to \link{xyplot}.
@@ -134,6 +137,7 @@ rvf_plot <- function(model, pch=20, col=1, aspect=3/4, ...)
 #'
 #' \code{box_plot} is a wrap function that calls \link{bwplot} to construct more aesthetic box plots.
 #' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+#' @author Deepayan Sarkar, R-Core.
 #' @param formula A formula of the form \code{y ~ x} where \code{y} is a numerical variable and \code{x} is a factor.
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param box.fill Colour used for the box passed to \link{bwplot}.
@@ -156,6 +160,7 @@ box_plot <- function(formula, data, box.fill = "gray70", box.ratio = 0.7, aspect
 #' \code{qq_plot} constructs quantile-quantile plots against the standard normal distribution
 #' (also known as quantile-normal plots).
 #' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+#' @author Deepayan Sarkar, R-Core.
 #' @param formula A formula of the form \code{ ~ x} or \code{ ~ x|z} where \code{x} is a numerical variable and \code{z} is a factor.
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param pch Point character passed to \link{qqmath}.
@@ -177,6 +182,7 @@ qq_plot <- function(formula, data = NULL, pch = 20, col = 1, aspect = 3/4, ...)
 #'
 #' \code{hist_norm} constructs histograms in lattice and adds corresponding Normal density curve.
 #' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+#' @author Deepayan Sarkar, R-Core.
 #' @param formula A formula of the form \code{ ~ x} where \code{x} is a numerical variable.
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param col Colour passed to \link{histogram}.
@@ -202,6 +208,7 @@ hist_norm <- function(formula, data = NULL, col = "gray70", aspect = 3/4, ...)
 #' \code{strip_error} constructs strip plots in \code{lattice} with error bars showing 95% bootstrapped
 #' confidence intervals around mean values.
 #' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+#' @author Deepayan Sarkar, R-Core.
 #' @param formula A formula of the form \code{y ~ x} or \code{y ~ x|z} where \code{y} is a
 #' numerical variable and both \code{x} and \code{z} are factors.
 #' @param data A data frame where the variables in the \code{formula} can be found.
@@ -247,6 +254,7 @@ strip_error <- function(formula, data, pch = 20, aspect = 3/4, ...)
 #' @details Limits for the y-axis have to be estimated; lower limit should be zero and upper limit higher than
 #' the maximum upper confidence interval.
 #' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+#' @author Deepayan Sarkar, R-Core.
 #' @param formula A formula of the form \code{y ~ x} or \code{y ~ x|z} where \code{y} is a
 #' numerical variable and both \code{x} and \code{z} are factors.
 #' @param data A data frame where the variables in the \code{formula} can be found.
@@ -290,6 +298,7 @@ bar_error <- function(formula, data, col = "gray70", aspect = 3/4, ...)
 #' @details \code{coef_plot} does not show estimate for the constant (intercept). Estimates and confidence intervals
 #' can be optionally exponentiated, in which case estimates would represent ratios instead of differences.
 #' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+#' @author Deepayan Sarkar, R-Core.
 #' @param model A regression object (like \link{glm}).
 #' @param Exp Logical, should estimates and confidence intervals be exponentiated?
 #' @param CI Proportion representing the confidence intervals.

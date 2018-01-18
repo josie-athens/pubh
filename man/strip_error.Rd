@@ -38,4 +38,6 @@ strip_error(bwt ~ Race|smoke, data = birthwt, ylab = "Birth weight (g)")
 }
 \author{
 Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+
+Deepayan Sarkar, R-Core.
 }

@@ -26,4 +26,6 @@ hist_norm(~ bwt, data = birthwt, nint = 15, xlab = "Birth weight (g)")
 }
 \author{
 Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+
+Deepayan Sarkar, R-Core.
 }

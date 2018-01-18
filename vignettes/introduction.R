@@ -52,7 +52,7 @@ strip_error(Ratio ~ Group, data = Hodgkin, ylab = "CD4+ / CD8+ T cells", ylim = 
   layer(panel.text(1.5, 4.1, "**"))
 
 ## ------------------------------------------------------------------------
-data(birthwt, package = "MASS")
+data(birthwt)
 birthwt$smoke <- factor(birthwt$smoke, labels = c("Non-smoker", "Smoker"))
 birthwt$race <- factor(birthwt$race, labels = c("White", "African American", "Other"))
 

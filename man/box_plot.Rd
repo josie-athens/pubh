@@ -29,4 +29,6 @@ box_plot(dl.milk ~ sex, data = kfm, ylab = "Breast-milk intake (dl/day)")
 }
 \author{
 Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+
+Deepayan Sarkar, R-Core.
 }

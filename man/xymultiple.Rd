@@ -47,4 +47,6 @@ xymultiple(model2_glht, Exp = TRUE)
 }
 \author{
 Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+
+Deepayan Sarkar, R-Core.
 }

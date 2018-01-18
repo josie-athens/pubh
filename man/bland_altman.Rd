@@ -36,4 +36,6 @@ bland_altman(mini.wright ~ std.wright, data = wright, pch = 16,
 }
 \author{
 Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+
+Deepayan Sarkar, R-Core.
 }

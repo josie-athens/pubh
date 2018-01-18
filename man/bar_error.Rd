@@ -41,4 +41,6 @@ bar_error(bwt ~ race|smoke, data = birthwt, ylab = "Birth weight (g)", ylim = c(
 }
 \author{
 Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+
+Deepayan Sarkar, R-Core.
 }
