@@ -1,50 +1,44 @@
 ---
-title: "My Title"
-author: "My Name"
-date: "Date"
+title: "Title"
+subtitle: "Subtitle"
+author: "Name"
+date: "`r Sys.Date()`"
 output:
-  html_document:
+  rmdformats::readthedown:
     highlight: kate
-    number_sections: yes
-    fig_height: 5
-    fig_width: 6
-    theme: united
-    toc_float:
-      collapsed: yes
-      smooth_scroll: no
-  word_document:
+    number_sections: true
+    use_bookdown: true
+  bookdown::word_document2:
+    fig_height: 4
+    fig_width: 5
     toc: yes
-    number_sections: yes
-    fig_height: 5
-    fig_width: 6
-  bookdown::pdf_document2: null
-  pdf_document:
-    fig_height: 5
-    fig_width: 6
+    toc_depth: 3
+  bookdown::pdf_document2:
+    citation_package: natbib
+    latex_engine: pdflatex
     highlight: kate
     keep_tex: yes
-    number_sections: yes
-    toc: yes
+    fig_height: 4
+    fig_width: 5
 link-citations: yes
-fontsize: 12pt
 ---
 
 ```{r echo = FALSE, message = FALSE}
 rm(list = ls())
 library(knitr)
-opts_chunk$set(comment=NA, message=F, warning=F)
-figs <- captioner::captioner("Figure")
-tbl <- captioner::captioner("Table")
+opts_chunk$set(comment = NA, message = FALSE, warning = FALSE)
 ```
 
 ```{r echo = FALSE, message = FALSE}
-library(pubh, warn.conflicts = FALSE)
 library(car, warn.conflicts = FALSE)
 library(descr, warn.conflicts = FALSE)
 library(multcomp, warn.conflicts = FALSE)
 library(pander, warn.conflicts = FALSE)
+library(papeR, warn.conflicts = FALSE)
+library(pubh, warn.conflicts = FALSE)
 library(visreg, warn.conflicts = FALSE)
 
+panderOptions("table.split.table", Inf)
 set.alignment("right", row.names = "left", permanent = TRUE)
 ```
 
