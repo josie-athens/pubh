@@ -11,6 +11,7 @@
 #' @param Exp Logical, should results be exponentiated? (default = FALSE).
 #' @param dg Number of digits for rounding (default = 2).
 #' @param plot Logical, should a plot be constructed? (default = TRUE).
+#' @param rotx Degrees to rotate x-labels (default = 45).
 #' @param ... Passes additional information to \code{xyplot}.
 #' @details
 #' The default adjusting method is "Westfall". Other options are: "single-step", "Shaffer",
@@ -28,7 +29,7 @@
 #' model2 <- glm(low ~ race, data = birthwt, family = binomial)
 #' model2_glht <- glht(model2, linfct = mcp(race="Tukey"))
 #' xymultiple(model2_glht, Exp = TRUE)
-xymultiple <- function(model.glht, method = "Westfall", Exp = FALSE, dg = 2, plot = TRUE, ...)
+xymultiple <- function(model.glht, method = "Westfall", Exp = FALSE, dg = 2, plot = TRUE, rotx = 45, ...)
 {
   model.summary <- summary(model.glht, adjusted(type = method))
   cisnorm <- as.data.frame(confint(model.summary, adjusted(type=method))$confint)
@@ -49,13 +50,13 @@ xymultiple <- function(model.glht, method = "Westfall", Exp = FALSE, dg = 2, plo
   } else {
     if (Exp == FALSE) {
       fig <- xyplot(cbind(Difference, lwr, upr) ~ Comparison, data = model.ci, ylab = "Difference",
-                    xlab = NULL, panel = panel.errbars, pch = 20, col = 1, scales = list(x = list(rot = 45)), ...) +
+                    xlab = NULL, panel = panel.errbars, pch = 20, col = 1, scales = list(x = list(rot = rotx)), ...) +
         layer(panel.abline(h = 0, lty = 2, col = 2, lwd = 0.5))
       print(model.ci)
       fig
     } else {
       fig <- xyplot(cbind(Ratio, lwr, upr) ~ Comparison, data=model.ci, ylab = "Ratio",
-                    xlab = NULL, panel = panel.errbars, pch = 20, col = 1, scales = list(x = list(rot = 45)), ...) +
+                    xlab = NULL, panel = panel.errbars, pch = 20, col = 1, scales = list(x = list(rot = rotx)), ...) +
         layer(panel.abline(h = 1, lty = 2, col = 2, lwd = 0.5))
       print(model.ci)
       fig
@@ -305,6 +306,7 @@ bar_error <- function(formula, data, col = "gray70", aspect = 3/4, ...)
 #' @param CI Proportion representing the confidence intervals.
 #' @param pch Point character passed to \link{xyplot}.
 #' @param col Colour passed to \link{xyplot}.
+#' @param rotx Degrees to rotate x-labels.
 #' @param ... Further arguments passed to \link{xyplot}.
 #' @examples
 #' data(birthwt, package = "MASS")
@@ -313,7 +315,7 @@ bar_error <- function(formula, data, col = "gray70", aspect = 3/4, ...)
 #' model1 <- glm(bwt ~ smoke + race, data = birthwt)
 #' glm_coef(model1, labels=c("Constant", "Smoker vs Non-smoker", "Non-white vs White"))
 #' coef_plot(model1)
-coef_plot <- function (model, labels = NULL, Exp = FALSE, CI = 0.95, pch = 20, col = 1, ...)
+coef_plot <- function (model, labels = NULL, Exp = FALSE, CI = 0.95, pch = 20, col = 1, rotx = 45, ...)
 {
   alpha <- 1 - CI
   if (Exp == FALSE) {
@@ -326,7 +328,7 @@ coef_plot <- function (model, labels = NULL, Exp = FALSE, CI = 0.95, pch = 20, c
     cis2 <- data.frame(Parameter = param, Estimate = cis[, 1],
                        lo = cis[, 2], up = cis[, 3])
     xyplot(cbind(Estimate, lo, up) ~ Parameter, data = cis2,
-           scales = list(x = list(rot = 45)), xlab = NULL,
+           scales = list(x = list(rot = rotx)), xlab = NULL,
            ylab = "Coefficient (difference)", panel = panel.errbars,
            pch = pch,  col = col, ...) +
       layer(panel.abline(h = 0, lty = 2, col = 1, lwd = 0.5))
@@ -340,7 +342,7 @@ coef_plot <- function (model, labels = NULL, Exp = FALSE, CI = 0.95, pch = 20, c
     cis2 <- data.frame(Parameter = param, Estimate = cis[, 1],
                        lo = cis[, 2], up = cis[, 3])
     xyplot(cbind(Estimate, lo, up) ~ Parameter, data = cis2,
-           scales = list(x = list(rot = 45)), xlab = NULL,
+           scales = list(x = list(rot = rotx)), xlab = NULL,
            ylab = "Coefficient (ratio)", panel = panel.errbars,
            pch = pch, col = col,  ...) +
       layer(panel.abline(h = 1, lty = 2, col = 1, lwd = 0.5))

@@ -5,7 +5,7 @@
 \title{Multiple comparisons with plot.}
 \usage{
 xymultiple(model.glht, method = "Westfall", Exp = FALSE, dg = 2,
-  plot = TRUE, ...)
+  plot = TRUE, rotx = 45, ...)
 }
 \arguments{
 \item{model.glht}{An object of class "glht" (from multiple comparisons).}
@@ -17,6 +17,8 @@ xymultiple(model.glht, method = "Westfall", Exp = FALSE, dg = 2,
 \item{dg}{Number of digits for rounding (default = 2).}
 
 \item{plot}{Logical, should a plot be constructed? (default = TRUE).}
+
+\item{rotx}{Degrees to rotate x-labels (default = 45).}
 
 \item{...}{Passes additional information to \code{xyplot}.}
 }

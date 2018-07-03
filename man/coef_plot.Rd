@@ -5,7 +5,7 @@
 \title{Plot of model coefficients.}
 \usage{
 coef_plot(model, labels = NULL, Exp = FALSE, CI = 0.95, pch = 20,
-  col = 1, ...)
+  col = 1, rotx = 45, ...)
 }
 \arguments{
 \item{model}{A regression object (like \link{glm}).}
@@ -19,6 +19,8 @@ coef_plot(model, labels = NULL, Exp = FALSE, CI = 0.95, pch = 20,
 \item{pch}{Point character passed to \link{xyplot}.}
 
 \item{col}{Colour passed to \link{xyplot}.}
+
+\item{rotx}{Degrees to rotate x-labels.}
 
 \item{...}{Further arguments passed to \link{xyplot}.}
 }

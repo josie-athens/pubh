@@ -28,15 +28,15 @@ glm_coef(model_norm)
 
 ## ------------------------------------------------------------------------
 pander(glm_coef(model_norm, labels=c("Constant", "Smoker - Non-smoker", "Non-white - White"),
-                se.rob = FALSE), split.table=Inf, caption="Table of coeffients using naive
+                se.rob = FALSE), split.table=Inf, caption="Table of coeffients using naive 
        standard errors.")
 
 ## ------------------------------------------------------------------------
 pander(glm_coef(model_norm, labels=c("Constant", "Smoker - Non-smoker", "Non-white - White")),
-       split.table=Inf, caption="Table of coeffients using robust standard errors.")
+       split.table = Inf, caption="Table of coeffients using robust standard errors.")
 
 ## ------------------------------------------------------------------------
-plot(Effect(c("smoke", "race"), model_norm), multiline = TRUE, main = NULL,
+plot(Effect(c("smoke", "race"), model_norm), multiline = TRUE, main = NULL, 
      ylab = "Birth weight (g)", xlab = "Smoking status", symbols = list(pch=16),
      confint = list(style="auto"), aspect = 3/4, lines = list(col=c(2,4), lwd=1.5))
 
@@ -45,12 +45,12 @@ data(diet, package = "Epi")
 model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
 
 ## ------------------------------------------------------------------------
-pander(glm_coef(model_binom, labels = c("Constant", "Fibre intake (g/day)")), split.table=Inf,
-       caption="Parameter estimates from logistic regression.")
+pander(glm_coef(model_binom, labels = c("Constant", "Fibre intake (g/day)")), split.table = Inf,
+       caption = "Parameter estimates from logistic regression.")
 
 ## ------------------------------------------------------------------------
 plot(Effect("fibre", model_binom), type = "response", rug = FALSE, aspect = 3/4,
-     ylab = "P (CHD)", xlab = "Fibre (g/day)", lwd = 2, confint = list(style="none"),
+       ylab = "P (CHD)", xlab = "Fibre (g/day)", lwd = 2, confint = list(style="none"),
      main = NULL)
 
 ## ------------------------------------------------------------------------
@@ -63,8 +63,8 @@ model_clogit <- clogit(d ~ est * gall + strata(set), data = bdendo)
 glm_coef(model_clogit)
 
 ## ------------------------------------------------------------------------
-pander(glm_coef(model_clogit, labels = c("Oestrogen/No oestrogen", "GBD/No GBD",
-                                         "Oestrogen:GBD Interaction")),
+pander(glm_coef(model_clogit, labels = c("Oestrogen/No oestrogen", "GBD/No GBD", 
+                                         "Oestrogen:GBD Interaction")), 
        split.table = Inf, caption = "Parameter estimates from conditional logistic regression.")
 
 ## ------------------------------------------------------------------------
@@ -78,9 +78,9 @@ bdendo_grid <- with(bdendo, expand.grid(
 bdendo_grid$pred <- inv_logit(predict(model_clogit, bdendo_grid, type = "lp"))
 
 ## ------------------------------------------------------------------------
-xyplot(pred  ~ gall, data = bdendo_grid, groups = est, type = "l",
-       lwd = 2, xlab = "Gall blader disease", ylab = "P (cancer)",
-       auto.key = list(title = "Oestrogen", space = "right", cex = 0.8))
+xyplot(pred  ~ gall, data = bdendo_grid, groups = est, type = "l", 
+    lwd = 2, xlab = "Gall blader disease", ylab = "P (cancer)", 
+    auto.key = list(title = "Oestrogen", space = "right", cex = 0.8))
 
 ## ------------------------------------------------------------------------
 library(ordinal, warn.conflicts = FALSE)
@@ -101,7 +101,7 @@ pander(glm_coef(model_clm, labels = labs_ord), split.table = Inf,
        caption = "Parameter estimates on satisfaction of householders.")
 
 ## ------------------------------------------------------------------------
-plot(Effect(c("Infl", "Type", "Cont"), model_clm), main = NULL, aspect = 3/4, rotx = 45,
+plot(Effect(c("Infl", "Type", "Cont"), model_clm), main = NULL, aspect = 3/4, rotx = 45, 
      ylab = "Satisfaction (probability)", lines = list(lwd = 1.5, multiline = TRUE),
      confint = list(style="none"), symbols = list(pch = rep(20, 3)),
      ylim = c(0, 1))
@@ -114,7 +114,7 @@ model_multi <- multinom(Sat ~ Infl + Type + Cont, weights = Freq, data = housing
 glm_coef(model_multi)
 
 ## ------------------------------------------------------------------------
-plot(Effect(c("Infl", "Type", "Cont"), model_multi), main = NULL, aspect = 3/4, rotx = 45,
+plot(Effect(c("Infl", "Type", "Cont"), model_multi), main = NULL, aspect = 3/4, rotx = 45, 
      ylab = "Satisfaction (probability)", lines = list(lwd = 1.5, multiline = TRUE),
      confint = list(style="none"), symbols = list(pch = rep(20, 3)),
      ylim = c(0, 1))
@@ -145,11 +145,11 @@ unadj <- glm_coef(model_negbin, labels=c("Constant",
 pander(Anova(model_negbin))
 
 ## ------------------------------------------------------------------------
-pander(unadj, split.table=Inf, caption = "Parameter estimates with unadjusted CIs and p-values.")
+pander(unadj, split.table = Inf, caption = "Parameter estimates with unadjusted CIs and p-values.")
 
 ## ------------------------------------------------------------------------
 plot(Effect(c("Age", "Eth"), model_negbin), lines = list(lwd = 1.5, multiline = TRUE),
-     confint = list(style="none"), symbols = list(pch = rep(20, 2)), main = NULL,
+     confint = list(style="none"), symbols = list(pch = rep(20, 2)), main = NULL, 
      aspect = 3/4)
 
 ## ---- message=FALSE------------------------------------------------------
@@ -166,8 +166,9 @@ age_glht[, 5] <- as.character(age_glht[, 5])
 final[4:6, 3:5] <- age_glht[1:3, 3:5]
 
 ## ------------------------------------------------------------------------
-pander(final, split.table=Inf, caption = "Parameter estimates. CIs and p-values for age group were adjusted
-       for multiple comparisons by the method of Westfall.")
+pander(final, split.table = Inf, caption = "Parameter estimates. CIs and
+       p-values for age group were adjusted for multiple comparisons by the 
+       method of Westfall.")
 
 ## ------------------------------------------------------------------------
 data(bladder)
@@ -206,7 +207,7 @@ bladder_grid$lo <- bladder_pred$fit - 1.96 * bladder_pred$se
 bladder_grid$up <- bladder_pred$fit + 1.96 * bladder_pred$se
 
 ## ------------------------------------------------------------------------
-xyplot(cbind(fit, lo, up) ~ rx, data = bladder_grid, pch=20, panel = panel.errbars,
+xyplot(cbind(fit, lo, up) ~ rx, data = bladder_grid, pch = 20, panel = panel.errbars,
        ylab = "Survival time", xlab = "Treatment", aspect = 3/4)
 
 ## ------------------------------------------------------------------------
@@ -228,7 +229,7 @@ cox_grid$lo <- cox_pred$fit - 1.96 * cox_pred$se
 cox_grid$up <- cox_pred$fit + 1.96 * cox_pred$se
 
 ## ------------------------------------------------------------------------
-xyplot(cbind(fit, lo, up) ~ rx, data = cox_grid, pch=20, panel = panel.errbars,
+xyplot(cbind(fit, lo, up) ~ rx, data = cox_grid, pch = 20, panel = panel.errbars,
        ylab = "Hazard", xlab = "Treatment", aspect = 3/4)
 
 ## ------------------------------------------------------------------------
@@ -236,34 +237,34 @@ library(nlme, warn.conflicts = FALSE)
 data(Orthodont)
 
 ## ------------------------------------------------------------------------
-model_lme <- lme(distance ~ Sex*I(age - mean(age, na.rm = TRUE)), random=~1|Subject,
-                 method="ML", data=Orthodont)
+model_lme <- lme(distance ~ Sex * I(age - mean(age, na.rm = TRUE)), random = ~ 1|Subject, 
+                 method = "ML", data = Orthodont)
 glm_coef(model_lme)
 
 ## ------------------------------------------------------------------------
-pander(glm_coef(model_lme, labels = c("Constant", "Sex: female-male", "Age (years)",
-                                      "Sex:Age interaction")), split.table=Inf)
+pander(glm_coef(model_lme, labels = c("Constant", "Sex: female-male", "Age (years)", 
+                                      "Sex:Age interaction")), split.table = Inf)
 
 ## ---- warning=FALSE------------------------------------------------------
-plot(Effect(c("age", "Sex"), model_lme, residuals = TRUE), rug = FALSE, xlab = "Age (years)",
+plot(Effect(c("age", "Sex"), model_lme, residuals = TRUE), rug = FALSE, xlab = "Age (years)", 
      ylab = "Distance (mm)", main = NULL, aspect = 3/4, partial.residuals = list(pch = 20),
      lines = list(col = c(2, 4), lwd = 1.5))
 
 ## ------------------------------------------------------------------------
 library(gee, warn.conflicts = FALSE)
-model_gee_norm <- gee(distance ~ Sex*I(age - mean(age, na.rm = TRUE)), id = Subject,
+model_gee_norm <- gee(distance ~ Sex * I(age - mean(age, na.rm = TRUE)), id = Subject, 
                       data = Orthodont, corstr = "AR-M")
 
 ## ------------------------------------------------------------------------
-pander(glm_coef(model_gee_norm, labels = c("Constant", "Sex: female-male", "Age (years)",
-                                      "Sex:Age interaction")), split.table=Inf)
+pander(glm_coef(model_gee_norm, labels = c("Constant", "Sex: female-male", "Age (years)", 
+                                      "Sex:Age interaction")), split.table = Inf)
 
 ## ------------------------------------------------------------------------
 Orthodont$fit <- model_gee_norm$fitted.values
 
 ## ------------------------------------------------------------------------
-xyplot(distance ~ age|Sex, data = Orthodont, groups = Subject, pch = 20, xlab = "Age (years)",
-       ylab = "Distance (mm)", aspect = 3/4) +
+xyplot(distance ~ age|Sex, data = Orthodont, groups = Subject, pch = 20, xlab = "Age (years)", 
+     ylab = "Distance (mm)", aspect = 3/4) +
   xyplot(fit ~ age|Sex, data = Orthodont, type = "l", lwd = 2)
 
 ## ------------------------------------------------------------------------
@@ -276,20 +277,20 @@ c4 <- cbind(Thall[, c(1:4, 8)], count = Thall$y3)[, c(1:4, 6)]
 epilepsy <- rbind(c1, c2, c3, c4)
 
 ## ----results = "hide"----------------------------------------------------
-model_gee <- gee(count ~ treat + base + I(age - mean(age, na.rm = TRUE)), id = factor(id),
+model_gee <- gee(count ~ treat + base + I(age - mean(age, na.rm = TRUE)), id = factor(id), 
                  data = epilepsy, family = poisson, corstr = "exchangeable", scale.fix = TRUE)
 
 ## ------------------------------------------------------------------------
-pander(glm_coef(model_gee, labels = c("Constant", "Treatment (Prograbide/Control)",
+pander(glm_coef(model_gee, labels = c("Constant", "Treatment (Prograbide/Control)", 
                                "Baseline count", "Age (years)")), split.table = Inf)
 
 ## ----results = "hide"----------------------------------------------------
 library(lme4, warn.conflicts = FALSE)
-model_glmer <- glmer(count ~ treat + base + I(age - mean(age, na.rm = TRUE)) +
+model_glmer <- glmer(count ~ treat + base + I(age - mean(age, na.rm = TRUE)) + 
                        (1|id), data=epilepsy, family=poisson)
 
 ## ------------------------------------------------------------------------
-pander(glm_coef(model_glmer, labels = c("Constant", "Treatment (Prograbide/Control)",
+pander(glm_coef(model_glmer, labels = c("Constant", "Treatment (Prograbide/Control)", 
                                "Baseline count", "Age (years)")), split.table = Inf)
 
 ## ------------------------------------------------------------------------
@@ -300,11 +301,11 @@ plot(Effect(c("age", "treat"), model_glmer), rug = FALSE, lwd = 2, main = NULL,
 pander(estat(~ count|treat, data = epilepsy, label = "Number of seizures"))
 
 ## ----results = "hide"----------------------------------------------------
-model_quasi <- gee(count ~ treat + base + I(age - mean(age, na.rm = TRUE)), id = factor(id),
-                 data = epilepsy, family = quasi(variance = "mu^2", link = "log"),
+model_quasi <- gee(count ~ treat + base + I(age - mean(age, na.rm = TRUE)), id = factor(id), 
+                 data = epilepsy, family = quasi(variance = "mu^2", link = "log"), 
                  corstr = "exchangeable")
 
 ## ------------------------------------------------------------------------
-pander(glm_coef(model_quasi, labels = c("Constant", "Treatment (Prograbide/Control)",
+pander(glm_coef(model_quasi, labels = c("Constant", "Treatment (Prograbide/Control)", 
                                "Baseline count", "Age (years)")), split.table = Inf)
 

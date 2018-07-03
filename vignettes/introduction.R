@@ -109,7 +109,7 @@ final[3:4, 3:5] <- race_glht[1:2, 3:5]
 pander(final, split.table = Inf)
 
 ## ------------------------------------------------------------------------
-plot(Effect(c("race", "smoke"), model_bwt), main = NULL, aspect = 3/4,
+plot(Effect(c("race", "smoke"), model_bwt), main = NULL, aspect = 3/4, 
      multiline = TRUE, ylab = "Birth weight (g)", xlab = "Race/Ethnicity")
 
 ## ------------------------------------------------------------------------
