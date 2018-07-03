@@ -300,6 +300,7 @@ bar_error <- function(formula, data, col = "gray70", aspect = 3/4, ...)
 #' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @author Deepayan Sarkar, R-Core.
 #' @param model A regression object (like \link{glm}).
+#' @param labels Vector for the coefficient's names (intercept/constant should be omitted).
 #' @param Exp Logical, should estimates and confidence intervals be exponentiated?
 #' @param CI Proportion representing the confidence intervals.
 #' @param pch Point character passed to \link{xyplot}.
@@ -312,25 +313,38 @@ bar_error <- function(formula, data, col = "gray70", aspect = 3/4, ...)
 #' model1 <- glm(bwt ~ smoke + race, data = birthwt)
 #' glm_coef(model1, labels=c("Constant", "Smoker vs Non-smoker", "Non-white vs White"))
 #' coef_plot(model1)
-coef_plot <- function(model, Exp = FALSE, CI = 0.95, pch = 20, col = 1, ...)
+coef_plot <- function (model, labels = NULL, Exp = FALSE, CI = 0.95, pch = 20, col = 1, ...)
 {
-	alpha <- 1 - CI
-	if (Exp == FALSE) {
-		cis <- glm_coef(model)
-		cis <- cis[-1, c(1, 3:4)]
-	 	param <- row.names(car::Anova(model))
-	 	cis2 <- data.frame(Parameter = param, Estimate = cis[, 1], low = cis[, 2], high = cis[, 3])
-	 	xyplot(cbind(Estimate, low, high) ~ Parameter, data = cis2, ylab = "Coefficient (difference)",
-	 	panel = panel.errbars, pch = pch, col = col, ...) +
-	 	layer(panel.abline(h = 0, lty = 2, col = 1, lwd = 0.5))
-	} else {
-		cis <- glm_coef(model)
-		cis <- cis[-1, c(2, 4:5)]
-	 	param <- row.names(car::Anova(model))
-	 	cis2 <- data.frame(Parameter = param, Estimate = cis[, 1], low = cis[, 2], high = cis[, 3])
-	 	xyplot(cbind(Estimate, low, high) ~ Parameter, data = cis2, ylab = "Coefficient (ratio)",
-	 	panel = panel.errbars, pch = pch, col = col, ...) +
-	 	layer(panel.abline(h = 1, lty = 2, col = 1, lwd = 0.5))}
+  alpha <- 1 - CI
+  if (Exp == FALSE) {
+    if (is.null(labels)) {
+      cis <- glm_coef(model)[- 1, c(1, 3:4)]
+    } else {
+      cis <- glm_coef(model, labels = c("", labels))[- 1, c(1, 3:4)]
+    }
+    param <- row.names(cis)
+    cis2 <- data.frame(Parameter = param, Estimate = cis[, 1],
+                       lo = cis[, 2], up = cis[, 3])
+    xyplot(cbind(Estimate, lo, up) ~ Parameter, data = cis2,
+           scales = list(x = list(rot = 45)), xlab = NULL,
+           ylab = "Coefficient (difference)", panel = panel.errbars,
+           pch = pch,  col = col, ...) +
+      layer(panel.abline(h = 0, lty = 2, col = 1, lwd = 0.5))
+  } else {
+    if (is.null(labels)) {
+      cis <- glm_coef(model)[- 1, c(2, 4:5)]
+    } else {
+      cis <- glm_coef(model, labels = c("", labels))[- 1, c(2, 4:5)]
+    }
+    param <- row.names(cis)
+    cis2 <- data.frame(Parameter = param, Estimate = cis[, 1],
+                       lo = cis[, 2], up = cis[, 3])
+    xyplot(cbind(Estimate, lo, up) ~ Parameter, data = cis2,
+           scales = list(x = list(rot = 45)), xlab = NULL,
+           ylab = "Coefficient (ratio)", panel = panel.errbars,
+           pch = pch, col = col,  ...) +
+      layer(panel.abline(h = 1, lty = 2, col = 1, lwd = 0.5))
+  }
 }
 
 #' Internal function for displaying error bars in lattice plots.

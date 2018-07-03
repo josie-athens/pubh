@@ -11,9 +11,9 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning 
 library(pubh, warn.conflicts = FALSE)
 library(car, warn.conflicts = FALSE)
 library(descr, warn.conflicts = FALSE)
+library(effects, warn.conflicts = FALSE)
 library(multcomp, warn.conflicts = FALSE)
 library(pander, warn.conflicts = FALSE)
-library(visreg, warn.conflicts = FALSE)
 
 set.alignment("right", row.names = "left", permanent = TRUE)
 
@@ -109,8 +109,8 @@ final[3:4, 3:5] <- race_glht[1:2, 3:5]
 pander(final, split.table = Inf)
 
 ## ------------------------------------------------------------------------
-visreg(model_bwt, "race", by = "smoke", partial = FALSE, overlay = TRUE, band = FALSE, 
-       rug = FALSE, ylab = "Birth weight (g)", xlab = "Race/Ethnicity")
+plot(Effect(c("race", "smoke"), model_bwt), main = NULL, aspect = 3/4,
+     multiline = TRUE, ylab = "Birth weight (g)", xlab = "Race/Ethnicity")
 
 ## ------------------------------------------------------------------------
 data(Bernard)

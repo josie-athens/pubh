@@ -4,10 +4,13 @@
 \alias{coef_plot}
 \title{Plot of model coefficients.}
 \usage{
-coef_plot(model, Exp = FALSE, CI = 0.95, pch = 20, col = 1, ...)
+coef_plot(model, labels = NULL, Exp = FALSE, CI = 0.95, pch = 20,
+  col = 1, ...)
 }
 \arguments{
 \item{model}{A regression object (like \link{glm}).}
+
+\item{labels}{Vector for the coefficient's names (intercept/constant should be omitted).}
 
 \item{Exp}{Logical, should estimates and confidence intervals be exponentiated?}
 
