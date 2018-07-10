@@ -327,3 +327,32 @@ inv_logit <- function(x)
     return(lv)}
   exp(x)/(1 + exp(x))
 }
+
+#' Pseudo R2 (logistic regression)
+#' \code{pseudo_r2} Calculates R2 analogues (pseudo R2) of logistic regression.
+#'
+#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+#' @param model A logistic regression model.
+#' @details \code{pseudo_r2} calculates three pseudo R2 of logistic regression models: 1) Nagelkerke, @0 Cox and Snell, 3) Hosmer and Lemeshow.
+#' @return A data frame with the calculated pseudo R2 values.
+#' @examples
+#' model_oncho <- glm(mf ~ area, data = Oncho, binomial)
+#' glm_coef(model_oncho, labels = c("Constant", "Area (rainforest/savannah)"))
+#' pseudo_r2(model_oncho)
+pseudo_r2 <- function(model)
+{
+  if (!(model$family$family == "binomial" && (model$family$link ==
+                                              "logit" || model$family$link == "probit"))) {
+    stop("No logistic regression model, no pseudo R^2 computed.")
+  }
+  dev <- model$deviance
+  null_dev <- model$null.deviance
+  model_n <- length(model$fitted)
+  r_hl <- 1 - dev / null_dev
+  r_cs <- 1 - exp(-(null_dev - dev) / model_n)
+  r_n <- r_cs / (1 - (exp(-(null_dev / model_n))))
+  Index <- c("Nagelkerke", "Hosmer and Lemeshow", "Cox and Snell")
+  Estimate <- round(c(r_n, r_hl, r_cs), 3)
+  res <- data.frame(Index, Estimate)
+  res
+}

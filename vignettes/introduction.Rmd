@@ -85,17 +85,15 @@ Many options currently exists for displaying descriptive statistics. I recommend
 
 The `estat` function from the `pubh` package displays descriptive statistics of continuous outcomes and like `summarise`, it can use *labels* to display nice tables. `estat` has less options than summarise and as such, is simpler to use, which is the main intention of the `pubh` package. Furthermore, as a way to aid in the understanding of the variability, `estat` displays also the relative dispersion (coefficient of variation) which is of particular interest for comparing variance between groups (factors).
 
-Some examples. We start by loading packages and setting alignment in `pander` tables (as suggested in the Template of this package).
+Some examples. We start by loading packages as suggested in the Template of this package.
 
 ```{r, message=FALSE}
-library(pubh, warn.conflicts = FALSE)
-library(car, warn.conflicts = FALSE)
-library(descr, warn.conflicts = FALSE)
 library(effects, warn.conflicts = FALSE)
+library(kableExtra, warn.conflicts = FALSE)
+library(knitr, warn.conflicts = FALSE)
 library(multcomp, warn.conflicts = FALSE)
-library(pander, warn.conflicts = FALSE)
-
-set.alignment("right", row.names = "left", permanent = TRUE)
+library(papeR, warn.conflicts = FALSE)
+library(pubh, warn.conflicts = FALSE)
 ```
 
 We will use a data set about blood counts of T cells from patients in remission from Hodgkin's disease or in remission from disseminated malignancies.
@@ -103,7 +101,7 @@ We will use a data set about blood counts of T cells from patients in remission 
 ```{r}
 data(Hodgkin)
 Hodgkin$Ratio <- Hodgkin$CD4/Hodgkin$CD8
-pander(head(Hodgkin))
+kable(head(Hodgkin))
 ```
 
 Descriptive statistics for CD4+ T cells:
@@ -114,10 +112,10 @@ estat(~ CD4, data = Hodgkin)
 
 In the previous code, the left-hand side of the formula is empty as it's the case when working with only one variable.
 
-We can use either `pander` or `kable` (from the `knitr` package) to display nice tables with labels.
+We can use `kable` (from the `knitr` package) to display nice tables with labels.
 
 ```{r}
-pander(estat(~ CD4, data = Hodgkin, label = "CD4^+^ T cells (cells / mm^3^)"))
+kable(estat(~ CD4, data = Hodgkin, label = "CD4^+^ T cells (cells / mm^3^)"))
 ```
 
 In the previous command, we used the Markup language for the superscripts in the label. For subscripts, the syntax is (for example): `H~2~O`.
@@ -130,11 +128,11 @@ For stratification, `estat` recognises the following two syntaxes:
 For example:
 
 ```{r}
-pander(estat(~ Ratio|Group, data = Hodgkin, label = "CD4^+^/CD8^+^ T cells"))
+kable(estat(~ Ratio|Group, data = Hodgkin, label = "CD4^+^/CD8^+^ T cells"))
 ```
 
 ```{r}
-pander(estat(Ratio ~ Group, data = Hodgkin, label = "CD4^+^/CD8^+^ T cells"))
+kable(estat(Ratio ~ Group, data = Hodgkin, label = "CD4^+^/CD8^+^ T cells"))
 ```
 
 ## Inferential statistics
@@ -144,7 +142,7 @@ From the descriptive statistics of *Ratio* we know that the relative dispersion 
 For new users of `R` it helps to have a common syntax in most of the commands, as `R` could be challenging and even intimidating at times. We can test if the difference in variance is statistically significant with the `var.test` command, which uses can use a formula syntax:
 
 ```{r}
-pander(var.test(Ratio ~ Group, data = Hodgkin), split.table = Inf)
+var.test(Ratio ~ Group, data = Hodgkin)
 ```
 
 What about normality? We can look at the QQ-plots against the standard Normal distribution.
@@ -156,7 +154,7 @@ qq_plot(~ Ratio|Group, data = Hodgkin, ylab = "CD4+ / CD8+ T cells", aspect = 1)
 Let's say we choose a non-parametric test to compare the groups:
 
 ```{r}
-pander(wilcox.test(Ratio ~ Group, data = Hodgkin), split.table = Inf)
+wilcox.test(Ratio ~ Group, data = Hodgkin)
 ```
 
 ## Graphical output
@@ -197,7 +195,7 @@ birthwt$race <- factor(birthwt$race, labels = c("White", "African American", "Ot
 Bar charts should always start at the origin, the upper limit on the $y$ scale should be higher than the maximum upper confidence limit. For example:
 
 ```{r}
-pander(gen_bst_df(bwt ~ smoke, data = birthwt))
+kable(gen_bst_df(bwt ~ smoke, data = birthwt))
 ```
 
 ```{r}
@@ -213,7 +211,7 @@ qq_plot(~ bwt|smoke, data = birthwt, ylab = "Birth weight (g)", aspect = 1)
 The (unadjusted) test:
 
 ```{r}
-pander(t.test(bwt ~ smoke, data = birthwt))
+t.test(bwt ~ smoke, data = birthwt)
 ```
 
 The final plot showing (unadjusted) difference:
@@ -253,7 +251,7 @@ unadj <- glm_coef(model_bwt, labels = c("Constant",
                                       "Smoking: smoker - non-smoker",
                                       "Race: African American - White",
                                       "Race: Other - White"))
-pander(unadj, split.table = Inf)
+kable(unadj)
 ```
 
 In the previous table of coefficients confidence intervals and p-values for race had not been adjusted for multiple comparisons. We use the `multcomp` to make the corrections.
@@ -267,7 +265,7 @@ We can incorporate the adjusted results into our final table:
 
 ```{r}
 race_glht <- xymultiple(model_glht, plot = FALSE)
-pander(race_glht)
+kable(race_glht)
 ```
 
 ```{r}
@@ -278,7 +276,7 @@ final[3:4, 3:5] <- race_glht[1:2, 3:5]
 ```
 
 ```{r}
-pander(final, split.table = Inf)
+kable(final)
 ```
 
 The effect plot:
@@ -301,13 +299,15 @@ Let's say we want to look at the effect of ibuprofen on preventing death in pati
 
 ```{r}
 data(Bernard)
-pander(head(Bernard), split.table = Inf)
+kable(head(Bernard))
 ```
 
 Let's look at the table:
 
 ```{r}
-pander(with(Bernard, crosstab(treat, fate, prop.r = TRUE, plot = FALSE)), digits = 2)
+kable(summarise(Bernard, type = "fac", variables = "treat", group = "fate",
+                test = FALSE, labels = "Treatment"))  %>%
+  add_header_above(c(" " = 3, "Alive" = 2, " " = 1, "Dead" = 2))
 ```
 
 For `epi.2by2` we need to provide the table of counts in the correct order, so we would type something like:

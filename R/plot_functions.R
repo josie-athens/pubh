@@ -14,8 +14,8 @@
 #' @param rotx Degrees to rotate x-labels (default = 45).
 #' @param ... Passes additional information to \code{xyplot}.
 #' @details
-#' The default adjusting method is "Westfall". Other options are: "single-step", "Shaffer",
-#' "free", "holm", "hochberg", "hommel", "bonferroni".
+#' The default adjusting method is "bonferroni". Other options are: "single-step", "Shaffer",
+#' "free", "holm", "hochberg", "hommel", "Westfall".
 #' @seealso \code{glht}, \code{glht-methods}.
 #' @return A data frame with CIs and p-values adjusted for multiple comparisons.
 #' @examples
@@ -29,10 +29,10 @@
 #' model2 <- glm(low ~ race, data = birthwt, family = binomial)
 #' model2_glht <- glht(model2, linfct = mcp(race="Tukey"))
 #' xymultiple(model2_glht, Exp = TRUE)
-xymultiple <- function(model.glht, method = "Westfall", Exp = FALSE, dg = 2, plot = TRUE, rotx = 45, ...)
+xymultiple <- function(model.glht, method = "bonferroni", Exp = FALSE, dg = 2, plot = TRUE, rotx = 45, ...)
 {
   model.summary <- summary(model.glht, adjusted(type = method))
-  cisnorm <- as.data.frame(confint(model.summary, adjusted(type=method))$confint)
+  cisnorm <- as.data.frame(confint(model.summary, adjusted(type = method))$confint)
   if (Exp == TRUE) {
     cisnorm <- exp(cisnorm)
     names(cisnorm)[1] <- "Ratio"

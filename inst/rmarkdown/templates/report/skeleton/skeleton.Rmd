@@ -25,21 +25,13 @@ link-citations: yes
 
 ```{r echo = FALSE, message = FALSE}
 rm(list = ls())
-library(knitr)
-opts_chunk$set(comment = NA, message = FALSE, warning = FALSE)
-```
-
-```{r echo = FALSE, message = FALSE}
-library(car, warn.conflicts = FALSE)
-library(descr, warn.conflicts = FALSE)
 library(effects, warn.conflicts = FALSE)
+library(kableExtra, warn.conflicts = FALSE)
+library(knitr, warn.conflicts = FALSE)
 library(multcomp, warn.conflicts = FALSE)
-library(pander, warn.conflicts = FALSE)
 library(papeR, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
 
-
-panderOptions("table.split.table", Inf)
-set.alignment("right", row.names = "left", permanent = TRUE)
+opts_chunk$set(comment = NA, message = FALSE, warning = FALSE)
 ```
 

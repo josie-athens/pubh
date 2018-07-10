@@ -8,40 +8,38 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning 
 #  y ~ x|z, data = my_data
 
 ## ---- message=FALSE------------------------------------------------------
-library(pubh, warn.conflicts = FALSE)
-library(car, warn.conflicts = FALSE)
-library(descr, warn.conflicts = FALSE)
 library(effects, warn.conflicts = FALSE)
+library(kableExtra, warn.conflicts = FALSE)
+library(knitr, warn.conflicts = FALSE)
 library(multcomp, warn.conflicts = FALSE)
-library(pander, warn.conflicts = FALSE)
-
-set.alignment("right", row.names = "left", permanent = TRUE)
+library(papeR, warn.conflicts = FALSE)
+library(pubh, warn.conflicts = FALSE)
 
 ## ------------------------------------------------------------------------
 data(Hodgkin)
 Hodgkin$Ratio <- Hodgkin$CD4/Hodgkin$CD8
-pander(head(Hodgkin))
+kable(head(Hodgkin))
 
 ## ------------------------------------------------------------------------
 estat(~ CD4, data = Hodgkin)
 
 ## ------------------------------------------------------------------------
-pander(estat(~ CD4, data = Hodgkin, label = "CD4^+^ T cells (cells / mm^3^)"))
+kable(estat(~ CD4, data = Hodgkin, label = "CD4^+^ T cells (cells / mm^3^)"))
 
 ## ------------------------------------------------------------------------
-pander(estat(~ Ratio|Group, data = Hodgkin, label = "CD4^+^/CD8^+^ T cells"))
+kable(estat(~ Ratio|Group, data = Hodgkin, label = "CD4^+^/CD8^+^ T cells"))
 
 ## ------------------------------------------------------------------------
-pander(estat(Ratio ~ Group, data = Hodgkin, label = "CD4^+^/CD8^+^ T cells"))
+kable(estat(Ratio ~ Group, data = Hodgkin, label = "CD4^+^/CD8^+^ T cells"))
 
 ## ------------------------------------------------------------------------
-pander(var.test(Ratio ~ Group, data = Hodgkin), split.table = Inf)
+var.test(Ratio ~ Group, data = Hodgkin)
 
 ## ------------------------------------------------------------------------
 qq_plot(~ Ratio|Group, data = Hodgkin, ylab = "CD4+ / CD8+ T cells", aspect = 1)
 
 ## ------------------------------------------------------------------------
-pander(wilcox.test(Ratio ~ Group, data = Hodgkin), split.table = Inf)
+wilcox.test(Ratio ~ Group, data = Hodgkin)
 
 ## ------------------------------------------------------------------------
 strip_error(Ratio ~ Group, data = Hodgkin, ylab = "CD4+ / CD8+ T cells")
@@ -57,7 +55,7 @@ birthwt$smoke <- factor(birthwt$smoke, labels = c("Non-smoker", "Smoker"))
 birthwt$race <- factor(birthwt$race, labels = c("White", "African American", "Other"))
 
 ## ------------------------------------------------------------------------
-pander(gen_bst_df(bwt ~ smoke, data = birthwt))
+kable(gen_bst_df(bwt ~ smoke, data = birthwt))
 
 ## ------------------------------------------------------------------------
 bar_error(bwt ~ smoke, data = birthwt, ylab = "Birth weight (g)", ylim = c(0, 3500))
@@ -66,7 +64,7 @@ bar_error(bwt ~ smoke, data = birthwt, ylab = "Birth weight (g)", ylim = c(0, 35
 qq_plot(~ bwt|smoke, data = birthwt, ylab = "Birth weight (g)", aspect = 1)
 
 ## ------------------------------------------------------------------------
-pander(t.test(bwt ~ smoke, data = birthwt))
+t.test(bwt ~ smoke, data = birthwt)
 
 ## ------------------------------------------------------------------------
 bar_error(bwt ~ smoke, data = birthwt, ylab = "Birth weight (g)", ylim = c(0, 3500)) +
@@ -89,7 +87,7 @@ unadj <- glm_coef(model_bwt, labels = c("Constant",
                                       "Smoking: smoker - non-smoker",
                                       "Race: African American - White",
                                       "Race: Other - White"))
-pander(unadj, split.table = Inf)
+kable(unadj)
 
 ## ------------------------------------------------------------------------
 model_glht <- glht(model_bwt, linfct  = mcp(race = "Tukey"))
@@ -97,7 +95,7 @@ xymultiple(model_glht)
 
 ## ------------------------------------------------------------------------
 race_glht <- xymultiple(model_glht, plot = FALSE)
-pander(race_glht)
+kable(race_glht)
 
 ## ------------------------------------------------------------------------
 final <- unadj
@@ -106,7 +104,7 @@ race_glht[, 5] <- as.character(race_glht[, 5])
 final[3:4, 3:5] <- race_glht[1:2, 3:5]
 
 ## ------------------------------------------------------------------------
-pander(final, split.table = Inf)
+kable(final)
 
 ## ------------------------------------------------------------------------
 plot(Effect(c("race", "smoke"), model_bwt), main = NULL, aspect = 3/4, 
@@ -114,10 +112,12 @@ plot(Effect(c("race", "smoke"), model_bwt), main = NULL, aspect = 3/4,
 
 ## ------------------------------------------------------------------------
 data(Bernard)
-pander(head(Bernard), split.table = Inf)
+kable(head(Bernard))
 
 ## ------------------------------------------------------------------------
-pander(with(Bernard, crosstab(treat, fate, prop.r = TRUE, plot = FALSE)), digits = 2)
+kable(summarise(Bernard, type = "fac", variables = "treat", group = "fate",
+                test = FALSE, labels = "Treatment"))  %>%
+  add_header_above(c(" " = 3, "Alive" = 2, " " = 1, "Dead" = 2))
 
 ## ------------------------------------------------------------------------
 dat <- matrix(c(84, 140 , 92, 139), nrow = 2, byrow = TRUE)

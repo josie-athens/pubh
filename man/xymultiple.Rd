@@ -4,7 +4,7 @@
 \alias{xymultiple}
 \title{Multiple comparisons with plot.}
 \usage{
-xymultiple(model.glht, method = "Westfall", Exp = FALSE, dg = 2,
+xymultiple(model.glht, method = "bonferroni", Exp = FALSE, dg = 2,
   plot = TRUE, rotx = 45, ...)
 }
 \arguments{
@@ -29,8 +29,8 @@ A data frame with CIs and p-values adjusted for multiple comparisons.
 \code{xymultiple} displays results from post-doc analysis and constructs corresponding plot.
 }
 \details{
-The default adjusting method is "Westfall". Other options are: "single-step", "Shaffer",
-"free", "holm", "hochberg", "hommel", "bonferroni".
+The default adjusting method is "bonferroni". Other options are: "single-step", "Shaffer",
+"free", "holm", "hochberg", "hommel", "Westfall".
 }
 \examples{
 library(multcomp)

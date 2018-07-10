@@ -1,6 +1,6 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 0.2.2
+Version: 0.3.0
 Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@otago.ac.nz", role = c("aut", "cre")),
     person("Deepayan", "Sarkar", email = "deepayan.sarkar@r-project.org", role = "ctb"),
@@ -23,19 +23,19 @@ Description: A toolbox for making R functions and capabilities more
     or Public Health. Please note that use of the 
     provided data sets is for educational purposes only.
 Depends:
-    R (>= 3.4.0),
+    R (>= 3.5.0),
     lattice,
     latticeExtra,
 		stats
 Imports:
     car,
     bookdown,
-    descr,
     effects,
 		Epi,
 		epiR,
 		epitools,
-		gee,
+		kableExtra,
+		knitr,
 		lmtest,
 		lme4,
 		MASS,
@@ -43,7 +43,6 @@ Imports:
 		nlme,
 		nnet,
 		ordinal,
-		pander,
 		papeR,
 		rmdformats,
 		sandwich,
@@ -53,7 +52,6 @@ Suggests:
 		epiDisplay,
 		haven,
 		ISwR,
-		knitr,
 		psych,
 		rmarkdown
 License: GPL-2
