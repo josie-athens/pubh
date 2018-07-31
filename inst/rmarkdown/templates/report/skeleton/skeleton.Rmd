@@ -33,5 +33,6 @@ library(papeR, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
 
 opts_chunk$set(comment = NA, message = FALSE, warning = FALSE)
+trellis.par.set(tactile.theme())
 ```
 

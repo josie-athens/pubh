@@ -1,6 +1,6 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 0.3.0
+Version: 0.3.1
 Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@otago.ac.nz", role = c("aut", "cre")),
     person("Deepayan", "Sarkar", email = "deepayan.sarkar@r-project.org", role = "ctb"),
@@ -12,6 +12,7 @@ Authors@R: c(
     person("John", "Fox", email = "jfox@mcmaster.ca", role = "ctb"),
     person("Kazuki", "Yoshida", role = "ctb"),
     person("Tomas", "Aragon", role = "ctb"),
+    person("Johan", "Larsson", email = "johanlarsson@outlook.com", role = "ctb"),
     person("R-Core", role="ctb"))
 Maintainer: Josie Athens <josie.athens@otago.ac.nz>
 Description: A toolbox for making R functions and capabilities more
@@ -26,6 +27,7 @@ Depends:
     R (>= 3.5.0),
     lattice,
     latticeExtra,
+    tactile,
 		stats
 Imports:
     car,

@@ -6,7 +6,8 @@ importFrom("stats", "addmargins", "binomial", "chisq.test", "coef",
              "qnorm", "qt", "quantile", "sd")
 importFrom("lattice", "barchart", "bwplot", "histogram", "panel.abline", "panel.grid",
            "panel.histogram", "panel.mathdensity", "panel.qqmathline",
-           "panel.segments", "panel.xyplot", "qqmath", "stripplot",
+           "panel.segments", "panel.xyplot", "qqmath", "stripplot", "trellis.par.get",
            "xyplot")
 importFrom("latticeExtra", "layer", "panel.smoother")
 importFrom("multcomp", "adjusted")
+importFrom("tactile", "panel.qqmathci")
