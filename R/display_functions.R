@@ -416,7 +416,7 @@ glmcoef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se.rob = TRU
         mod <- summary(model)$tTable
         estim <- mod[, 1]
         low <- estim - mod[, 2] * zcrit
-        up <- estim - mod[, 2] * zcrit
+        up <- estim + mod[, 2] * zcrit
         stats <- mod[, 2:4]
         out.df <- round(data.frame(estim, low, up, stats), digits)
         out.df <- data.frame(out.df, round_pval(mod[, 5]))
