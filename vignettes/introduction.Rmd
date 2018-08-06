@@ -94,6 +94,8 @@ library(knitr, warn.conflicts = FALSE)
 library(multcomp, warn.conflicts = FALSE)
 library(papeR, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
+
+trellis.par.set(tactile.theme())
 ```
 
 We will use a data set about blood counts of T cells from patients in remission from Hodgkin's disease or in remission from disseminated malignancies.
@@ -251,10 +253,10 @@ unadj <- glm_coef(model_bwt, labels = c("Constant",
                                       "Smoking: smoker - non-smoker",
                                       "Race: African American - White",
                                       "Race: Other - White"))
-kable(unadj)
+kable(unadj, align = c("r", "r"))
 ```
 
-In the previous table of coefficients confidence intervals and p-values for race had not been adjusted for multiple comparisons. We use the `multcomp` to make the corrections.
+In the previous table of coefficients confidence intervals and p-values for race had not been adjusted for multiple comparisons. We use functions from the `multcomp` package to make the corrections.
 
 ```{r}
 model_glht <- glht(model_bwt, linfct  = mcp(race = "Tukey"))
@@ -265,25 +267,30 @@ We can incorporate the adjusted results into our final table:
 
 ```{r}
 race_glht <- xymultiple(model_glht, plot = FALSE)
-kable(race_glht)
+kable(race_glht, align = c("r", "r"))
 ```
 
 ```{r}
 final <- unadj
-final[, 5] <- as.character(final[, 5])
-race_glht[, 5] <- as.character(race_glht[, 5])
-final[3:4, 3:5] <- race_glht[1:2, 3:5]
+
+final[, 1] <- as.character(final[, 1])
+final[3:4, 1] <- paste0(race_glht[1:2, 2], " (", race_glht[1:2, 3],
+                        ", ", race_glht[1:2, 4], ")")
+
+final[, 2] <- as.character(final[, 2])
+final[3:4, 2] <- as.character(race_glht[1:2, 5])
 ```
 
 ```{r}
-kable(final)
+kable(final, align = c("r", "r"))
 ```
 
 The effect plot:
 
 ```{r}
 plot(Effect(c("race", "smoke"), model_bwt), main = NULL, aspect = 3/4, 
-     multiline = TRUE, ylab = "Birth weight (g)", xlab = "Race/Ethnicity")
+     multiline = TRUE, ylab = "Birth weight (g)", xlab = "Race/Ethnicity",
+     symbols = list(pch = 16))
 ```
 
 # Epidemiology functions

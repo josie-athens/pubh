@@ -15,6 +15,8 @@ library(multcomp, warn.conflicts = FALSE)
 library(papeR, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
 
+trellis.par.set(tactile.theme())
+
 ## ------------------------------------------------------------------------
 data(Hodgkin)
 Hodgkin$Ratio <- Hodgkin$CD4/Hodgkin$CD8
@@ -87,7 +89,7 @@ unadj <- glm_coef(model_bwt, labels = c("Constant",
                                       "Smoking: smoker - non-smoker",
                                       "Race: African American - White",
                                       "Race: Other - White"))
-kable(unadj)
+kable(unadj, align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
 model_glht <- glht(model_bwt, linfct  = mcp(race = "Tukey"))
@@ -95,20 +97,25 @@ xymultiple(model_glht)
 
 ## ------------------------------------------------------------------------
 race_glht <- xymultiple(model_glht, plot = FALSE)
-kable(race_glht)
+kable(race_glht, align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
 final <- unadj
-final[, 5] <- as.character(final[, 5])
-race_glht[, 5] <- as.character(race_glht[, 5])
-final[3:4, 3:5] <- race_glht[1:2, 3:5]
+
+final[, 1] <- as.character(final[, 1])
+final[3:4, 1] <- paste0(race_glht[1:2, 2], " (", race_glht[1:2, 3],
+                        ", ", race_glht[1:2, 4], ")")
+
+final[, 2] <- as.character(final[, 2])
+final[3:4, 2] <- as.character(race_glht[1:2, 5])
 
 ## ------------------------------------------------------------------------
-kable(final)
+kable(final, align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
 plot(Effect(c("race", "smoke"), model_bwt), main = NULL, aspect = 3/4, 
-     multiline = TRUE, ylab = "Birth weight (g)", xlab = "Race/Ethnicity")
+     multiline = TRUE, ylab = "Birth weight (g)", xlab = "Race/Ethnicity",
+     symbols = list(pch = 16))
 
 ## ------------------------------------------------------------------------
 data(Bernard)

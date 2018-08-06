@@ -18,7 +18,7 @@ glm_coef(model, digits = 2, alpha = 0.05, labels = NULL, se.rob = TRUE)
 \item{se.rob}{Logical, should robust errors be used to calculate confidence intervals? (default = TRUE).}
 }
 \value{
-A data frame with estimates, standard errors, confidence intervals and p-values from \code{glm} objects.
+A data frame with estimates, confidence intervals and p-values from \code{glm} objects.
 }
 \description{
 \code{glm_coef} displays estimates with confidence intervals and p-values from generalised linear models (see Details).
@@ -67,17 +67,6 @@ unadj <- glm_coef(model_negbin, labels=c("Constant",
                                    "F2/Primary",
                                    "F3/Primary"))
 unadj # Not-adjusted for multiple comparisons
-
-library(multcomp)
-model_glht <- glht(model_negbin, linfct  = mcp(Age = "Tukey"))
-age_glht <- xymultiple(model_glht, Exp = TRUE, plot = FALSE)
-age_glht
-
-final <- unadj
-final[, 5] <- as.character(final[, 5])
-age_glht[, 5] <- as.character(age_glht[, 5])
-final[4:6, 3:5] <- age_glht[1:3, 3:5]
-final # Final table, with CIs and p-values adjusted for multiple comparisons (Westfall).
 
 ## For more examples, please read the Vignette on Regression.
 }

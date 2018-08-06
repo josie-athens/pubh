@@ -2,12 +2,16 @@
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning = FALSE)
 
 ## ---- message=FALSE------------------------------------------------------
+rm(list = ls())
 library(effects, warn.conflicts = FALSE)
 library(kableExtra, warn.conflicts = FALSE)
 library(knitr, warn.conflicts = FALSE)
 library(multcomp, warn.conflicts = FALSE)
 library(papeR, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
+
+opts_chunk$set(comment = NA, message = FALSE, warning = FALSE)
+trellis.par.set(tactile.theme())
 
 ## ---- message=FALSE------------------------------------------------------
 data(birthwt)
@@ -27,18 +31,19 @@ glm_coef(model_norm)
 ## ------------------------------------------------------------------------
 kable(glm_coef(model_norm, labels = c("Constant", "Smoker - Non-smoker", 
                                       "Non-white - White"), se.rob = FALSE),
-      caption = "Table of coeffients using naive standard errors.")
+      caption = "Table of coeffients using naive standard errors.",
+      align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
 kable(glm_coef(model_norm, labels = c("Constant", "Smoker - Non-smoker", 
                                       "Non-white - White")),
-       caption = "Table of coeffients using robust standard errors.")
+       caption = "Table of coeffients using robust standard errors.",
+      align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
 plot(Effect(c("smoke", "race"), model_norm), multiline = TRUE, main = NULL, 
      ylab = "Birth weight (g)", xlab = "Smoking status", symbols = list(pch = 16),
-     confint = list(style = "auto"), aspect = 3/4, 
-     lines = list(col = c(2, 4), lwd = 1.5))
+     confint = list(style = "auto"), aspect = 3/4, lines = list(lwd = 1.5))
 
 ## ------------------------------------------------------------------------
 data(diet, package = "Epi")
@@ -46,7 +51,8 @@ model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
 
 ## ------------------------------------------------------------------------
 kable(glm_coef(model_binom, labels = c("Constant", "Fibre intake (g/day)")), 
-       caption = "Parameter estimates from logistic regression.")
+      caption = "Parameter estimates from logistic regression.",
+      align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
 plot(Effect("fibre", model_binom), type = "response", rug = FALSE, aspect = 3/4,
@@ -65,7 +71,8 @@ glm_coef(model_clogit)
 ## ------------------------------------------------------------------------
 kable(glm_coef(model_clogit, labels = c("Oestrogen/No oestrogen", "GBD/No GBD", 
                                          "Oestrogen:GBD Interaction")), 
-       caption = "Parameter estimates from conditional logistic regression.")
+       caption = "Parameter estimates from conditional logistic regression.",
+      align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
 bdendo_grid <- with(bdendo, expand.grid(
@@ -101,7 +108,8 @@ labs_ord <- c("Constant: Low/Medium satisfaction",
               "Accommodation: Terrace/Tower",
               "Afforded: High/Low")
 kable(glm_coef(model_clm, labels = labs_ord), 
-       caption = "Parameter estimates on satisfaction of householders.")
+      caption = "Parameter estimates on satisfaction of householders.",
+      align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
 plot(Effect(c("Infl", "Type", "Cont"), model_clm), main = NULL, aspect = 3/4, rotx = 45, 
@@ -148,7 +156,8 @@ unadj <- glm_coef(model_negbin, labels=c("Constant",
 Anova(model_negbin)
 
 ## ------------------------------------------------------------------------
-kable(unadj, caption = "Parameter estimates with unadjusted CIs and p-values.")
+kable(unadj, caption = "Parameter estimates with unadjusted CIs and p-values.",
+      align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
 plot(Effect(c("Age", "Eth"), model_negbin), lines = list(lwd = 1.5, multiline = TRUE),
@@ -164,14 +173,18 @@ xymultiple(model_glht, Exp = TRUE)
 
 ## ------------------------------------------------------------------------
 final <- unadj
-final[, 5] <- as.character(final[, 5])
-age_glht[, 5] <- as.character(age_glht[, 5])
-final[4:6, 3:5] <- age_glht[1:3, 3:5]
+
+final[, 1] <- as.character(final[, 1])
+final[4:6, 1] <- paste0(age_glht[1:3, 2], " (", age_glht[1:3, 3],
+                        ", ", age_glht[1:3, 4], ")")
+
+final[, 2] <- as.character(final[, 2])
+final[4:6, 2] <- as.character(age_glht[1:3, 5])
 
 ## ------------------------------------------------------------------------
 kable(final, caption = "Parameter estimates. CIs and
        p-values for age group were adjusted for multiple comparisons by the 
-       method of Bonferroni")
+       method of Bonferroni", align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
 data(bladder)
@@ -185,14 +198,17 @@ model_surv <- survreg(Surv(times, event) ~ rx, data = bladder)
 glm_coef(model_surv)
 
 ## ------------------------------------------------------------------------
-kable(glm_coef(model_surv, labels = c("Treatment: Thiotepa/Placebo", "Scale")))
+kable(glm_coef(model_surv, labels = c("Treatment: Thiotepa/Placebo", "Scale")),
+      align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
 model_exp <- survreg(Surv(times, event) ~ rx, data = bladder, dist = "exponential")
-kable(glm_coef(model_exp, labels = "Treatment: Thiotepa/Placebo"))
+kable(glm_coef(model_exp, labels = "Treatment: Thiotepa/Placebo"),
+      align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
-kable(glm_coef(model_exp, se.rob = FALSE, labels = "Treatment: Thiotepa/Placebo"))
+kable(glm_coef(model_exp, se.rob = FALSE, labels = "Treatment: Thiotepa/Placebo"),
+      align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
 bladder_grid <- with(bladder, expand.grid(
@@ -214,7 +230,8 @@ xyplot(cbind(fit, lo, up) ~ rx, data = bladder_grid, pch = 20, panel = panel.err
 model_cox <-  coxph(Surv(times, event) ~ rx, data = bladder)
 
 ## ------------------------------------------------------------------------
-kable(glm_coef(model_cox, labels = c("Treatment: Thiotepa/Placebo")))
+kable(glm_coef(model_cox, labels = c("Treatment: Thiotepa/Placebo")),
+      align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
 cox_grid <- with(bladder, expand.grid(
@@ -243,7 +260,8 @@ glm_coef(model_lme)
 
 ## ------------------------------------------------------------------------
 kable(glm_coef(model_lme, labels = c("Constant", "Sex: female-male", "Age (years)", 
-                                      "Sex:Age interaction")))
+                                      "Sex:Age interaction")),
+      align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
 data(Thall)
@@ -260,8 +278,9 @@ model_glmer <- glmer(count ~ treat + base + I(age - mean(age, na.rm = TRUE)) +
                        (1|id), data=epilepsy, family=poisson)
 
 ## ------------------------------------------------------------------------
-kable(glm_coef(model_glmer, labels = c("Constant", "Treatment (Prograbide/Control)", 
-                               "Baseline count", "Age (years)")))
+kable(glm_coef(model_glmer, labels = c("Treatment (Prograbide/Control)", 
+                               "Baseline count", "Age (years)")),
+      align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
 plot(Effect(c("age", "treat"), model_glmer), rug = FALSE, lwd = 2, main = NULL,

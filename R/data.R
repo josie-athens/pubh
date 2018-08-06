@@ -282,6 +282,6 @@
 #' library(lme4, warn.conflicts = FALSE)
 #' model_glmer <- glmer(count ~ treat + base + I(age - mean(age, na.rm = TRUE)) +
 #'                  (1|id), data=epilepsy, family=poisson)
-#' glm_coef(model_glmer, labels = c("Constant", "Treatment (Prograbide/Control)",
+#' glm_coef(model_glmer, labels = c("Treatment (Prograbide/Control)",
 #'                                "Baseline count", "Age (years)"))
 "Thall"
