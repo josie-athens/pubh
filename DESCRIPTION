@@ -1,6 +1,6 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 0.4.0
+Version: 0.4.1
 Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@otago.ac.nz", role = c("aut", "cre")),
     person("Deepayan", "Sarkar", email = "deepayan.sarkar@r-project.org", role = "ctb"),

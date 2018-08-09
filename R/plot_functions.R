@@ -322,9 +322,9 @@ coef_plot <- function (model, labels = NULL, Exp = FALSE, CI = 0.95, pch = 20, c
   alpha <- 1 - CI
   if (Exp == FALSE) {
     if (is.null(labels)) {
-      cis <- glmcoef(model)[- 1, c(1, 3:4)]
+      cis <- glm_coef(model, type = "ext")[- 1, c(1, 3:4)]
     } else {
-      cis <- glmcoef(model, labels = c("", labels))[- 1, c(1, 3:4)]
+      cis <- glm_coef(model, labels = c("", labels), type = "ext")[- 1, c(1, 3:4)]
     }
     param <- row.names(cis)
     cis2 <- data.frame(Parameter = param, Estimate = cis[, 1],
@@ -336,9 +336,9 @@ coef_plot <- function (model, labels = NULL, Exp = FALSE, CI = 0.95, pch = 20, c
       layer(panel.abline(h = 0, lty = 2, col = 1, lwd = 0.5))
   } else {
     if (is.null(labels)) {
-      cis <- glmcoef(model)[- 1, c(2, 4:5)]
+      cis <- glm_coef(model, type = "ext")[- 1, c(2, 4:5)]
     } else {
-      cis <- glmcoef(model, labels = c("", labels))[- 1, c(2, 4:5)]
+      cis <- glm_coef(model, labels = c("", labels), type = "ext")[- 1, c(2, 4:5)]
     }
     param <- row.names(cis)
     cis2 <- data.frame(Parameter = param, Estimate = cis[, 1],
