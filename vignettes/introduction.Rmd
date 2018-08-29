@@ -89,12 +89,13 @@ Some examples. We start by loading packages as suggested in the Template of this
 
 ```{r, message=FALSE}
 library(effects, warn.conflicts = FALSE)
-library(kableExtra, warn.conflicts = FALSE)
-library(knitr, warn.conflicts = FALSE)
+library(latex2exp, warn.conflicts = FALSE)
 library(multcomp, warn.conflicts = FALSE)
+library(pander, warn.conflicts = FALSE)
 library(papeR, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
 
+set.alignment("right", row.names = "left", permanent = TRUE)
 trellis.par.set(tactile.theme())
 ```
 
@@ -103,7 +104,7 @@ We will use a data set about blood counts of T cells from patients in remission 
 ```{r}
 data(Hodgkin)
 Hodgkin$Ratio <- Hodgkin$CD4/Hodgkin$CD8
-kable(head(Hodgkin))
+pander(head(Hodgkin))
 ```
 
 Descriptive statistics for CD4+ T cells:
@@ -114,10 +115,10 @@ estat(~ CD4, data = Hodgkin)
 
 In the previous code, the left-hand side of the formula is empty as it's the case when working with only one variable.
 
-We can use `kable` (from the `knitr` package) to display nice tables with labels.
+We can use `pander` to display nice tables with labels.
 
 ```{r}
-kable(estat(~ CD4, data = Hodgkin, label = "CD4^+^ T cells (cells / mm^3^)"))
+pander(estat(~ CD4, data = Hodgkin, label = "CD4^+^ T cells (cells / mm^3^)"))
 ```
 
 In the previous command, we used the Markup language for the superscripts in the label. For subscripts, the syntax is (for example): `H~2~O`.
@@ -130,12 +131,9 @@ For stratification, `estat` recognises the following two syntaxes:
 For example:
 
 ```{r}
-kable(estat(~ Ratio|Group, data = Hodgkin, label = "CD4^+^/CD8^+^ T cells"))
+pander(estat(~ Ratio|Group, data = Hodgkin, label = "CD4^+^/CD8^+^ T cells"))
 ```
 
-```{r}
-kable(estat(Ratio ~ Group, data = Hodgkin, label = "CD4^+^/CD8^+^ T cells"))
-```
 
 ## Inferential statistics
 
@@ -150,7 +148,8 @@ var.test(Ratio ~ Group, data = Hodgkin)
 What about normality? We can look at the QQ-plots against the standard Normal distribution.
 
 ```{r}
-qq_plot(~ Ratio|Group, data = Hodgkin, ylab = "CD4+ / CD8+ T cells", aspect = 1)
+lab <- TeX("CD4$^+$ / CD8$^+$ T cells")
+qq_plot(~ Ratio|Group, data = Hodgkin, ylab = lab)
 ```
 
 Let's say we choose a non-parametric test to compare the groups:
@@ -169,7 +168,7 @@ For relatively small samples (for example, less than 30 observations per group) 
 For our current example:
 
 ```{r}
-strip_error(Ratio ~ Group, data = Hodgkin, ylab = "CD4+ / CD8+ T cells")
+strip_error(Ratio ~ Group, data = Hodgkin, ylab = lab)
 ```
 
 The error bars represent 95% confidence intervals around mean values.
@@ -181,7 +180,7 @@ For `panel.segments` we provide the coordinates of the two points at the ends of
 The commands are as follows:
 
 ```{r}
-strip_error(Ratio ~ Group, data = Hodgkin, ylab = "CD4+ / CD8+ T cells", ylim = c(0, 4.5)) +
+strip_error(Ratio ~ Group, data = Hodgkin, ylab = lab, ylim = c(0, 4.5)) +
   layer(panel.segments(1, 4, 2, 4, lwd=1.5)) +
   layer(panel.text(1.5, 4.1, "**"))
 ```
@@ -197,7 +196,7 @@ birthwt$race <- factor(birthwt$race, labels = c("White", "African American", "Ot
 Bar charts should always start at the origin, the upper limit on the $y$ scale should be higher than the maximum upper confidence limit. For example:
 
 ```{r}
-kable(gen_bst_df(bwt ~ smoke, data = birthwt))
+pander(gen_bst_df(bwt ~ smoke, data = birthwt))
 ```
 
 ```{r}
@@ -207,7 +206,7 @@ bar_error(bwt ~ smoke, data = birthwt, ylab = "Birth weight (g)", ylim = c(0, 35
 Quick normality check:
 
 ```{r}
-qq_plot(~ bwt|smoke, data = birthwt, ylab = "Birth weight (g)", aspect = 1)
+qq_plot(~ bwt|smoke, data = birthwt, ylab = "Birth weight (g)")
 ```
 
 The (unadjusted) test:
@@ -253,7 +252,7 @@ unadj <- glm_coef(model_bwt, labels = c("Constant",
                                       "Smoking: smoker - non-smoker",
                                       "Race: African American - White",
                                       "Race: Other - White"))
-kable(unadj, align = c("r", "r"))
+pander(unadj)
 ```
 
 In the previous table of coefficients confidence intervals and p-values for race had not been adjusted for multiple comparisons. We use functions from the `multcomp` package to make the corrections.
@@ -267,7 +266,7 @@ We can incorporate the adjusted results into our final table:
 
 ```{r}
 race_glht <- xymultiple(model_glht, plot = FALSE)
-kable(race_glht, align = c("r", "r"))
+pander(race_glht)
 ```
 
 ```{r}
@@ -282,7 +281,7 @@ final[3:4, 2] <- as.character(race_glht[1:2, 5])
 ```
 
 ```{r}
-kable(final, align = c("r", "r"))
+pander(final)
 ```
 
 The effect plot:
@@ -306,15 +305,17 @@ Let's say we want to look at the effect of ibuprofen on preventing death in pati
 
 ```{r}
 data(Bernard)
-kable(head(Bernard))
+pander(head(Bernard), split.table = Inf)
 ```
 
 Let's look at the table:
 
 ```{r}
-kable(summarise(Bernard, type = "fac", variables = "treat", group = "fate",
-                test = FALSE, labels = "Treatment"))  %>%
-  add_header_above(c(" " = 3, "Alive" = 2, " " = 1, "Dead" = 2))
+tbl1 <- summarise(Bernard, type = "fac", variables = "treat", group = "fate",
+                test = FALSE, labels = "Treatment")
+first_row <- c(rep("", 3), "Alive", rep("", 2), "Dead", "")
+tbl1 <- rbind(first_row, tbl1)
+pander(tbl1)
 ```
 
 For `epi.2by2` we need to provide the table of counts in the correct order, so we would type something like:

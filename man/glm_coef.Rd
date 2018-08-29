@@ -4,8 +4,8 @@
 \alias{glm_coef}
 \title{Table of coefficients from generalised linear models.}
 \usage{
-glm_coef(model, digits = 2, alpha = 0.05, labels = NULL, se.rob = TRUE,
-  type = "cond")
+glm_coef(model, digits = 2, alpha = 0.05, labels = NULL,
+  se.rob = TRUE, type = "cond")
 }
 \arguments{
 \item{model}{A model from any of the classes listed in the details section.}

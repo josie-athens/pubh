@@ -1,13 +1,13 @@
 ---
 title: "Title"
-subtitle: "Subtitle"
 author: "Name"
 date: "`r Sys.Date()`"
 output:
-  rmdformats::readthedown:
+  bookdown::html_document2:
     highlight: kate
     number_sections: true
-    use_bookdown: true
+    toc: yes
+    toc_depth: 3
   bookdown::word_document2:
     fig_height: 4
     fig_width: 5
@@ -26,13 +26,14 @@ link-citations: yes
 ```{r echo = FALSE, message = FALSE}
 rm(list = ls())
 library(effects, warn.conflicts = FALSE)
-library(kableExtra, warn.conflicts = FALSE)
-library(knitr, warn.conflicts = FALSE)
+library(latex2exp, warn.conflicts = FALSE)
 library(multcomp, warn.conflicts = FALSE)
+library(pander, warn.conflicts = FALSE)
 library(papeR, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
 
-opts_chunk$set(comment = NA, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(comment = NA, message = FALSE, warning = FALSE, echo = FALSE)
+set.alignment("right", row.names = "left", permanent = TRUE)
 trellis.par.set(tactile.theme())
 ```
 

@@ -4,13 +4,13 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning 
 ## ---- message=FALSE------------------------------------------------------
 rm(list = ls())
 library(effects, warn.conflicts = FALSE)
-library(kableExtra, warn.conflicts = FALSE)
-library(knitr, warn.conflicts = FALSE)
+library(latex2exp, warn.conflicts = FALSE)
 library(multcomp, warn.conflicts = FALSE)
+library(pander, warn.conflicts = FALSE)
 library(papeR, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
 
-opts_chunk$set(comment = NA, message = FALSE, warning = FALSE)
+set.alignment("right", row.names = "left", permanent = TRUE)
 trellis.par.set(tactile.theme())
 
 ## ---- message=FALSE------------------------------------------------------
@@ -29,16 +29,14 @@ summary(model_norm)
 glm_coef(model_norm)
 
 ## ------------------------------------------------------------------------
-kable(glm_coef(model_norm, labels = c("Constant", "Smoker - Non-smoker", 
+pander(glm_coef(model_norm, labels = c("Constant", "Smoker - Non-smoker", 
                                       "Non-white - White"), se.rob = FALSE),
-      caption = "Table of coeffients using naive standard errors.",
-      align = c("r", "r"))
+      caption = "Table of coeffients using naive standard errors.")
 
 ## ------------------------------------------------------------------------
-kable(glm_coef(model_norm, labels = c("Constant", "Smoker - Non-smoker", 
+pander(glm_coef(model_norm, labels = c("Constant", "Smoker - Non-smoker", 
                                       "Non-white - White")),
-       caption = "Table of coeffients using robust standard errors.",
-      align = c("r", "r"))
+       caption = "Table of coeffients using robust standard errors.")
 
 ## ------------------------------------------------------------------------
 plot(Effect(c("smoke", "race"), model_norm), multiline = TRUE, main = NULL, 
@@ -50,9 +48,8 @@ data(diet, package = "Epi")
 model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
 
 ## ------------------------------------------------------------------------
-kable(glm_coef(model_binom, labels = c("Constant", "Fibre intake (g/day)")), 
-      caption = "Parameter estimates from logistic regression.",
-      align = c("r", "r"))
+pander(glm_coef(model_binom, labels = c("Constant", "Fibre intake (g/day)")), 
+      caption = "Parameter estimates from logistic regression.")
 
 ## ------------------------------------------------------------------------
 plot(Effect("fibre", model_binom), type = "response", rug = FALSE, aspect = 3/4,
@@ -69,10 +66,9 @@ model_clogit <- clogit(d ~ est * gall + strata(set), data = bdendo)
 glm_coef(model_clogit)
 
 ## ------------------------------------------------------------------------
-kable(glm_coef(model_clogit, labels = c("Oestrogen/No oestrogen", "GBD/No GBD", 
+pander(glm_coef(model_clogit, labels = c("Oestrogen/No oestrogen", "GBD/No GBD", 
                                          "Oestrogen:GBD Interaction")), 
-       caption = "Parameter estimates from conditional logistic regression.",
-      align = c("r", "r"))
+       caption = "Parameter estimates from conditional logistic regression.")
 
 ## ------------------------------------------------------------------------
 bdendo_grid <- with(bdendo, expand.grid(
@@ -107,9 +103,8 @@ labs_ord <- c("Constant: Low/Medium satisfaction",
               "Accommodation: Atrium/Tower",
               "Accommodation: Terrace/Tower",
               "Afforded: High/Low")
-kable(glm_coef(model_clm, labels = labs_ord), 
-      caption = "Parameter estimates on satisfaction of householders.",
-      align = c("r", "r"))
+pander(glm_coef(model_clm, labels = labs_ord), 
+      caption = "Parameter estimates on satisfaction of householders.")
 
 ## ------------------------------------------------------------------------
 plot(Effect(c("Infl", "Type", "Cont"), model_clm), main = NULL, aspect = 3/4, rotx = 45, 
@@ -138,7 +133,8 @@ model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
 glm_coef(model_pois)
 
 ## ------------------------------------------------------------------------
-kable(estat(~ Days|Eth, data = quine, label = "Days of school absences"))
+pander(estat(~ Days|Eth, data = quine, label = "Days of school absences"),
+       split.table = Inf)
 
 ## ------------------------------------------------------------------------
 deviance(model_pois) / df.residual(model_pois)
@@ -156,7 +152,7 @@ unadj <- glm_coef(model_negbin, labels=c("Constant",
 Anova(model_negbin)
 
 ## ------------------------------------------------------------------------
-kable(unadj, caption = "Parameter estimates with unadjusted CIs and p-values.",
+pander(unadj, caption = "Parameter estimates with unadjusted CIs and p-values.",
       align = c("r", "r"))
 
 ## ------------------------------------------------------------------------
@@ -182,9 +178,9 @@ final[, 2] <- as.character(final[, 2])
 final[4:6, 2] <- as.character(age_glht[1:3, 5])
 
 ## ------------------------------------------------------------------------
-kable(final, caption = "Parameter estimates. CIs and
+pander(final, caption = "Parameter estimates. CIs and
        p-values for age group were adjusted for multiple comparisons by the 
-       method of Bonferroni", align = c("r", "r"))
+       method of Bonferroni")
 
 ## ------------------------------------------------------------------------
 data(bladder)
@@ -198,17 +194,14 @@ model_surv <- survreg(Surv(times, event) ~ rx, data = bladder)
 glm_coef(model_surv)
 
 ## ------------------------------------------------------------------------
-kable(glm_coef(model_surv, labels = c("Treatment: Thiotepa/Placebo", "Scale")),
-      align = c("r", "r"))
+pander(glm_coef(model_surv, labels = c("Treatment: Thiotepa/Placebo", "Scale")))
 
 ## ------------------------------------------------------------------------
 model_exp <- survreg(Surv(times, event) ~ rx, data = bladder, dist = "exponential")
-kable(glm_coef(model_exp, labels = "Treatment: Thiotepa/Placebo"),
-      align = c("r", "r"))
+pander(glm_coef(model_exp, labels = "Treatment: Thiotepa/Placebo"))
 
 ## ------------------------------------------------------------------------
-kable(glm_coef(model_exp, se.rob = FALSE, labels = "Treatment: Thiotepa/Placebo"),
-      align = c("r", "r"))
+pander(glm_coef(model_exp, se.rob = FALSE, labels = "Treatment: Thiotepa/Placebo"))
 
 ## ------------------------------------------------------------------------
 bladder_grid <- with(bladder, expand.grid(
@@ -230,8 +223,7 @@ xyplot(cbind(fit, lo, up) ~ rx, data = bladder_grid, pch = 20, panel = panel.err
 model_cox <-  coxph(Surv(times, event) ~ rx, data = bladder)
 
 ## ------------------------------------------------------------------------
-kable(glm_coef(model_cox, labels = c("Treatment: Thiotepa/Placebo")),
-      align = c("r", "r"))
+pander(glm_coef(model_cox, labels = c("Treatment: Thiotepa/Placebo")))
 
 ## ------------------------------------------------------------------------
 cox_grid <- with(bladder, expand.grid(
@@ -259,9 +251,8 @@ model_lme <- lme(distance ~ Sex * I(age - mean(age, na.rm = TRUE)), random = ~ 1
 glm_coef(model_lme)
 
 ## ------------------------------------------------------------------------
-kable(glm_coef(model_lme, labels = c("Constant", "Sex: female-male", "Age (years)", 
-                                      "Sex:Age interaction")),
-      align = c("r", "r"))
+pander(glm_coef(model_lme, labels = c("Constant", "Sex: female-male", "Age (years)", 
+                                      "Sex:Age interaction")))
 
 ## ------------------------------------------------------------------------
 data(Thall)
@@ -278,9 +269,8 @@ model_glmer <- glmer(count ~ treat + base + I(age - mean(age, na.rm = TRUE)) +
                        (1|id), data=epilepsy, family=poisson)
 
 ## ------------------------------------------------------------------------
-kable(glm_coef(model_glmer, labels = c("Treatment (Prograbide/Control)", 
-                               "Baseline count", "Age (years)")),
-      align = c("r", "r"))
+pander(glm_coef(model_glmer, labels = c("Treatment (Prograbide/Control)", 
+                               "Baseline count", "Age (years)")))
 
 ## ------------------------------------------------------------------------
 plot(Effect(c("age", "treat"), model_glmer), rug = FALSE, lwd = 2, main = NULL,

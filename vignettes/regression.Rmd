@@ -34,13 +34,13 @@ We start by loading relevant packages and setting the theme for the plots (as su
 ```{r, message=FALSE}
 rm(list = ls())
 library(effects, warn.conflicts = FALSE)
-library(kableExtra, warn.conflicts = FALSE)
-library(knitr, warn.conflicts = FALSE)
+library(latex2exp, warn.conflicts = FALSE)
 library(multcomp, warn.conflicts = FALSE)
+library(pander, warn.conflicts = FALSE)
 library(papeR, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
 
-opts_chunk$set(comment = NA, message = FALSE, warning = FALSE)
+set.alignment("right", row.names = "left", permanent = TRUE)
 trellis.par.set(tactile.theme())
 ```
 
@@ -77,18 +77,16 @@ Once we know the order in which the parameters are displayed, we can add labels 
 > **Note:** Compare results using naive and robust standard errors.
 
 ```{r}
-kable(glm_coef(model_norm, labels = c("Constant", "Smoker - Non-smoker", 
+pander(glm_coef(model_norm, labels = c("Constant", "Smoker - Non-smoker", 
                                       "Non-white - White"), se.rob = FALSE),
-      caption = "Table of coeffients using naive standard errors.",
-      align = c("r", "r"))
+      caption = "Table of coeffients using naive standard errors.")
 ```
 
 
 ```{r}
-kable(glm_coef(model_norm, labels = c("Constant", "Smoker - Non-smoker", 
+pander(glm_coef(model_norm, labels = c("Constant", "Smoker - Non-smoker", 
                                       "Non-white - White")),
-       caption = "Table of coeffients using robust standard errors.",
-      align = c("r", "r"))
+       caption = "Table of coeffients using robust standard errors.")
 ```
 
 Effect plot:
@@ -109,9 +107,8 @@ model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
 ```
 
 ```{r}
-kable(glm_coef(model_binom, labels = c("Constant", "Fibre intake (g/day)")), 
-      caption = "Parameter estimates from logistic regression.",
-      align = c("r", "r"))
+pander(glm_coef(model_binom, labels = c("Constant", "Fibre intake (g/day)")), 
+      caption = "Parameter estimates from logistic regression.")
 ```
 
 Effect plot:
@@ -137,10 +134,9 @@ glm_coef(model_clogit)
 ```
 
 ```{r}
-kable(glm_coef(model_clogit, labels = c("Oestrogen/No oestrogen", "GBD/No GBD", 
+pander(glm_coef(model_clogit, labels = c("Oestrogen/No oestrogen", "GBD/No GBD", 
                                          "Oestrogen:GBD Interaction")), 
-       caption = "Parameter estimates from conditional logistic regression.",
-      align = c("r", "r"))
+       caption = "Parameter estimates from conditional logistic regression.")
 ```
 
 Creating data frame for effect plot:
@@ -188,9 +184,8 @@ labs_ord <- c("Constant: Low/Medium satisfaction",
               "Accommodation: Atrium/Tower",
               "Accommodation: Terrace/Tower",
               "Afforded: High/Low")
-kable(glm_coef(model_clm, labels = labs_ord), 
-      caption = "Parameter estimates on satisfaction of householders.",
-      align = c("r", "r"))
+pander(glm_coef(model_clm, labels = labs_ord), 
+      caption = "Parameter estimates on satisfaction of householders.")
 ```
 
 Effect plot:
@@ -241,7 +236,8 @@ glm_coef(model_pois)
 The assumption is that the mean is equal than the variance. Is that the case?
 
 ```{r}
-kable(estat(~ Days|Eth, data = quine, label = "Days of school absences"))
+pander(estat(~ Days|Eth, data = quine, label = "Days of school absences"),
+       split.table = Inf)
 ```
 
 > **Note:** Look at the relative dispersion (coefficient of variation), for the variance to be equal to the means the CV would have to be about 35%.
@@ -275,7 +271,7 @@ Thus, we want to report confidence intervals and $p$-values adjusted for multipl
 The unadjusted CIs:
 
 ```{r}
-kable(unadj, caption = "Parameter estimates with unadjusted CIs and p-values.",
+pander(unadj, caption = "Parameter estimates with unadjusted CIs and p-values.",
       align = c("r", "r"))
 ```
 
@@ -317,9 +313,9 @@ final[4:6, 2] <- as.character(age_glht[1:3, 5])
 ```
 
 ```{r}
-kable(final, caption = "Parameter estimates. CIs and
+pander(final, caption = "Parameter estimates. CIs and
        p-values for age group were adjusted for multiple comparisons by the 
-       method of Bonferroni", align = c("r", "r"))
+       method of Bonferroni")
 ```
 
 # Survival Analysis
@@ -343,16 +339,14 @@ glm_coef(model_surv)
 ```
 
 ```{r}
-kable(glm_coef(model_surv, labels = c("Treatment: Thiotepa/Placebo", "Scale")),
-      align = c("r", "r"))
+pander(glm_coef(model_surv, labels = c("Treatment: Thiotepa/Placebo", "Scale")))
 ```
 
 In this example the scale parameter is not statistically different from one, meaning hazard is constant and thus, we can use the exponential distribution:
 
 ```{r}
 model_exp <- survreg(Surv(times, event) ~ rx, data = bladder, dist = "exponential")
-kable(glm_coef(model_exp, labels = "Treatment: Thiotepa/Placebo"),
-      align = c("r", "r"))
+pander(glm_coef(model_exp, labels = "Treatment: Thiotepa/Placebo"))
 ```
 
 > **Interpretation:** Patients receiving Thiotepa live on average 64% more than those in the Placebo group.
@@ -360,8 +354,7 @@ kable(glm_coef(model_exp, labels = "Treatment: Thiotepa/Placebo"),
 Using naive standard errors:
 
 ```{r}
-kable(glm_coef(model_exp, se.rob = FALSE, labels = "Treatment: Thiotepa/Placebo"),
-      align = c("r", "r"))
+pander(glm_coef(model_exp, se.rob = FALSE, labels = "Treatment: Thiotepa/Placebo"))
 ```
 
 Data for predictions:
@@ -396,8 +389,7 @@ model_cox <-  coxph(Surv(times, event) ~ rx, data = bladder)
 ```
 
 ```{r}
-kable(glm_coef(model_cox, labels = c("Treatment: Thiotepa/Placebo")),
-      align = c("r", "r"))
+pander(glm_coef(model_cox, labels = c("Treatment: Thiotepa/Placebo")))
 ```
 
 > **Interpretation:** Patients receiving Thiotepa are 64% less likely of dying than those in the Placebo group.
@@ -444,9 +436,8 @@ glm_coef(model_lme)
 ```
 
 ```{r}
-kable(glm_coef(model_lme, labels = c("Constant", "Sex: female-male", "Age (years)", 
-                                      "Sex:Age interaction")),
-      align = c("r", "r"))
+pander(glm_coef(model_lme, labels = c("Constant", "Sex: female-male", "Age (years)", 
+                                      "Sex:Age interaction")))
 ```
 
 ## Count outcomes
@@ -468,9 +459,8 @@ model_glmer <- glmer(count ~ treat + base + I(age - mean(age, na.rm = TRUE)) +
 ```
 
 ```{r}
-kable(glm_coef(model_glmer, labels = c("Treatment (Prograbide/Control)", 
-                               "Baseline count", "Age (years)")),
-      align = c("r", "r"))
+pander(glm_coef(model_glmer, labels = c("Treatment (Prograbide/Control)", 
+                               "Baseline count", "Age (years)")))
 ```
 
 Effect plot:

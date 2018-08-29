@@ -1,6 +1,6 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 0.4.1
+Version: 0.4.2
 Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@otago.ac.nz", role = c("aut", "cre")),
     person("Deepayan", "Sarkar", email = "deepayan.sarkar@r-project.org", role = "ctb"),
@@ -32,12 +32,13 @@ Depends:
 Imports:
     car,
     bookdown,
+    desctable,
     effects,
 		Epi,
 		epiR,
 		epitools,
-		kableExtra,
 		knitr,
+		latex2exp,
 		lmtest,
 		lme4,
 		MASS,
@@ -45,8 +46,8 @@ Imports:
 		nlme,
 		nnet,
 		ordinal,
+		pander,
 		papeR,
-		rmdformats,
 		sandwich,
 		survival
 Suggests:
@@ -59,7 +60,7 @@ Suggests:
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 VignetteBuilder: knitr
 URL: https://github.com/josie-athens/pubh
 BugReports: https://github.com/josie-athens/pubh/issues
