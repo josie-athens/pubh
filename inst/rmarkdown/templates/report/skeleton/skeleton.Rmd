@@ -32,7 +32,8 @@ library(pander, warn.conflicts = FALSE)
 library(papeR, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
 
-knitr::opts_chunk$set(comment = NA, message = FALSE, warning = FALSE, echo = FALSE)
+knitr::opts_chunk$set(comment = NA, message = FALSE, warning = FALSE)
+panderOptions("table.split.table", Inf)
 set.alignment("right", row.names = "left", permanent = TRUE)
 trellis.par.set(tactile.theme())
 ```

@@ -40,6 +40,7 @@ library(pander, warn.conflicts = FALSE)
 library(papeR, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
 
+panderOptions("table.split.table", Inf)
 set.alignment("right", row.names = "left", permanent = TRUE)
 trellis.par.set(tactile.theme())
 ```
@@ -236,8 +237,7 @@ glm_coef(model_pois)
 The assumption is that the mean is equal than the variance. Is that the case?
 
 ```{r}
-pander(estat(~ Days|Eth, data = quine, label = "Days of school absences"),
-       split.table = Inf)
+pander(estat(~ Days|Eth, data = quine, label = "Days of school absences"))
 ```
 
 > **Note:** Look at the relative dispersion (coefficient of variation), for the variance to be equal to the means the CV would have to be about 35%.

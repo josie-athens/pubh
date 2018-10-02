@@ -95,6 +95,7 @@ library(pander, warn.conflicts = FALSE)
 library(papeR, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
 
+panderOptions("table.split.table", Inf)
 set.alignment("right", row.names = "left", permanent = TRUE)
 trellis.par.set(tactile.theme())
 ```
@@ -305,7 +306,7 @@ Let's say we want to look at the effect of ibuprofen on preventing death in pati
 
 ```{r}
 data(Bernard)
-pander(head(Bernard), split.table = Inf)
+pander(head(Bernard))
 ```
 
 Let's look at the table:
