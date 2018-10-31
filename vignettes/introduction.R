@@ -15,6 +15,7 @@ library(pander, warn.conflicts = FALSE)
 library(papeR, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
 
+panderOptions("table.split.table", Inf)
 set.alignment("right", row.names = "left", permanent = TRUE)
 trellis.par.set(tactile.theme())
 
@@ -118,7 +119,7 @@ plot(Effect(c("race", "smoke"), model_bwt), main = NULL, aspect = 3/4,
 
 ## ------------------------------------------------------------------------
 data(Bernard)
-pander(head(Bernard), split.table = Inf)
+pander(head(Bernard))
 
 ## ------------------------------------------------------------------------
 tbl1 <- summarise(Bernard, type = "fac", variables = "treat", group = "fate",

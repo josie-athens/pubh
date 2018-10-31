@@ -10,6 +10,7 @@ library(pander, warn.conflicts = FALSE)
 library(papeR, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
 
+panderOptions("table.split.table", Inf)
 set.alignment("right", row.names = "left", permanent = TRUE)
 trellis.par.set(tactile.theme())
 
@@ -133,8 +134,7 @@ model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
 glm_coef(model_pois)
 
 ## ------------------------------------------------------------------------
-pander(estat(~ Days|Eth, data = quine, label = "Days of school absences"),
-       split.table = Inf)
+pander(estat(~ Days|Eth, data = quine, label = "Days of school absences"))
 
 ## ------------------------------------------------------------------------
 deviance(model_pois) / df.residual(model_pois)
