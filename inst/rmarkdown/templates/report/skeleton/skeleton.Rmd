@@ -25,16 +25,16 @@ link-citations: yes
 
 ```{r echo = FALSE, message = FALSE}
 rm(list = ls())
-library(effects, warn.conflicts = FALSE)
+library(car, warn.conflicts = FALSE)
+library(knitr, warn.conflicts = FALSE)
 library(latex2exp, warn.conflicts = FALSE)
-library(multcomp, warn.conflicts = FALSE)
-library(pander, warn.conflicts = FALSE)
-library(papeR, warn.conflicts = FALSE)
+library(magrittr, warn.conflicts = FALSE)
+library(MASS, warn.conflicts = FALSE)
+library(moonBook, warn.conflicts = FALSE)
+library(mosaic, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
 
-knitr::opts_chunk$set(comment = NA, message = FALSE, warning = FALSE)
-panderOptions("table.split.table", Inf)
-set.alignment("right", row.names = "left", permanent = TRUE)
-trellis.par.set(tactile.theme())
+theme_set(theme_sjplot2(base_size = 10))
+theme_update(legend.position = "top")
 ```
 
