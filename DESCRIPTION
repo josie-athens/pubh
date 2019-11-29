@@ -1,56 +1,52 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 0.4.3
+Version: 1.0.0
 Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@otago.ac.nz", role = c("aut", "cre")),
-    person("Deepayan", "Sarkar", email = "deepayan.sarkar@r-project.org", role = "ctb"),
-    person("Mark", "Stevenson", email = "mark.stevenson1@unimelb.edu.au", role = "ctb"),
-    person("Simon", "Firestone", role = "ctb"),
-    person("Cord", "Heuer", role = "ctb"),
-    person("Jim", "Robison-Cox", role = "ctb"),
     person("Frank", "Harell", email = "f.harrell@vanderbilt.edu", role = "ctb"),
     person("John", "Fox", email = "jfox@mcmaster.ca", role = "ctb"),
-    person("Kazuki", "Yoshida", role = "ctb"),
-    person("Tomas", "Aragon", role = "ctb"),
-    person("Johan", "Larsson", email = "johanlarsson@outlook.com", role = "ctb"),
     person("R-Core", role="ctb"))
 Maintainer: Josie Athens <josie.athens@otago.ac.nz>
 Description: A toolbox for making R functions and capabilities more
     accessible to students and professionals from Epidemiology and
     Public Health related disciplines. Includes a function to report 
     coefficients and confidence intervals from models using robust
-    standard errors (when available), functions that expand lattice
+    standard errors (when available), functions that expand ggplot2
     plots and functions relevant for introductory papers in Epidemiology 
     or Public Health. Please note that use of the 
     provided data sets is for educational purposes only.
 Depends:
     R (>= 3.5.0),
-    lattice,
-    latticeExtra,
-    tactile,
+    emmeans,
+    ggformula,
+    sjlabelled,
+    sjPlot,
 		stats
 Imports:
     car,
     bookdown,
-    desctable,
-    effects,
+    dplyr,
 		Epi,
 		epiR,
 		epitools,
+		GGally,
+		Hmisc,
+		kableExtra,
 		knitr,
 		latex2exp,
 		lmtest,
 		lme4,
+		magrittr,
 		MASS,
-		multcomp,
+		moonBook,
 		nlme,
 		nnet,
 		ordinal,
-		pander,
-		papeR,
+		reshape2,
 		sandwich,
 		survival
 Suggests:
+    ggsci,
 		epibasix,
 		epiDisplay,
 		haven,

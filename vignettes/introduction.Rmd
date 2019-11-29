@@ -5,8 +5,8 @@ date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
     number_sections: yes
-    fig_height: 5
-    fig_width: 6
+    fig_height: 4
+    fig_width: 5
 vignette: >
   %\VignetteIndexEntry{Introduction to the pubh package}
   %\VignetteEngine{knitr::rmarkdown}
@@ -60,9 +60,11 @@ Using epidemiology friendly terms:
 
 Is worth to mention that `Stata` requires for variables to be given in the same order as in formulas: outcome first, predictors next.
 
+The `pubh` package integrates well with other packages of the `tidyverse` wich use formulas and the pipe operator `%>%` to add layers over functions. In particular, `pubh` uses `ggformula` as a graphical interface for plotting and takes advantage of variable labels from `sjlabelled`. This versatility allows it to interact also with tables from `moonBook` and effect plots from `sjPlot`.
+
 ### Stratification
 
-One way to control for confounders is the use of stratification. In `Stata` stratification is done by including the `by` option as part of the command. In the `lattice` package, one way of doing stratification is with a formula like:
+One way to control for confounders is the use of stratification. In `Stata` stratification is done by including the `by` option as part of the command. In the `ggformula` package, one way of doing stratification is with a formula like:
 
 ```{r eval=FALSE}
 y ~ x|z, data = my_data
@@ -76,53 +78,60 @@ The main contributions of the `pubh` package to students and professionals from 
 
 1. Use of a common syntax for the most used analysis.
 2. A function, `glm_coef` that displays coefficients from most common regression analysis in a way that can be easy interpreted and used for publications.
-3. Integration with the `lattice` package, introducing plotting functions with a relatively simple syntax.
+3. Integration with the `ggformula` package, introducing plotting functions with a relatively simple syntax.
 4. Integration with the most common epidemiological analysis, using the standard formula syntax explained in the previous section.
 
 # Descriptive statistics
 
-Many options currently exists for displaying descriptive statistics. I recommend the function `summarise` from the `papeR` package. It does a great job for both continuous and categorical (factors) outcomes. 
+Many options currently exists for displaying descriptive statistics. I recommend the function `mytable` from the `moonBook` package. It does a great job for both continuous and categorical (factors) outcomes. 
 
-The `estat` function from the `pubh` package displays descriptive statistics of continuous outcomes and like `summarise`, it can use *labels* to display nice tables. `estat` has less options than summarise and as such, is simpler to use, which is the main intention of the `pubh` package. Furthermore, as a way to aid in the understanding of the variability, `estat` displays also the relative dispersion (coefficient of variation) which is of particular interest for comparing variance between groups (factors).
+The `estat` function from the `pubh` package displays descriptive statistics of continuous outcomes and like `mytable`, it can use *labels* to display nice tables. `estat` has less options than summarise and as such, is simpler to use, which is the main intention of the `pubh` package. Furthermore, as a way to aid in the understanding of the variability, `estat` displays also the relative dispersion (coefficient of variation) which is of particular interest for comparing variance between groups (factors).
 
 Some examples. We start by loading packages as suggested in the Template of this package.
 
 ```{r, message=FALSE}
-library(effects, warn.conflicts = FALSE)
-library(latex2exp, warn.conflicts = FALSE)
-library(multcomp, warn.conflicts = FALSE)
-library(pander, warn.conflicts = FALSE)
-library(papeR, warn.conflicts = FALSE)
-library(pubh, warn.conflicts = FALSE)
-
-panderOptions("table.split.table", Inf)
-set.alignment("right", row.names = "left", permanent = TRUE)
-trellis.par.set(tactile.theme())
+library(dplyr)
+library(knitr)
+library(magrittr)
+library(moonBook)
+library(pubh)
 ```
 
-We will use a data set about blood counts of T cells from patients in remission from Hodgkin's disease or in remission from disseminated malignancies.
+```{r}
+theme_set(theme_sjplot2(base_size = 10))
+```
+
+We will use a data set about blood counts of T cells from patients in remission from Hodgkin's disease or in remission from disseminated malignancies. We generate the new variable `Ratio` and add labels to the variables.
 
 ```{r}
 data(Hodgkin)
-Hodgkin$Ratio <- Hodgkin$CD4/Hodgkin$CD8
-pander(head(Hodgkin))
+Hodgkin <- Hodgkin %>%
+  mutate(Ratio = CD4/CD8) %>%
+  var_labels(
+    CD4 = "CD4 T cells (cells / mm3)",
+    CD8 = "CD8 T cells (cells / mm3)",
+    Ratio = "CD4 / CD8 T cells ratio"
+    )
+kable(head(Hodgkin))
 ```
 
 Descriptive statistics for CD4+ T cells:
 
 ```{r}
-estat(~ CD4, data = Hodgkin)
+Hodgkin %>%
+  estat(~ CD4)
 ```
 
 In the previous code, the left-hand side of the formula is empty as it's the case when working with only one variable.
 
-We can use `pander` to display nice tables with labels.
+We can use `kable` to display nice tables with labels.
 
 ```{r}
-pander(estat(~ CD4, data = Hodgkin, label = "CD4^+^ T cells (cells / mm^3^)"))
+Hodgkin %>%
+  estat(~ CD4) %>%
+  kable()
 ```
 
-In the previous command, we used the Markup language for the superscripts in the label. For subscripts, the syntax is (for example): `H~2~O`.
 
 For stratification, `estat` recognises the following two syntaxes:
 
@@ -132,7 +141,9 @@ For stratification, `estat` recognises the following two syntaxes:
 For example:
 
 ```{r}
-pander(estat(~ Ratio|Group, data = Hodgkin, label = "CD4^+^/CD8^+^ T cells"))
+Hodgkin %>%
+  estat(~ Ratio|Group) %>%
+  kable()
 ```
 
 
@@ -149,9 +160,12 @@ var.test(Ratio ~ Group, data = Hodgkin)
 What about normality? We can look at the QQ-plots against the standard Normal distribution.
 
 ```{r}
-lab <- TeX("CD4$^+$ / CD8$^+$ T cells")
-qq_plot(~ Ratio|Group, data = Hodgkin, ylab = lab)
+Hodgkin %>%
+  qq_plot(~ Ratio|Group) %>%
+  use_labels()
 ```
+
+In the previous command, `use_labels()` is added as another layer to the plot to take advantage of labelled data.
 
 Let's say we choose a non-parametric test to compare the groups:
 
@@ -169,75 +183,108 @@ For relatively small samples (for example, less than 30 observations per group) 
 For our current example:
 
 ```{r}
-strip_error(Ratio ~ Group, data = Hodgkin, ylab = lab)
+Hodgkin %>%
+  strip_error(Ratio ~ Group) %>%
+  use_labels()
 ```
 
 The error bars represent 95% confidence intervals around mean values.
 
-Is relatively easy to add a line on top, to show that the two groups are significantly different. With the `latticeExtra` package (loaded by default with `pubh`) allows the use of *layers*. We will draw a line using `panel.segments` and text with `panel.text`.
+Is relatively easy to add a line on top, to show that the two groups are significantly different. The function `gf_star` needs the reference point on how to draw an horizontal line to display statistical difference or to annotate a plot; in summary, `gf_star`:
 
-For `panel.segments` we provide the coordinates of the two points at the ends of the line in the following order: `x1`, `y1`, `x2`, `y2`. `x` coordinates are easy: from `1` to `2`. For the `y` coordinates, we choose a value higher than the maximum observation (from our descriptives, higher than 3.82). We also need to adjust the limits of the `y`-axis to accommodate for our line and text. It could be some trial and error one has the plot that is more visually appealing.
+- Draws an horizontal line from $(x1, y2)$ to $(x2, y2)$.
+- Draws a vertical line from $(x1, y1)$ to $(x1, y1)$.
+- Draws a vertical line from $(x2, y1)$ to $(x2, y1)$.
+- Writes a character (the legend or "star") at the mid point between $x1$ and $x2$ at high $y3$.
 
-The commands are as follows:
+Thus: 
+
+$$
+y1 < y2 < y3
+$$
+
+In our current example:
 
 ```{r}
-strip_error(Ratio ~ Group, data = Hodgkin, ylab = lab, ylim = c(0, 4.5)) +
-  layer(panel.segments(1, 4, 2, 4, lwd=1.5)) +
-  layer(panel.text(1.5, 4.1, "**"))
+Hodgkin %>%
+  strip_error(Ratio ~ Group) %>%
+  use_labels() %>%
+  gf_star(x1 = 1, y1 = 4, x2 = 2, y2 = 4.05, y3 = 4.1, "**")
 ```
 
-For larger samples we would use bar charts with error bars. For example:
+For larger samples we could use bar charts with error bars. For example:
 
 ```{r}
-data(birthwt)
-birthwt$smoke <- factor(birthwt$smoke, labels = c("Non-smoker", "Smoker"))
-birthwt$race <- factor(birthwt$race, labels = c("White", "African American", "Other"))
+data(birthwt, package = "MASS")
+birthwt <- birthwt %>%
+  mutate(
+    smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
+    Race = factor(race > 1, labels = c("White", "Non-white")),
+    race = factor(race, labels = c("White", "Afican American", "Other"))
+    ) %>%
+  var_labels(
+    bwt = 'Birth weight (g)',
+    smoke = 'Smoking status'
+  )
 ```
 
-Bar charts should always start at the origin, the upper limit on the $y$ scale should be higher than the maximum upper confidence limit. For example:
 
 ```{r}
-pander(gen_bst_df(bwt ~ smoke, data = birthwt))
-```
-
-```{r}
-bar_error(bwt ~ smoke, data = birthwt, ylab = "Birth weight (g)", ylim = c(0, 3500))
+birthwt %>%
+  bar_error(bwt ~ smoke, fill = 'plum3') %>%
+  use_labels()
 ```
 
 Quick normality check:
 
 ```{r}
-qq_plot(~ bwt|smoke, data = birthwt, ylab = "Birth weight (g)")
+birthwt %>%
+  qq_plot(~ bwt|smoke) %>%
+  use_labels()
 ```
 
-The (unadjusted) test:
+The (unadjusted) $t$-test:
 
 ```{r}
 t.test(bwt ~ smoke, data = birthwt)
 ```
 
-The final plot showing (unadjusted) difference:
+The final plot with annotation to highlight statistical difference (unadjusted):
 
 ```{r}
-bar_error(bwt ~ smoke, data = birthwt, ylab = "Birth weight (g)", ylim = c(0, 3500)) +
-  layer(panel.segments(1, 3300, 2, 3300, lwd=1.5)) +
-  layer(panel.text(1.5, 3350, "**"))
+birthwt %>%
+  bar_error(bwt ~ smoke, fill ="plum3") %>%
+  use_labels() %>%
+  gf_star(x1 = 1, x2 = 2, y1 = 3400, y2 = 3500, y3 = 3550, "**")
 ```
+
 
 Both `strip_error` and `bar_error` can generate plots stratified by a third variable, for example:
 
 ```{r}
-bar_error(bwt ~ smoke|race, data = birthwt, ylab = "Birth weight (g)", ylim = c(0, 3800),
-          col = c("gray80", "gray30"))
+birthwt %>%
+  bar_error(bwt ~ smoke, fill = ~ Race) %>%
+  gf_refine(ggsci::scale_fill_jama()) %>%
+  use_labels()
 ```
 
 ```{r}
-strip_error(bwt ~ smoke|race, data = birthwt, ylab = "Birth weight (g)", cex = 0.3)
+birthwt %>%
+  bar_error(bwt ~ smoke|Race, fill = 'plum3') %>%
+  use_labels()
+```
+
+
+```{r}
+birthwt %>%
+  strip_error(bwt ~ smoke, pch = ~ Race, col = ~ Race) %>%
+  gf_refine(ggsci::scale_color_jama()) %>%
+  use_labels()
 ```
 
 # Regression models
 
-The `pubh` package includes the function `glm_coef` for displaying coefficients from regression models and the function `xymultiple` to help in the visualisation of multiple comparisons. 
+The `pubh` package includes the function `glm_coef` for displaying coefficients from regression models and the function `multiple` to help in the visualisation of multiple comparisons. 
 
 > **Note:** Please read the vignette on **Regression Examples** for a more comprehensive use of `glm_coef`.
 
@@ -245,53 +292,58 @@ For simplicity, here we show the analysis of the linear model of smoking on birt
 
 ```{r}
 model_bwt <- lm(bwt ~ smoke + race, data = birthwt)
-glm_coef(model_bwt)
+model_bwt %>%
+  glm_coef(labels = c("Constant",
+                      "Smoker vs Non smoker",
+                      "African American vs White",
+                      "Other vs White")) %>%
+  kable(align = "r")
 ```
 
+Similar results can be obtained with the function `tab_model` from the `sjPlot` package. 
+
 ```{r}
+tab_model(model_bwt,  collapse.ci = TRUE)
+```
+
+
+Some adavantages of `glm_coef` over `tab_model` are:
+
+- Script documents can be knitted to Word and $\LaTeX$ (besides HTML).
+- Uses roubust standard errors by default. The option to not use robust standard errors is part of the arguments.
+- Recognises some type of models that `tab_model` does not recognise.
+
+Some advantages of `tab_model` over `glm_coef` are:
+
+- Recognises labels from variables and use those labels to display the table.
+- Includes some statistics about the model.
+- It can display more than one model on the same output.
+- Tables are more aesthetically appealing.
+
+```{r, eval = FALSE, echo = FALSE}
 unadj <- glm_coef(model_bwt, labels = c("Constant",
                                       "Smoking: smoker - non-smoker",
                                       "Race: African American - White",
                                       "Race: Other - White"))
-pander(unadj)
+kable(unadj)
 ```
 
-In the previous table of coefficients confidence intervals and p-values for race had not been adjusted for multiple comparisons. We use functions from the `multcomp` package to make the corrections.
+In the previous table of coefficients confidence intervals and p-values for race had not been adjusted for multiple comparisons. We use functions from the `emmeans` package to make the corrections.
 
 ```{r}
-model_glht <- glht(model_bwt, linfct  = mcp(race = "Tukey"))
-xymultiple(model_glht)
-```
-
-We can incorporate the adjusted results into our final table:
-
-```{r}
-race_glht <- xymultiple(model_glht, plot = FALSE)
-pander(race_glht)
+multiple(model_bwt, "race" )$df
 ```
 
 ```{r}
-final <- unadj
-
-final[, 1] <- as.character(final[, 1])
-final[3:4, 1] <- paste0(race_glht[1:2, 2], " (", race_glht[1:2, 3],
-                        ", ", race_glht[1:2, 4], ")")
-
-final[, 2] <- as.character(final[, 2])
-final[3:4, 2] <- as.character(race_glht[1:2, 5])
+multiple(model_bwt, "race" )$fig_ci %>%
+  gf_labs(y = "Race", x = get_label(birthwt$bwt))
 ```
 
 ```{r}
-pander(final)
+multiple(model_bwt, "race" )$fig_pval %>%
+  gf_labs(y = "Race")
 ```
 
-The effect plot:
-
-```{r}
-plot(Effect(c("race", "smoke"), model_bwt), main = NULL, aspect = 3/4, 
-     multiline = TRUE, ylab = "Birth weight (g)", xlab = "Race/Ethnicity",
-     symbols = list(pch = 16))
-```
 
 # Epidemiology functions
 
@@ -306,18 +358,24 @@ Let's say we want to look at the effect of ibuprofen on preventing death in pati
 
 ```{r}
 data(Bernard)
-pander(head(Bernard))
+kable(head(Bernard))
 ```
+
+```{r}
+Bernard <- Bernard %>%
+  var_labels(treat = "Treatment",
+             race = "Race",
+             fate = "Outcome at 30 days")
+```
+
 
 Let's look at the table:
 
 ```{r}
-tbl1 <- summarise(Bernard, type = "fac", variables = "treat", group = "fate",
-                test = FALSE, labels = "Treatment")
-first_row <- c(rep("", 3), "Alive", rep("", 2), "Dead", "")
-tbl1 <- rbind(first_row, tbl1)
-pander(tbl1)
+mytable(treat ~ fate, data = Bernard, show.total = TRUE)$res[, 1:4] %>%
+  kable() 
 ```
+
 
 For `epi.2by2` we need to provide the table of counts in the correct order, so we would type something like:
 
@@ -363,7 +421,17 @@ mhor(ill ~ sex/chocolate.ice.cream, data = oswego)
 Example: An international case-control study to test the hypothesis that breast cancer is related to the age that a woman gives childbirth.
 
 ```{r}
-odds_trend(Cancer ~ Age, data = Macmahon)
+data(Oncho)
+Oncho = var_labels(Oncho,
+                   mf = 'Infection',
+                   area = 'Residence',
+                   agegrp = 'Age group (years)',
+                   sex = 'Sex',
+                   mfload = 'Load',
+                   lesions = 'Number of lesions'
+                  )
+odds_trend(mf ~ agegrp, data = Oncho, angle = 0, hjust = 0.5)$fig %>%
+  gf_path()
 ```
 
 ## Diagnostic tests

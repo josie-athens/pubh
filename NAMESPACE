@@ -1,13 +1,13 @@
 exportPattern("^[[:alpha:]]+")
 importFrom("stats", "addmargins", "binomial", "chisq.test", "coef",
-             "confint", "df.residual", "dnorm", "family", "fisher.test",
-             "fitted", "glm", "influence.measures", "lm.wfit",
-             "mantelhaen.test", "median", "pnorm", "prop.trend.test",
-             "qnorm", "qt", "quantile", "sd")
-importFrom("lattice", "barchart", "bwplot", "histogram", "panel.abline", "panel.grid",
-           "panel.histogram", "panel.mathdensity", "panel.qqmathline",
-           "panel.segments", "panel.xyplot", "qqmath", "stripplot", "trellis.par.get",
-           "xyplot")
-importFrom("latticeExtra", "layer", "panel.smoother")
-importFrom("multcomp", "adjusted")
-importFrom("tactile", "panel.qqmathci")
+           "confint", "df.residual", "dnorm", "family", "fisher.test",
+           "fitted", "glm", "influence.measures", "lm.wfit",
+           "mantelhaen.test", "median", "pnorm", "prop.trend.test",
+           "qnorm", "qt", "quantile", "sd")
+importFrom("ggformula", "gf_ash", "gf_boxplot", "gf_dhistogram",
+           "gf_errorbarh", "gf_hline",  "gf_jitter", "gf_labs", "gf_point",
+           "gf_qq", "gf_qqline", "gf_segment", "gf_smooth", "gf_summary",
+           "gf_theme", "gf_text",  "gf_vline")
+importFrom("emmeans", "emmeans" , "pwpp")
+importFrom("sjlabelled", "get_label")
+importFrom("sjPlot", "plot_model")

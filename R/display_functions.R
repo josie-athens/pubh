@@ -3,7 +3,6 @@
 #' Rounding p-values.
 #'
 #' \code{round_pval} is an internal function called by \code{glm_coef} to round p-values from model coefficients.
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param pval vector of p-values, numeric.
 round_pval <- function(pval)
 {
@@ -14,7 +13,6 @@ round_pval <- function(pval)
 #'
 #' \code{glm_coef} displays estimates with confidence intervals and p-values from generalised linear models (see Details).
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @details \code{glm_coef} recognises objects (models) from the following classes: \code{clm}, \code{clogit},
 #' \code{coxph}, \code{gee}, \code{glm}, \code{glmerMod}, \code{lm}, \code{lme}, \code{multinom}, \code{negbin},
 #' \code{polr} and \code{surveg}
@@ -31,23 +29,31 @@ round_pval <- function(pval)
 #' @param digits A scalar, number of digits for rounding the results (default = 2).
 #' @param alpha Significant level (default = 0.05) used to calculate confidence intervals.
 #' @param labels An optional character vector with the names of the coefficients (including intercept).
-#' @param se.rob Logical, should robust errors be used to calculate confidence intervals? (default = TRUE).
+#' @param se_rob Logical, should robust errors be used to calculate confidence intervals? (default = TRUE).
 #' @param type Character, either "cond" (condensed) or "ext" (extended). See details.
+#' @param exp_norm Logical, should estimates and confidence intervals should be exponentiated? (for family == "gaussian").
 #' @return A data frame with estimates, confidence intervals and p-values from \code{glm} objects.
 #' @examples
 #' ## Continuous outcome.
 #' data(birthwt, package = "MASS")
-#' birthwt$smoke <- factor(birthwt$smoke, labels=c("Non-smoker", "Smoker"))
-#' birthwt$race <- factor(birthwt$race > 1, labels=c("White", "Non-white"))
+#' birthwt <- mutate(birthwt,
+#'   smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
+#'   Race = factor(race > 1, labels = c("White", "Non-white")))
+#'
 #' model_norm <- glm(bwt ~ smoke + race, data = birthwt)
 #' glm_coef(model_norm)
-#' glm_coef(model_norm, labels=c("Constant", "Smoker vs Non-smoker", "Non-white vs White"))
+#'
+#' model_norm %>%
+#'   glm_coef(labels=c("Constant", "Smoker vs Non-smoker", "Non-white vs White"))
 #'
 #' ## Logistic regression.
 #' data(diet, package = "Epi")
 #' model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
-#' glm_coef(model_binom, labels = c("Constant", "Fibre intake (g/day)"))
-#' glm_coef(model_binom, labels = c("Constant", "Fibre intake (g/day)"), type = "ext")
+#' model_binom %>%
+#'   glm_coef(labels = c("Constant", "Fibre intake (g/day)"))
+#'
+#' model_binom %>%
+#' glm_coef(labels = c("Constant", "Fibre intake (g/day)"), type = "ext")
 #'
 #' ## Poisson regression.
 #' library(MASS)
@@ -55,7 +61,10 @@ round_pval <- function(pval)
 #' levels(quine$Eth) <- list(White = "N", Aboriginal = "A")
 #' levels(quine$Sex) <- list(Male = "M", Female = "F")
 #' model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
-#' glm_coef(model_pois)
+#'
+#' model_pois %>%
+#'   glm_coef()
+#'
 #' deviance(model_pois) / df.residual(model_pois) # to check for overdispersion
 #'
 #' model_negbin <- glm.nb(Days ~ Eth + Sex + Age, data = quine)
@@ -68,8 +77,8 @@ round_pval <- function(pval)
 #' unadj # Not-adjusted for multiple comparisons
 #'
 #' ## For more examples, please read the Vignette on Regression.
-glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se.rob = TRUE,
-                      type = "cond") {
+glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = TRUE,
+                      type = "cond", exp_norm = FALSE) {
   if (type != "cond" & type != "ext")
     stop("Option type not supported")
   mod <- summary(model)
@@ -206,7 +215,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se.rob = TR
     hc <- sandwich::vcovHAC(model)
     ct <- lmtest::coeftest(model, vcov = hc)
     np <- nrow(mod.coef)
-    if (se.rob == TRUE) {
+    if (se_rob == TRUE) {
       mod.coef <- ct[, ]
     } else {
       mod.coef <- mod$table
@@ -266,7 +275,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se.rob = TR
     estim <- mod[, 1]
     coeff <- exp(mod[, 1])
     coeff[1] <- NA
-    if (se.rob == TRUE) {
+    if (se_rob == TRUE) {
       segee <- mod[, 4]
       my.z <- mod[, 5]
     } else {
@@ -299,7 +308,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se.rob = TR
     mod <- mod$coefficients
     n <- nrow(mod)
     estim <- mod[, 1]
-    if (se.rob == TRUE) {
+    if (se_rob == TRUE) {
       segee <- mod[, 4]
       my.z <- mod[, 5]
     } else {
@@ -387,7 +396,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se.rob = TR
       tcrit <- qt((1 + conf.int)/2, df.residual(model))
       hc <- sandwich::vcovHAC(model)
       ct <- lmtest::coeftest(model, vcov = hc)
-      if (se.rob == TRUE) {
+      if (se_rob == TRUE) {
         mod.coef <- ct[, ]
       } else {
         mod.coef <- mod$coefficients
@@ -438,6 +447,18 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se.rob = TR
                      digits)
         out.df <- data.frame(cis, round_pval(mod.coef[, 4]))
         colnames(out.df) <- c("Coefficient", "Std. Error", "Lower CI", "Upper CI",
+                              "Pr(>|t|)")
+      }
+      if (family(model)$family == "gaussian" & type == "cond" & exp_norm == TRUE) {
+        cis <- data.frame(or_ci)
+        out.df <- data.frame(cis, round_pval(mod.coef[, 4]))
+        colnames(out.df) <- c("Ratio", "Pr(>|t|)")
+      }
+      if (family(model)$family == "gaussian" & type == "ext" & exp_norm == TRUE) {
+        cis <- round(data.frame(OR, mod.coef[, 2], or.low, or.up),
+                     digits)
+        out.df <- data.frame(cis, round_pval(mod.coef[, 4]))
+        colnames(out.df) <- c("Ratio", "Std. Error", "Lower CI", "Upper CI",
                               "Pr(>|t|)")
       }
     }

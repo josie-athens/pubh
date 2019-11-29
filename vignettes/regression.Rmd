@@ -5,8 +5,8 @@ date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
     number_sections: yes
-    fig_height: 5
-    fig_width: 6
+    fig_height: 4
+    fig_width: 5
 vignette: >
   %\VignetteIndexEntry{Regression Examples}
   %\VignetteEngine{knitr::rmarkdown}
@@ -32,17 +32,17 @@ The aim of this vignette is to illustrate the use/functionality of the `glm_coef
 We start by loading relevant packages and setting the theme for the plots (as suggested in the Template of this package):
 
 ```{r, message=FALSE}
-rm(list = ls())
-library(effects, warn.conflicts = FALSE)
+library(car, warn.conflicts = FALSE)
+library(knitr, warn.conflicts = FALSE)
 library(latex2exp, warn.conflicts = FALSE)
-library(multcomp, warn.conflicts = FALSE)
-library(pander, warn.conflicts = FALSE)
-library(papeR, warn.conflicts = FALSE)
+library(magrittr, warn.conflicts = FALSE)
+library(MASS, warn.conflicts = FALSE)
+library(moonBook, warn.conflicts = FALSE)
+library(mosaic, warn.conflicts = FALSE)
 library(pubh, warn.conflicts = FALSE)
 
-panderOptions("table.split.table", Inf)
-set.alignment("right", row.names = "left", permanent = TRUE)
-trellis.par.set(tactile.theme())
+theme_set(theme_sjplot2(base_size = 10))
+theme_update(legend.position = "top")
 ```
 
 
@@ -50,27 +50,43 @@ trellis.par.set(tactile.theme())
 
 For continuous outcomes there is no need of exponentiating the results.
 
-```{r, message=FALSE}
+
+```{r}
 data(birthwt)
-birthwt$smoke <- factor(birthwt$smoke, labels=c("Non-smoker", "Smoker"))
-birthwt$race <- factor(birthwt$race > 1, labels=c("White", "Non-white"))
-model_norm <- glm(bwt ~ smoke + race, data = birthwt)
+birthwt <- birthwt %>%
+  mutate(
+    smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
+    race = factor(race, labels = c("White", "Afican American", "Other"))
+    ) %>%
+  var_labels(
+    bwt = 'Birth weight (g)',
+    smoke = 'Smoking status',
+    race = 'Race'
+    )
+```
+
+
+```{r}
+model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 ```
 
 Traditional output from the model:
 
 ```{r}
-Anova(model_norm)
+model_norm %>%
+  Anova()
 ```
 
 ```{r}
-summary(model_norm)
+model_norm %>%
+  summary()
 ```
 
 Table of coefficients:
 
 ```{r}
-glm_coef(model_norm)
+model_norm %>%
+  glm_coef()
 ```
 
 Once we know the order in which the parameters are displayed, we can add labels to our final table:
@@ -78,25 +94,40 @@ Once we know the order in which the parameters are displayed, we can add labels 
 > **Note:** Compare results using naive and robust standard errors.
 
 ```{r}
-pander(glm_coef(model_norm, labels = c("Constant", "Smoker - Non-smoker", 
-                                      "Non-white - White"), se.rob = FALSE),
-      caption = "Table of coeffients using naive standard errors.")
+model_norm %>%
+  glm_coef(se_rob = FALSE, labels = c("Constant",
+                                      "Smoker - No smoker",
+                                      "African American - White",
+                                      "Other - White")) %>%
+  kable(caption = "Table of coeffients using naive standard errors.",
+        align = "r")
 ```
 
 
 ```{r}
-pander(glm_coef(model_norm, labels = c("Constant", "Smoker - Non-smoker", 
-                                      "Non-white - White")),
-       caption = "Table of coeffients using robust standard errors.")
+model_norm %>%
+  glm_coef(labels = c("Constant",
+                      "Smoker - No smoker",
+                      "African American - White",
+                      "Other - White")) %>%
+  kable(caption = "Table of coeffients using robust standard errors.", align = "r")
+```
+
+```{r}
+tab_model(model_norm, collapse.ci = TRUE)
 ```
 
 Effect plot:
 
 ```{r}
-plot(Effect(c("smoke", "race"), model_norm), multiline = TRUE, main = NULL, 
-     ylab = "Birth weight (g)", xlab = "Smoking status", symbols = list(pch = 16),
-     confint = list(style = "auto"), aspect = 3/4, lines = list(lwd = 1.5))
+plot_model(model_norm, "pred", terms = race ~ smoke, dot.size = 1, title = "")
 ```
+
+```{r}
+emmip(model_norm, ~ smoke | race, CIs = T) %>%
+  gf_labs(y = get_dv_labels(model_norm))
+```
+
 
 # Logistic Regression
 
@@ -104,20 +135,27 @@ For logistic regression we are interested in the odds ratios.
 
 ```{r}
 data(diet, package = "Epi")
+diet <- diet %>%
+  var_labels(chd = "Coronary Heart Disease",
+             fibre = "Fibre intake (10 g/day)")
+
 model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
 ```
 
 ```{r}
-pander(glm_coef(model_binom, labels = c("Constant", "Fibre intake (g/day)")), 
-      caption = "Parameter estimates from logistic regression.")
+model_binom %>%
+  glm_coef(labels = c("Constant", "Fibre intake (g/day)")) %>%
+  kable(caption = "Parameter estimates from logistic regression.", align = "r")
+```
+
+```{r}
+tab_model(model_binom, collapse.ci = TRUE)
 ```
 
 Effect plot:
 
 ```{r}
-plot(Effect("fibre", model_binom), type = "response", rug = FALSE, aspect = 3/4,
-       ylab = "P (CHD)", xlab = "Fibre (g/day)", lwd = 2, 
-     confint = list(style = "none"), main = NULL)
+plot_model(model_binom, "pred", terms="fibre [all]", title = "")
 ```
 
 
@@ -127,54 +165,52 @@ plot(Effect("fibre", model_binom), type = "response", rug = FALSE, aspect = 3/4,
 data(bdendo, package = "Epi")
 levels(bdendo$gall) <- c("No GBD", "GBD")
 levels(bdendo$est) <- c("No oestrogen", "Oestrogen")
+bdendo <- bdendo %>%
+  var_labels(d = "Endometrial cancer",
+             est = "Oestrogen user",
+             gall = "Gall bladder disease"
+             )
 ```
 
 ```{r}
+library(survival)
 model_clogit <- clogit(d ~ est * gall + strata(set), data = bdendo)
-glm_coef(model_clogit)
+model_clogit %>%
+  glm_coef(labels = c("Oestrogen/No oestrogen", "GBD/No GBD",
+                      "Oestrogen:GBD Interaction")) %>%
+  kable(align = "r")
 ```
 
 ```{r}
-pander(glm_coef(model_clogit, labels = c("Oestrogen/No oestrogen", "GBD/No GBD", 
-                                         "Oestrogen:GBD Interaction")), 
-       caption = "Parameter estimates from conditional logistic regression.")
+tab_model(model_clogit, pred.labels = c("Oestrogen/No oestrogen", "GBD/No GBD",
+                      "Oestrogen:GBD Interaction"), collapse.ci = TRUE)
 ```
 
-Creating data frame for effect plot:
 
 ```{r}
-bdendo_grid <- with(bdendo, expand.grid(
-  gall = levels(gall),
-  est = levels(est),
-  set = sample(1:63, 1)
-))
+plot_model(model_clogit, type = "pred", terms = c("est", "gall"), 
+           dot.size = 1, title = "")
 ```
 
-Predictions:
 
-```{r}
-bdendo_pred <- predict(model_clogit, bdendo_grid, type = "lp", se.fit = TRUE)
-bdendo_grid$fit <- inv_logit(bdendo_pred$fit)
-bdendo_grid$se <- inv_logit(bdendo_pred$se)
-bdendo_grid$lo <- inv_logit(bdendo_pred$fit - 1.96 * bdendo_pred$se)
-bdendo_grid$up <- inv_logit(bdendo_pred$fit + 1.96 * bdendo_pred$se)
-```
-
-Effect plot:
-
-```{r}
-xyplot(cbind(fit, lo, up) ~ gall|est, data = bdendo_grid,  pch = 20, 
-       panel = panel.errbars, xlab = "Gall blader disease", ylab = "P (cancer)")
-```
 
 ## Ordinal Logistic Regression
 
 ```{r}
 library(ordinal, warn.conflicts = FALSE)
 data(housing)
+housing <- housing %>%
+  var_labels(Sat = "Satisfaction",
+             Infl = "Perceived influence",
+             Type = "Type of rental",
+             Cont = "Contact")
+```
+
+```{r}
 model_clm <- clm(Sat ~ Infl + Type + Cont, weights = Freq, data = housing)
 glm_coef(model_clm)
 ```
+
 
 ```{r}
 labs_ord <- c("Constant: Low/Medium satisfaction",
@@ -185,20 +221,40 @@ labs_ord <- c("Constant: Low/Medium satisfaction",
               "Accommodation: Atrium/Tower",
               "Accommodation: Terrace/Tower",
               "Afforded: High/Low")
-pander(glm_coef(model_clm, labels = labs_ord), 
+kable(glm_coef(model_clm, labels = labs_ord), align = "r", 
       caption = "Parameter estimates on satisfaction of householders.")
 ```
+
+```{r}
+tab_model(model_clm, collapse.ci = TRUE)
+```
+
 
 Effect plot:
 
 ```{r}
-plot(Effect(c("Infl", "Type", "Cont"), model_clm), main = NULL, aspect = 3/4, rotx = 45, 
-     ylab = "Satisfaction (probability)", lines = list(lwd = 1.5, multiline = TRUE),
-     confint = list(style="none"), symbols = list(pch = rep(20, 3)),
-     ylim = c(0, 1))
+plot_model(model_clm, dot.size = 1, title = "")
 ```
 
-> **Note:** In tne previous table parameter estimates and confidene intervals for *Perceived influence* and *Accommodation* were not adjusted for multiple comparisons. See example from **Poisson Regression** to see how to include adjusted parameters.
+```{r}
+plot_model(model_clm, type = "pred", terms = c("Infl", "Cont"), 
+           dot.size = 1, title = "") %>%
+  gf_theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+plot_model(model_clm, type = "pred", terms = c("Infl", "Type"), 
+           dot.size = 1, title = "") %>%
+  gf_theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+emmip(model_clm, Infl ~ Type |Cont) %>%
+  gf_labs(x = "Type of rental", col = "Perceived influence")
+```
+
+
+> **Note:** In tne previous table parameter estimates and confidene intervals for *Perceived influence* and *Accommodation* were not adjusted for multiple comparisons. 
 
 ## Multinomial Regression
 
@@ -211,14 +267,6 @@ model_multi <- multinom(Sat ~ Infl + Type + Cont, weights = Freq, data = housing
 glm_coef(model_multi)
 ```
 
-Effect plot:
-
-```{r}
-plot(Effect(c("Infl", "Type", "Cont"), model_multi), main = NULL, aspect = 3/4, rotx = 45, 
-     ylab = "Satisfaction (probability)", lines = list(lwd = 1.5, multiline = TRUE),
-     confint = list(style = "none"), symbols = list(pch = rep(20, 3)),
-     ylim = c(0, 1))
-```
 
 # Poisson Regression
 
@@ -228,16 +276,28 @@ For Poisson regression we are interested in incidence rate ratios.
 data(quine)
 levels(quine$Eth) <- list(White = "N", Aboriginal = "A")
 levels(quine$Sex) <- list(Male = "M", Female = "F")
+quine <- quine %>%
+  var_labels(Days = "Number of absent days",
+             Eth = "Ethnicity",
+             Age = "Age group")
+```
+
+```{r}
 model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
 glm_coef(model_pois)
 ```
+
+```{r}
+tab_model(model_pois, collapse.ci = TRUE, show.reflvl = TRUE)
+```
+
 
 ## Negative-binomial
 
 The assumption is that the mean is equal than the variance. Is that the case?
 
 ```{r}
-pander(estat(~ Days|Eth, data = quine, label = "Days of school absences"))
+kable(estat(~ Days|Eth, data = quine, label = "Days of school absences"))
 ```
 
 > **Note:** Look at the relative dispersion (coefficient of variation), for the variance to be equal to the means the CV would have to be about 35%.
@@ -263,7 +323,8 @@ unadj <- glm_coef(model_negbin, labels=c("Constant",
 Notice that age group is a factor with more than two levels and is significant:
 
 ```{r}
-Anova(model_negbin)
+model_negbin %>%
+  Anova()
 ```
 
 Thus, we want to report confidence intervals and $p$-values adjusted for multiple comparisons.
@@ -271,59 +332,54 @@ Thus, we want to report confidence intervals and $p$-values adjusted for multipl
 The unadjusted CIs:
 
 ```{r}
-pander(unadj, caption = "Parameter estimates with unadjusted CIs and p-values.",
-      align = c("r", "r"))
+kable(unadj, caption = "Parameter estimates with unadjusted CIs and p-values.",
+      align = "r")
 ```
 
 Effect plot:
 
 ```{r}
-plot(Effect(c("Age", "Eth"), model_negbin), lines = list(lwd = 1.5, multiline = TRUE),
-     confint = list(style = "none"), symbols = list(pch = rep(20, 2)), main = NULL, 
-     aspect = 3/4)
+plot_model(model_negbin, type = "pred", terms = c("Age", "Eth"), 
+           dot.size = 1, title = "") 
 ```
-
 
 ## Adjusting CIs and p-values for multiple comparisons
 
 We adjust for multiple comparisons:
 
-```{r, message=FALSE}
-model_glht <- glht(model_negbin, linfct  = mcp(Age = "Tukey"))
-age_glht <- xymultiple(model_glht, Exp = TRUE, plot = FALSE)
+```{r}
+multiple(model_negbin, ~ Age|Sex)$df
 ```
 
 We can see the comparison graphically with:
 
-```{r, fig.cap="Parameter estimates on the effect of age group on the number of days absent from school. Bars represent 95% CIs adjusted by the method of Bonferroni for multiple comparisons."}
-xymultiple(model_glht, Exp = TRUE)
-```
-
-We use this information to construct the final table:
-
 ```{r}
-final <- unadj
-
-final[, 1] <- as.character(final[, 1])
-final[4:6, 1] <- paste0(age_glht[1:3, 2], " (", age_glht[1:3, 3],
-                        ", ", age_glht[1:3, 4], ")")
-
-final[, 2] <- as.character(final[, 2])
-final[4:6, 2] <- as.character(age_glht[1:3, 5])
+multiple(model_negbin, ~ Age|Sex)$fig_ci %>%
+  gf_labs(y = "Age group", x = get_label(quine$Days))
 ```
 
 ```{r}
-pander(final, caption = "Parameter estimates. CIs and
-       p-values for age group were adjusted for multiple comparisons by the 
-       method of Bonferroni")
+multiple(model_negbin, ~ Age|Sex)$fig_pval %>%
+  gf_labs(y = "Age group")
 ```
+
+
+```{r}
+emmip(model_negbin, Age ~ Sex|Eth, type = 'response') %>%
+  gf_labs(y = get_label(quine$Days))
+```
+
 
 # Survival Analysis
 
 ```{r}
 data(bladder)
-bladder$times <- bladder$stop
-bladder$rx <- factor(bladder$rx, labels=c("Placebo", "Thiotepa"))
+bladder <- bladder %>%
+  mutate(times = stop,
+         rx = factor(rx, labels=c("Placebo", "Thiotepa"))
+         ) %>%
+  var_labels(times = "Survival time",
+             rx = "Treatment")
 ```
 
 ## Parametric method
@@ -335,18 +391,19 @@ model_surv <- survreg(Surv(times, event) ~ rx, data = bladder)
 Using robust standard errors (default):
 
 ```{r}
-glm_coef(model_surv)
+model_surv %>%
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo", "Scale")) %>%
+  kable(align = "r")
 ```
 
-```{r}
-pander(glm_coef(model_surv, labels = c("Treatment: Thiotepa/Placebo", "Scale")))
-```
 
 In this example the scale parameter is not statistically different from one, meaning hazard is constant and thus, we can use the exponential distribution:
 
 ```{r}
 model_exp <- survreg(Surv(times, event) ~ rx, data = bladder, dist = "exponential")
-pander(glm_coef(model_exp, labels = "Treatment: Thiotepa/Placebo"))
+model_exp %>%
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo")) %>%
+  kable(align = "r")
 ```
 
 > **Interpretation:** Patients receiving Thiotepa live on average 64% more than those in the Placebo group.
@@ -354,33 +411,17 @@ pander(glm_coef(model_exp, labels = "Treatment: Thiotepa/Placebo"))
 Using naive standard errors:
 
 ```{r}
-pander(glm_coef(model_exp, se.rob = FALSE, labels = "Treatment: Thiotepa/Placebo"))
+model_exp %>%
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo"), se_rob = FALSE) %>%
+  kable(align = "r")
 ```
 
-Data for predictions:
 
 ```{r}
-bladder_grid <- with(bladder, expand.grid(
-  rx = levels(rx)
-))
+plot_model(model_exp, type = "pred", terms = ~ rx, dot.size = 1, title = "") %>%
+  gf_labs(y = "Survival time", x = "Treatment", title = "")
 ```
 
-Predictions:
-
-```{r}
-bladder_pred <- predict(model_exp, bladder_grid, se.fit = TRUE, type = "response")
-bladder_grid$fit <- bladder_pred$fit
-bladder_grid$se <- bladder_pred$se
-bladder_grid$lo <- bladder_pred$fit - 1.96 * bladder_pred$se
-bladder_grid$up <- bladder_pred$fit + 1.96 * bladder_pred$se
-```
-
-Effect plot:
-
-```{r}
-xyplot(cbind(fit, lo, up) ~ rx, data = bladder_grid, pch = 20, panel = panel.errbars,
-       ylab = "Survival time", xlab = "Treatment", aspect = 3/4)
-```
 
 ## Cox proportional hazards regression
 
@@ -389,35 +430,19 @@ model_cox <-  coxph(Surv(times, event) ~ rx, data = bladder)
 ```
 
 ```{r}
-pander(glm_coef(model_cox, labels = c("Treatment: Thiotepa/Placebo")))
+model_cox %>%
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo")) %>%
+  kable(align = "r")
 ```
 
 > **Interpretation:** Patients receiving Thiotepa are 64% less likely of dying than those in the Placebo group.
 
-Data for predictions:
-
 ```{r}
-cox_grid <- with(bladder, expand.grid(
-  rx = levels(rx)
-))
+plot_model(model_cox, type = "pred", terms = ~ rx, dot.size = 1, 
+           title = "") %>%
+  gf_labs(x = "Treatment", title = "")
 ```
 
-Predictions:
-
-```{r}
-cox_pred <- predict(model_cox, cox_grid, se.fit = TRUE, type = "risk")
-cox_grid$fit <- cox_pred$fit
-cox_grid$se <- cox_pred$se
-cox_grid$lo <- cox_pred$fit - 1.96 * cox_pred$se
-cox_grid$up <- cox_pred$fit + 1.96 * cox_pred$se
-```
-
-Effect plot:
-
-```{r}
-xyplot(cbind(fit, lo, up) ~ rx, data = cox_grid, pch = 20, panel = panel.errbars,
-       ylab = "Hazard", xlab = "Treatment", aspect = 3/4)
-```
 
 
 # Mixed Linear Regression Models
@@ -430,15 +455,40 @@ data(Orthodont)
 ```
 
 ```{r}
+Orthodont <- Orthodont %>%
+  var_labels(distance = "Pituitary distance (mm)",
+             age = "Age (years)")
+```
+
+
+
+```{r}
 model_lme <- lme(distance ~ Sex * I(age - mean(age, na.rm = TRUE)), random = ~ 1|Subject, 
                  method = "ML", data = Orthodont)
 glm_coef(model_lme)
 ```
 
 ```{r}
-pander(glm_coef(model_lme, labels = c("Constant", "Sex: female-male", "Age (years)", 
-                                      "Sex:Age interaction")))
+model_lme %>%
+  glm_coef(labels = c("Constant", "Sex: female-male", "Age (years)",
+                      "Sex:Age interaction")) %>%
+  kable(align = "r")
 ```
+
+```{r}
+tab_model(model_lme, collapse.ci = TRUE)
+```
+
+```{r}
+plot_model(model_lme, type = "pred", terms = age ~ Sex) %>%
+  gf_labs(y = get_label(Orthodont$distance), x = "Age (years)", title = "")
+```
+
+```{r}
+emmip(model_lme, age ~ Sex, CIs = TRUE) %>%
+  gf_labs(y = get_label(Orthodont$distance))
+```
+
 
 ## Count outcomes
 
@@ -452,6 +502,15 @@ c4 <- cbind(Thall[, c(1:4, 8)], count = Thall$y3)[, c(1:4, 6)]
 epilepsy <- rbind(c1, c2, c3, c4)
 ```
 
+```{r}
+epilepsy <- epilepsy %>%
+  var_labels(count = "Number of events",
+             treat = "Treatment",
+             base = "Baseline count",
+             age = "Age (years)")
+```
+
+
 ```{r results = "hide"}
 library(lme4, warn.conflicts = FALSE)
 model_glmer <- glmer(count ~ treat + base + I(age - mean(age, na.rm = TRUE)) + 
@@ -459,13 +518,28 @@ model_glmer <- glmer(count ~ treat + base + I(age - mean(age, na.rm = TRUE)) +
 ```
 
 ```{r}
-pander(glm_coef(model_glmer, labels = c("Treatment (Prograbide/Control)", 
-                               "Baseline count", "Age (years)")))
+model_glmer %>%
+  glm_coef(labels = c("Treatment (Prograbide/Control)",
+                      "Baseline count", "Age (years)")) %>%
+  kable()
 ```
+
+```{r}
+tab_model(model_glmer, collapse.ci = TRUE, show.reflvl = TRUE)
+```
+
 
 Effect plot:
 
 ```{r}
-plot(Effect(c("age", "treat"), model_glmer), rug = FALSE, lwd = 2, main = NULL,
-     xlab = "Age (years)", ylab = "Events", aspect = 3/4, multiline = TRUE)
+plot_model(model_glmer, type = "pred", terms = c("age [15:45]", "treat"), 
+           title = "") %>%
+  gf_labs(y = "Number of events", x = "Age (years)", col = "Treatment")
 ```
+
+
+```{r}
+emmip(model_glmer, ~ treat, type = "response", CIs = TRUE) %>%
+  gf_labs(y = "Number of events", x = "Treatment")
+```
+

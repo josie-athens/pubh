@@ -5,7 +5,6 @@
 #' Calculates the coefficient of variation (relative dispersion) of a variable. The relative dispersion
 #' is defined as the standard deviation over the arithmetic mean.
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param x A numerical variable. NA's observations are removed by default.
 #' @return The coefficient of variation (relative dispersion).
 #' @examples
@@ -24,7 +23,6 @@ rel_dis <- function(x)
 #' The reference range assumes normality and represents the limits that would include 95% of the expected
 #' observations.
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param avg The arithmetic mean (a scalar numerical value).
 #' @param std The standard deviation (a scalar numerical value).
 #' @return A data frame with the reference range limits.
@@ -44,7 +42,6 @@ reference_range <- function(avg, std)
 
 #' Geometric mean.
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param x A numeric variable with no negative values.
 #' @return A scalar, the calculated geometric mean.
 #' @examples
@@ -66,7 +63,6 @@ geo_mean <- function(x)
 
 #' Harmonic mean.
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param x A numeric variable with no zero values.
 #' @return A scalar, the calculated harmonic mean.
 #' @examples
@@ -91,47 +87,52 @@ harm_mean <- function(x)
 #'
 #' \code{bst} estimates confidence intervals around the \link{mean}, \link{median} or \link{geo_mean}.
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param x A numerical variable. Missing observations are removed by default.
 #' @param stat Statistic, either "mean" (default), "median" or "gmean" (geometric mean).
 #' @param n Number of replicates for the bootstrap (n=1000 by default).
 #' @param CI Confidence intervals (CI=95 by default).
+#' @param digits Number of digits for rounding (default = 2).
 #' @return A data frame with the estimate and confidence intervals.
 #' @examples
 #' data(IgM, package="ISwR")
 #' bst(IgM, "median")
 #'
 #' bst(IgM, "gmean")
-bst <- function(x, stat = "mean", n = 1000, CI = 95)
+bst <- function (x, stat = "mean", n = 1000, CI = 95, digits = 2)
 {
-	xmeans <- numeric(n)
-	if (stat == "median") {
-		for(i in 1:n) xmeans[i] <- median(sample(x, replace = TRUE), na.rm = TRUE)
-		estimate <- median(x, na.rm = TRUE)
-	} else
-	if (stat == "gmean") {
-		for(i in 1:n) xmeans[i] <- geo_mean(sample(x, replace = TRUE))
-		estimate <- geo_mean(x)
-	} else
-	if (stat == "mean") {
-		for(i in 1:n) xmeans[i] <- mean(sample(x, replace = TRUE), na.rm = TRUE)
-		estimate <- mean(x, na.rm = TRUE)
-	}  else {stop("Statistic not available")}
-	alpha <- 1 - (CI / 100)
-	tail <- alpha / 2
-	lower <- quantile(xmeans, tail, na.rm = TRUE)
-	upper <- quantile(xmeans, 1 - tail, na.rm = TRUE)
-	cis <- data.frame(stat, estimate, CI, lower, upper)
-	rownames(cis) <- ""
-	colnames(cis)[3] <- "%CI"
-	cis
+  xmeans <- numeric(n)
+  if (stat == "median") {
+    for (i in 1:n) xmeans[i] <- median(sample(x, replace = TRUE),
+                                       na.rm = TRUE)
+    estimate <- median(x, na.rm = TRUE)
+  }
+  else if (stat == "gmean") {
+    for (i in 1:n) xmeans[i] <- geo_mean(sample(x, replace = TRUE))
+    estimate <- geo_mean(x)
+  }
+  else if (stat == "mean") {
+    for (i in 1:n) xmeans[i] <- mean(sample(x, replace = TRUE),
+                                     na.rm = TRUE)
+    estimate <- mean(x, na.rm = TRUE)
+  }
+  else {
+    stop("Statistic not available")
+  }
+  alpha <- 1 - (CI/100)
+  tail <- alpha/2
+  lower <- round(quantile(xmeans, tail, na.rm = TRUE), digits = digits)
+  upper <- round(quantile(xmeans, 1 - tail, na.rm = TRUE), digits = digits)
+  estimate <- round(estimate, digits = digits)
+  cis <- data.frame(stat, estimate, CI, lower, upper)
+  rownames(cis) <- ""
+  colnames(cis)[3] <- "%CI"
+  cis
 }
 
 #' Internal function to calculate descriptive statistics.
 #'
 #' \code{stats_quotes} is an internal function called by \code{estat}.
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param x a numeric variable
 #' @param data2 A data frame where \code{x} can be found.
 #' @param digits Number of digits for rounding.
@@ -154,8 +155,8 @@ stats_quotes <- function(x, data2, digits = 2)
 #'
 #' \code{estat} calculates descriptives of numerical variables.
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-#' @param formula A formula of the form: ~ x or ~ x|z (for groups).
+#' @param object When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.
+#' @param formula A formula with shape: ~ x or ~ x|z (for groups).
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param digits Number of digits for rounding (default = 2).
 #' @param label Label used to display the name of the variable (see examples).
@@ -163,16 +164,43 @@ stats_quotes <- function(x, data2, digits = 2)
 #' @seealso \link{summary}, \code{summarize}.
 #' @examples
 #' data(kfm, package = "ISwR")
-#' estat(~ dl.milk, data = kfm, label = "Breast-milk intake (dl/day)")
-#' estat(~ dl.milk|sex, data = kfm, label = "Breast-milk intake (dl/day)")
-#' estat(~ weight|sex, data = kfm, label = "Weight of child (kg)")
-estat <- function(formula, data, digits = 2, label = NULL)
+#' kfm = kfm %>%
+#' var_labels(
+#'   dl.milk = 'Breast-milk intake (dl/day)',
+#'   sex = 'Sex',
+#'   weight = 'Child weight (kg)',
+#'   ml.suppl = 'Milk substitute (ml/day)',
+#'   mat.weight = 'Maternal weight (kg)',
+#'   mat.height = 'Maternal height (cm)'
+#'  )
+#'
+#' kfm %>%
+#'   estat(~ dl.milk)
+#'
+#' estat(~ dl.milk|sex, data = kfm)
+#'
+#' kfm %>%
+#'   estat(~ weight|sex)
+estat <- function (object = NULL, formula = NULL, data = NULL, digits = 2, label = NULL)
 {
+  if (inherits(object, "formula")) {
+    formula <- object
+    object <- NULL
+  }
+  if (inherits(object, "data.frame")) {
+    data <- object
+    object <- NULL
+  }
   vars <- all.vars(formula)
   y <- vars[1]
-  if (!is.numeric(data[[y]]))
+  outcome <- data[[y]]
+  if (!is.numeric(outcome))
     stop(y, " must be a numerical variable")
-  lab <- ifelse(is.null(label), y, label)
+  if (is.null(get_label(outcome)) == FALSE & is.null(label)) {
+    lab <- get_label(outcome)
+  } else {
+    lab <- ifelse(is.null(label), y, label)
+  }
   nv <- length(vars)
   if (nv == 1) {
     res <- stats_quotes(y, data2 = data)
@@ -180,20 +208,23 @@ estat <- function(formula, data, digits = 2, label = NULL)
     res <- data.frame(lab, res)
     names(res)[1] <- ""
     res
-  } else {
+  }
+  else {
     x <- vars[2]
-    if (!is.factor(data[[x]]))
+    exposure <- data[[x]]
+    if (!is.factor(exposure))
       stop(x, " must be a factor")
-    lev <- levels(data[[x]])
+    lev <- levels(exposure)
     nl <- length(lev)
     res <- numeric(nl * 7)
     dim(res) <- c(nl, 7)
-    for(i in 1:nl)
-    {
-      res[i,] <- as.numeric(stats_quotes(y, data2 = subset(data, data[[x]] == lev[i])))
+    for (i in 1:nl) {
+      res[i, ] <- as.numeric(stats_quotes(y,
+                                          data2 = subset(data, exposure == lev[i])))
     }
     res <- as.data.frame(res)
-    names(res) <- c("N", "Min.", "Max.", "Mean", "Median", "SD", "CV")
+    names(res) <- c("N", "Min.", "Max.", "Mean", "Median",
+                    "SD", "CV")
     res <- round(res, digits = digits)
     res <- data.frame(var = lev, res)
     names(res)[1] <- x
@@ -201,5 +232,9 @@ estat <- function(formula, data, digits = 2, label = NULL)
     var[1] <- lab
     res <- data.frame(var, res)
     names(res)[1] <- ""
-    res}
+    names(res)[2] <- ifelse(is.null(get_label(exposure)) == FALSE,
+                            get_label(exposure), x)
+    res
+  }
 }
+

@@ -5,7 +5,6 @@
 #' \code{ss_jk} is an internal function called by \link{jack_knife}. It calculates the squared
 #' difference of a numerical variable around a given value (for example, the mean).
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param obs A numerical vector with no missing values (NA's).
 #' @param stat The value of the statistic that is used as a reference.
 #' @return The squared difference between a variable and a given value.
@@ -28,7 +27,6 @@ ss_jk <- function(obs, stat)
 #' \code{jack_knife} Ranks the squared differences between mean values from Jackknife analysis
 #' (arithmetic mean estimated by removing one observation at a time) and the original mean value.
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param x A numeric variable. Missing values are removed by default.
 #' @return Data frame with the ranked squared differences.
 #' @seealso \link{rank_leverage}
@@ -61,7 +59,6 @@ jack_knife <- function(x)
 #'
 #' Estimates the leverage of each observation around the arithmetic mean.
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param x A numeric variable. Missing values are removed by default.
 #' @return Variable with corresponding leverage estimations
 #' @examples
@@ -83,7 +80,6 @@ leverage <- function(x)
 #'
 #' \code{rank_leverage} ranks observations by their leverage (influence) on the arithmetic mean.
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param x A numeric variable. Missing values are removed by default.
 #' @return A data frame ranking observations by their leverage around the mean.
 #' @seealso \link{jack_knife}
@@ -111,7 +107,6 @@ rank_leverage <- function(x)
 #'
 #' \code{predict_inv} Calculates the value the predictor x that generates value y with a simple linear model.
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param model A simple linear model object (class lm).
 #' @param y A numerical scalar, the value of the outcome for which we want to calculate the predictor x.
 #' @return The estimated value of the predictor.
@@ -146,7 +141,6 @@ predict_inv <- function(model, y)
 #' \code{knife_mean} is an internal function. Calculates arithmetic means by removing one observation
 #' at a time.
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param x A numerical variable. Missing values are removed for the mean calculation.
 #' @return A vector with the mean calculations.
 #' @examples
@@ -166,7 +160,6 @@ knife_mean <- function(x)
 #'
 #' \code{freq_cont} tabulates a continuous variable by given classes.
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param x A numerical (continuous) variable. Ideally, relatively long (greater than 100 observations).
 #' @param bks Breaks defining the classes (see example).
 #' @param dg Number of digits for rounding (default = 2).
@@ -246,7 +239,6 @@ logistic_gof <- function(model)
 #'
 #' \code{coef_det} estimates the coefficient of determination (r-squared) from fitted (predicted) and
 #' observed values. Outcome from the model is assumed to be numerical.
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param obs Vector with observed values (numerical outcome).
 #' @param fit Vector with fitted (predicted) values.
 #' @return A scalar, the coefficient of determination (r-squared).
@@ -278,12 +270,11 @@ coef_det <- function(obs, fit)
 #'
 #' \code{rank_influence} calculates influence measures of each data observation on models and then ranks them.
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-#' @author Several R core team members and John Fox, originally in his \code{car} package.
 #' @param model A generalised linear model object.
 #' @details \code{rank_influence} is a wrap function that calls \link{influence.measures}, ranks observations on
 #' their significance influence on the model and displays the 10 most influential observations
 #' (if they are significant).
+#' @seealso \link{car::influence.measures}
 #' @examples
 #' data(diet, package = "Epi")
 #' model <- glm(chd ~ fibre, data = diet, family = binomial)
@@ -315,7 +306,6 @@ rank_influence <- function(model)
 #'
 #' \code{inv_logit} Calculates the inverse of the logit (probability in logistic regression)
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param x Numerical value used to compute the inverse of the logit.
 inv_logit <- function(x)
 {
@@ -331,7 +321,6 @@ inv_logit <- function(x)
 #' Pseudo R2 (logistic regression)
 #' \code{pseudo_r2} Calculates R2 analogues (pseudo R2) of logistic regression.
 #'
-#' @author Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 #' @param model A logistic regression model.
 #' @details \code{pseudo_r2} calculates three pseudo R2 of logistic regression models: 1) Nagelkerke, @0 Cox and Snell, 3) Hosmer and Lemeshow.
 #' @return A data frame with the calculated pseudo R2 values.
