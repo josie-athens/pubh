@@ -50,14 +50,34 @@ expand_df <- function(aggregate.data, index.var = "Freq", retain.freq = FALSE)
 #'   for effect modification is also reported.
 #' @examples
 #' data(oswego, package = "epitools")
-#' oswego <- mutate(oswego,
-#'   ill <- factor(ill),
-#'   sex <- factor(sex),
-#'   chocolate.ice.cream <- factor(chocolate.ice.cream)
+#' require(dplyr)
+#' oswego <- oswego %>%
+#'   mutate(
+#'     ill = factor(ill, labels = c("No", "Yes")),
+#'     sex = factor(sex, labels = c("Female", "Male")),
+#'     chocolate.ice.cream = factor(chocolate.ice.cream, labels = c("No", "Yes"))
+#'   ) %>%
+#'   var_labels(
+#'     ill = "Developed illness",
+#'     sex = "Sex",
+#'     chocolate.ice.cream = "Consumed chocolate ice cream"
 #'   )
-#' mhor(ill ~ sex/chocolate.ice.cream, data = oswego)
-mhor <- function(formula, data)
+#'
+#' oswego %>%
+#'   cross_tab(ill ~ sex|chocolate.ice.cream)
+#'
+#' oswego %>%
+#'   mhor(ill ~ sex/chocolate.ice.cream)
+mhor <- function(object = NULL, formula = NULL, data = NULL)
 {
+  if (inherits(object, "formula")) {
+    formula <- object
+    object <- NULL
+  }
+  if (inherits(object, "data.frame")) {
+    data <- object
+    object <- NULL
+  }
   vars <- all.vars(formula)
   outcome <- vars[1]
   exposure <- vars[3]
@@ -128,8 +148,6 @@ prop_or <- function(p2, or)
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param angle Angle of for the x labels (default = 45).
 #' @param hjust Horizontal adjustment for x labels (default = 1).
-#' @param xlab Character passed to label x-axis.
-#' @param ylab Character passed to label y-axis.
 #' @param ... Passes optional arguments to \link{oddsratio}.
 #' @return A list with components \code{df} a data frame with the results and \code{fig} corresponding plot.
 #' @examples
@@ -153,22 +171,12 @@ prop_or <- function(p2, or)
 #'
 #' odds_trend(Biopsy ~ Weight, data = breast)$fig
 odds_trend <- function(formula, data, angle = 45,
-                       hjust = 1, xlab = NULL, ylab = NULL, ...)
+                       hjust = 1, ...)
 {
   vars <- all.vars(formula)
   x <- vars[2]
   outcome <- data[[vars[1]]]
   exposure <- data[[vars[2]]]
-  if (is.null(get_label(outcome)) == FALSE & is.null(ylab)){
-    yl <- get_label(outcome)
-  } else {
-    yl <- ifelse(is.null(ylab), y, ylab)
-  }
-  if (is.null(get_label(exposure)) == FALSE & is.null(xlab)){
-    xl <- get_label(exposure)
-  } else {
-    xl <- ifelse(is.null(xlab), x, xlab)
-  }
   orwald <- epitools::oddsratio(exposure, outcome, ...)
   n <- nrow(orwald$measure)
   or.df <- data.frame(x = 1:n, round(orwald$measure, 2),
@@ -181,9 +189,9 @@ odds_trend <- function(formula, data, angle = 45,
   or.df <- data.frame(or.df, row.names = NULL)
   df <- or.df
   fit = glm(formula, data = data, binomial)
-  fig = sjPlot::plot_model(fit, type='pred', terms = x, title='', dot.size = 1) %>%
-    gf_theme(axis.text.x = element_text(angle = angle, hjust = hjust)) %>%
-    gf_labs(y = yl, x = xl)
+  fig = sjPlot::plot_model(fit, type = 'pred', terms = x,
+                           title = '', dot.size = 1) %>%
+    gf_theme(axis.text.x = element_text(angle = angle, hjust = hjust))
   res <- list(df = df, fig = fig)
   res
 }
@@ -193,11 +201,12 @@ odds_trend <- function(formula, data, angle = 45,
 #' \code{diag_test} is a wrap function that calls \link{epi.tests} from package \code{epiR}.
 #' It computes sensitivity, specificity and other statistics related with screening tests.
 #'
+#' @param object When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.
 #' @param formula A formula with shape: outcome ~ predictor (see details).
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param ... Further arguments passed to \link{epi.tests}.
 #' @details For the \code{formula}, the outcome is the gold standard and the explanatory variable is the new (screening) test. See examples.
-#' @seealso \link{epiR::epi.tests}
+#' @seealso \code{\link{epiR::epi.tests}}
 #' @examples
 #' ## We compare the use of lung’s X-rays on the screening of TB against the gold standard test.
 #' Freq <- c(1739, 8, 51, 22)
@@ -205,9 +214,19 @@ odds_trend <- function(formula, data, angle = 45,
 #' Xray <- gl(2, 2, labels=c("Negative", "Positive"))
 #' tb <- data.frame(Freq, BCG, Xray)
 #' tb <- expand_df(tb)
-#' diag_test(BCG ~ Xray, data=tb)
-diag_test <- function(formula, data, ...)
+#'
+#' tb %>%
+#'   diag_test(BCG ~ Xray)
+diag_test <- function(object = NULL, formula = NULL, data = NULL, ...)
 {
+  if (inherits(object, "formula")) {
+    formula <- object
+    object <- NULL
+  }
+  if (inherits(object, "data.frame")) {
+    data <- object
+    object <- NULL
+  }
   vars <- all.vars(formula)
   outcome <- vars[1]
   exposure <- vars[2]
@@ -243,16 +262,18 @@ diag_test2 <- function(aa, bb, cc, dd)
 #'
 #' \code{contingency} is a wrap that calls \link{epi.2by2} from package \code{epiR}.
 #'
+#' @param object When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.
 #' @param formula A formula with shape: outcome ~ exposure.
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param method A character string with options: "cohort.count", "cohort.time", "case.control", or "cross.sectional".
-#' @param ... Further arguments passed to \link{epi.2by2}.
+#' @param ... Further arguments passed to \code{\link{epi.2by2}}.
 #' @details \code{contingency} uses a formula as a way to input variables.
 #' @details \code{contingency} displays the contingency table as a way for the user to check that the reference levels
 #' in the categorical variables (outcome and exposure) are correct. Then displays measures of association
-#' (table from \link{epi.2by2}). It also reports either chi-squared test or exact Fisher's test;
+#' (table from \code{\link{epi.2by2}}). It also reports either chi-squared
+#' test or exact Fisher's test;
 #' \code{contingency} checks which one of the tests two is appropriate.
-#' @seealso \link{epiR::epi.2by2}
+#' @seealso \code{\link{epiR::epi.2by2}}
 #' @examples
 #' ## A case-control study on the effect of alcohol on oesophageal cancer.
 #' Freq <- c(386, 29, 389, 171)
@@ -261,8 +282,33 @@ diag_test2 <- function(aa, bb, cc, dd)
 #' cancer <- data.frame(Freq, status, alcohol)
 #' cancer <- expand_df(cancer)
 #' contingency(status ~ alcohol, data = cancer, method = "case.control")
-contingency <- function(formula, data, method="cohort.count", ...)
+#'
+#' data(Oncho, package = 'pubh')
+#' Oncho <- Oncho %>%
+#'   var_labels(
+#'     mf = 'Infection',
+#'     area = 'Residence',
+#'     agegrp = 'Age group (years)',
+#'     sex = 'Sex',
+#'     mfload = 'Load',
+#'     lesions = 'Number of lesions'
+#'  )
+#'
+#' Oncho %>%
+#'   cross_tab(mf ~ area)
+#'
+#' Oncho %>%
+#'   contingency(mf ~ area)
+contingency <- function(object = NULL, formula = NULL, data = NULL, method="cohort.count", ...)
 {
+  if (inherits(object, "formula")) {
+    formula <- object
+    object <- NULL
+  }
+  if (inherits(object, "data.frame")) {
+    data <- object
+    object <- NULL
+  }
   vars <- all.vars(formula)
   outcome <- vars[1]
   exposure <- vars[2]

@@ -233,8 +233,6 @@ logistic_gof <- function(model)
   return(drop(stats))
 }
 
-
-
 #' Coefficient of determination.
 #'
 #' \code{coef_det} estimates the coefficient of determination (r-squared) from fitted (predicted) and

@@ -32,14 +32,16 @@ The aim of this vignette is to illustrate the use/functionality of the `glm_coef
 We start by loading relevant packages and setting the theme for the plots (as suggested in the Template of this package):
 
 ```{r, message=FALSE}
-library(car, warn.conflicts = FALSE)
-library(knitr, warn.conflicts = FALSE)
-library(latex2exp, warn.conflicts = FALSE)
-library(magrittr, warn.conflicts = FALSE)
-library(MASS, warn.conflicts = FALSE)
-library(moonBook, warn.conflicts = FALSE)
-library(mosaic, warn.conflicts = FALSE)
-library(pubh, warn.conflicts = FALSE)
+library(car)
+library(dplyr)
+library(Hmisc)
+library(kableExtra)
+library(latex2exp)
+library(magrittr)
+library(MASS)
+library(moonBook)
+library(mosaic)
+library(pubh)
 
 theme_set(theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
@@ -65,6 +67,14 @@ birthwt <- birthwt %>%
     )
 ```
 
+```{r}
+birthwt %>%
+  tab_cells(bwt) %>%
+  tab_rows(race, smoke) %>%
+  tab_stat_fun("Mean" = w_mean, "Median" = w_median, "SD"=w_sd, 
+               "CV"=rel_dis, method = list) %>%
+  tab_pivot()
+```
 
 ```{r}
 model_norm <- lm(bwt ~ smoke + race, data = birthwt)
@@ -125,7 +135,7 @@ plot_model(model_norm, "pred", terms = race ~ smoke, dot.size = 1, title = "")
 
 ```{r}
 emmip(model_norm, ~ smoke | race, CIs = T) %>%
-  gf_labs(y = get_dv_labels(model_norm))
+  gf_labs(y = get_label(birthwt$bwt))
 ```
 
 
@@ -136,8 +146,10 @@ For logistic regression we are interested in the odds ratios.
 ```{r}
 data(diet, package = "Epi")
 diet <- diet %>%
-  var_labels(chd = "Coronary Heart Disease",
-             fibre = "Fibre intake (10 g/day)")
+  var_labels(
+    chd = "Coronary Heart Disease",
+    fibre = "Fibre intake (10 g/day)"
+    )
 
 model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
 ```
@@ -166,14 +178,20 @@ data(bdendo, package = "Epi")
 levels(bdendo$gall) <- c("No GBD", "GBD")
 levels(bdendo$est) <- c("No oestrogen", "Oestrogen")
 bdendo <- bdendo %>%
-  var_labels(d = "Endometrial cancer",
-             est = "Oestrogen user",
-             gall = "Gall bladder disease"
-             )
+  var_labels(
+    d = "Endometrial cancer",
+    est = "Oestrogen user",
+    gall = "Gall bladder disease"
+    )
 ```
 
 ```{r}
-library(survival)
+bdendo %>%
+ cross_tab(d ~ est|gall)
+```
+
+
+```{r}
 model_clogit <- clogit(d ~ est * gall + strata(set), data = bdendo)
 model_clogit %>%
   glm_coef(labels = c("Oestrogen/No oestrogen", "GBD/No GBD",
@@ -181,18 +199,34 @@ model_clogit %>%
   kable(align = "r")
 ```
 
-```{r}
-tab_model(model_clogit, pred.labels = c("Oestrogen/No oestrogen", "GBD/No GBD",
-                      "Oestrogen:GBD Interaction"), collapse.ci = TRUE)
-```
-
+Creating data frame for effect plot:
 
 ```{r}
-plot_model(model_clogit, type = "pred", terms = c("est", "gall"), 
-           dot.size = 1, title = "")
+bdendo_grid <- with(bdendo, expand.grid(
+  gall = levels(gall),
+  est = levels(est),
+  set = sample(1:63, 1)
+))
 ```
 
+Predictions:
 
+```{r}
+ bdendo_pred <- predict(model_clogit, bdendo_grid, type = "lp", se.fit =
+TRUE)
+ bdendo_grid$fit <- inv_logit(bdendo_pred$fit)
+ bdendo_grid$se <- inv_logit(bdendo_pred$se)
+ bdendo_grid$lo <- inv_logit(bdendo_pred$fit - 1.96 * bdendo_pred$se)
+ bdendo_grid$up <- inv_logit(bdendo_pred$fit + 1.96 * bdendo_pred$se)
+```
+
+Effect plot:
+
+```{r}
+bdendo_grid %>%
+  gf_pointrange(fit + lo + up ~ gall|est, col = ~ gall) %>%
+  gf_labs(y = "P(cancer)", x = "", col = get_label(bdendo$gall))
+```
 
 ## Ordinal Logistic Regression
 
@@ -200,10 +234,12 @@ plot_model(model_clogit, type = "pred", terms = c("est", "gall"),
 library(ordinal, warn.conflicts = FALSE)
 data(housing)
 housing <- housing %>%
-  var_labels(Sat = "Satisfaction",
-             Infl = "Perceived influence",
-             Type = "Type of rental",
-             Cont = "Contact")
+  var_labels(
+    Sat = "Satisfaction",
+    Infl = "Perceived influence",
+    Type = "Type of rental",
+    Cont = "Contact"
+    )
 ```
 
 ```{r}
@@ -267,20 +303,25 @@ model_multi <- multinom(Sat ~ Infl + Type + Cont, weights = Freq, data = housing
 glm_coef(model_multi)
 ```
 
-
 # Poisson Regression
 
 For Poisson regression we are interested in incidence rate ratios.
 
 ```{r}
 data(quine)
-levels(quine$Eth) <- list(White = "N", Aboriginal = "A")
-levels(quine$Sex) <- list(Male = "M", Female = "F")
-quine <- quine %>%
-  var_labels(Days = "Number of absent days",
-             Eth = "Ethnicity",
-             Age = "Age group")
+levels(quine$Eth) <- c("Aboriginal", "White")
+levels(quine$Sex) <- c("Female", "Male")
 ```
+
+```{r}
+quine <- quine %>%
+  var_labels(
+    Days = "Number of absent days",
+    Eth = "Ethnicity",
+    Age = "Age group"
+    )
+```
+
 
 ```{r}
 model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
@@ -343,6 +384,12 @@ plot_model(model_negbin, type = "pred", terms = c("Age", "Eth"),
            dot.size = 1, title = "") 
 ```
 
+```{r}
+emmip(model_negbin, Age ~ Eth|Sex) %>%
+  gf_labs(y = "Number of absent days", x = "Ethnicity")
+```
+
+
 ## Adjusting CIs and p-values for multiple comparisons
 
 We adjust for multiple comparisons:
@@ -355,20 +402,13 @@ We can see the comparison graphically with:
 
 ```{r}
 multiple(model_negbin, ~ Age|Sex)$fig_ci %>%
-  gf_labs(y = "Age group", x = get_label(quine$Days))
+  gf_labs(y = "Age group", x = "Number of absent days")
 ```
 
 ```{r}
 multiple(model_negbin, ~ Age|Sex)$fig_pval %>%
   gf_labs(y = "Age group")
 ```
-
-
-```{r}
-emmip(model_negbin, Age ~ Sex|Eth, type = 'response') %>%
-  gf_labs(y = get_label(quine$Days))
-```
-
 
 # Survival Analysis
 
@@ -456,10 +496,11 @@ data(Orthodont)
 
 ```{r}
 Orthodont <- Orthodont %>%
-  var_labels(distance = "Pituitary distance (mm)",
-             age = "Age (years)")
+  var_labels(
+    distance = "Pituitary distance (mm)",
+    age = "Age (years)"
+    )
 ```
-
 
 
 ```{r}
@@ -473,10 +514,6 @@ model_lme %>%
   glm_coef(labels = c("Constant", "Sex: female-male", "Age (years)",
                       "Sex:Age interaction")) %>%
   kable(align = "r")
-```
-
-```{r}
-tab_model(model_lme, collapse.ci = TRUE)
 ```
 
 ```{r}
@@ -504,10 +541,12 @@ epilepsy <- rbind(c1, c2, c3, c4)
 
 ```{r}
 epilepsy <- epilepsy %>%
-  var_labels(count = "Number of events",
-             treat = "Treatment",
-             base = "Baseline count",
-             age = "Age (years)")
+  var_labels(
+    count = "Number of events",
+    treat = "Treatment",
+    base = "Baseline count",
+    age = "Age (years)"
+    )
 ```
 
 

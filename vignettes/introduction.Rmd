@@ -90,10 +90,15 @@ The `estat` function from the `pubh` package displays descriptive statistics of 
 Some examples. We start by loading packages as suggested in the Template of this package.
 
 ```{r, message=FALSE}
+library(car)
 library(dplyr)
-library(knitr)
+library(Hmisc)
+library(kableExtra)
+library(latex2exp)
 library(magrittr)
+library(MASS)
 library(moonBook)
+library(mosaic)
 library(pubh)
 ```
 
@@ -161,11 +166,8 @@ What about normality? We can look at the QQ-plots against the standard Normal di
 
 ```{r}
 Hodgkin %>%
-  qq_plot(~ Ratio|Group) %>%
-  use_labels()
+  qq_plot(~ Ratio|Group)
 ```
-
-In the previous command, `use_labels()` is added as another layer to the plot to take advantage of labelled data.
 
 Let's say we choose a non-parametric test to compare the groups:
 
@@ -185,8 +187,10 @@ For our current example:
 ```{r}
 Hodgkin %>%
   strip_error(Ratio ~ Group) %>%
-  use_labels()
+  axis_labs()
 ```
+
+In the previous code, `axis_labs` applies labels from labelled data to the axis.
 
 The error bars represent 95% confidence intervals around mean values.
 
@@ -208,7 +212,7 @@ In our current example:
 ```{r}
 Hodgkin %>%
   strip_error(Ratio ~ Group) %>%
-  use_labels() %>%
+  axis_labs() %>%
   gf_star(x1 = 1, y1 = 4, x2 = 2, y2 = 4.05, y3 = 4.1, "**")
 ```
 
@@ -232,7 +236,7 @@ birthwt <- birthwt %>%
 ```{r}
 birthwt %>%
   bar_error(bwt ~ smoke, fill = 'plum3') %>%
-  use_labels()
+  axis_labs()
 ```
 
 Quick normality check:
@@ -240,7 +244,7 @@ Quick normality check:
 ```{r}
 birthwt %>%
   qq_plot(~ bwt|smoke) %>%
-  use_labels()
+  axis_labs()
 ```
 
 The (unadjusted) $t$-test:
@@ -254,7 +258,7 @@ The final plot with annotation to highlight statistical difference (unadjusted):
 ```{r}
 birthwt %>%
   bar_error(bwt ~ smoke, fill ="plum3") %>%
-  use_labels() %>%
+  axis_labs() %>%
   gf_star(x1 = 1, x2 = 2, y1 = 3400, y2 = 3500, y3 = 3550, "**")
 ```
 
@@ -265,13 +269,13 @@ Both `strip_error` and `bar_error` can generate plots stratified by a third vari
 birthwt %>%
   bar_error(bwt ~ smoke, fill = ~ Race) %>%
   gf_refine(ggsci::scale_fill_jama()) %>%
-  use_labels()
+  axis_labs()
 ```
 
 ```{r}
 birthwt %>%
   bar_error(bwt ~ smoke|Race, fill = 'plum3') %>%
-  use_labels()
+  axis_labs()
 ```
 
 
@@ -279,7 +283,7 @@ birthwt %>%
 birthwt %>%
   strip_error(bwt ~ smoke, pch = ~ Race, col = ~ Race) %>%
   gf_refine(ggsci::scale_color_jama()) %>%
-  use_labels()
+  axis_labs()
 ```
 
 # Regression models
@@ -376,6 +380,12 @@ mytable(treat ~ fate, data = Bernard, show.total = TRUE)$res[, 1:4] %>%
   kable() 
 ```
 
+For cross-tabulation, the funciton `cross_tab` uses functions from the `expss` package to construct pretty tables.
+
+```{r}
+Bernard %>%
+  cross_tab(treat ~ fate)
+```
 
 For `epi.2by2` we need to provide the table of counts in the correct order, so we would type something like:
 
@@ -387,7 +397,8 @@ epiR::epi.2by2(as.table(dat))
 For `contingency` we only need to provide the information in a formula:
 
 ```{r}
-contingency(fate ~ treat, data = Bernard)
+Bernard %>%
+  contingency(fate ~ treat)
 ```
 
 Advantages of `contingency`:
@@ -410,11 +421,31 @@ Example: effect of eating chocolate ice cream on being ill by sex from the `oswe
 
 ```{r}
 data(oswego, package = "epitools")
-oswego$ill <- factor(oswego$ill)
-oswego$sex <- factor(oswego$sex)
-oswego$chocolate.ice.cream <- factor(oswego$chocolate.ice.cream)
-mhor(ill ~ sex/chocolate.ice.cream, data = oswego)
+oswego <- oswego %>%
+  mutate(
+    ill = factor(ill, labels = c("No", "Yes")),
+    sex = factor(sex, labels = c("Female", "Male")),
+    chocolate.ice.cream = factor(chocolate.ice.cream, labels = c("No", "Yes"))
+  ) %>%
+  var_labels(
+    ill = "Developed illness",
+    sex = "Sex",
+    chocolate.ice.cream = "Consumed chocolate ice cream"
+  )
 ```
+
+First we look at the cross-tabulation:
+
+```{r}
+oswego %>%
+  cross_tab(ill ~ sex|chocolate.ice.cream)
+```
+
+```{r}
+oswego %>%
+  mhor(ill ~ sex/chocolate.ice.cream)
+```
+
 
 ### Odds trend
 
