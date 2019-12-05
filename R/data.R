@@ -30,9 +30,19 @@
 #' evaluation and randomised controlled trial of extracorporeal membrane oxygenation: UK collaborative
 #' trial. Brit Med J 317:911-16.
 #' @examples
-#' barchart(with(Roberts, table(EMO, Survived)), horizontal = FALSE, stack = FALSE,
-#'          xlab = "EMO treatment", ylab = "Number of subjects",
-#'          auto.key = list(title = "Survived", space = "right", cex = 0.8))
+#' data(Roberts)
+#' require(sjlabelled)
+#' Roberts <- Roberts %>%
+#'   var_labels(
+#'     Survived = "Survived?",
+#'     EMO = "EMO treatment"
+#'   )
+#'
+#' require(sjPlot)
+#' plot_xtab(Roberts$EMO, Roberts$Survived, margin = 'row')
+#'
+#' Roberts %>%
+#'   cross_tab(Survived ~ EMO)
 "Roberts"
 
 #' Breast cancer and age of childbirth.
@@ -47,7 +57,8 @@
 #' }
 #' @source Macmahon, B. et al. (1970). Age at first birth and breast cancer risk. Bull WHO 43, 209-221.
 #' @examples
-#' odds_trend(Cancer ~ Age, data = Macmahon)
+#' odds_trend(Cancer ~ Age, data = Macmahon)$df
+#' odds_trend(Cancer ~ Age, data = Macmahon)$fig
 "Macmahon"
 
 #' Passive smoking in adulthood and cancer risk.
@@ -137,7 +148,7 @@
 #' data(Hodgkin)
 #' Hodgkin$Ratio <- Hodgkin$CD4/Hodgkin$CD8
 #' estat(~ Ratio|Group, data = Hodgkin, label = "CD4+/CD8+ T-cells")
-#' qq_plot(~ Ratio|Group, data = Hodgkin, ylab = "CD4+/CD8+ T-cells", aspect = 1)
+#' qq_plot(~ Ratio|Group, data = Hodgkin, ylab = "CD4+/CD8+ T-cells")
 "Hodgkin"
 
 #' Survival of patients with sepsis.
@@ -246,7 +257,20 @@
 #' a comparison of forest and savannah villages. Trans Roy Soc Trop Med Hyg 82: 595-600.
 #' @source Kirkwood, BR and Sterne, JAC (2003) Essential Medical Statistics. Second Edition. Blackwell.
 #' @examples
-#' odds_trend(mf ~ agegrp, data = Oncho)
+#' data(Oncho, package = 'pubh')
+#' require(sjlabelled)
+#' Oncho = Oncho %>%
+#'   var_labels(
+#'     mf = 'Infection',
+#'     area = 'Residence',
+#'     agegrp = 'Age group (years)',
+#'     sex = 'Sex',
+#'     mfload = 'Load',
+#'     lesions = 'Number of lesions'
+#'   )
+#'
+#' odds_trend(mf ~ agegrp, data = Oncho)$df
+#' odds_trend(mf ~ agegrp, data = Oncho)$fig
 "Oncho"
 
 #' RCT on the treatment of epilepsy.

@@ -25,6 +25,3 @@ mean(x)
 leverage(x)
 rank_leverage(x)
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-}

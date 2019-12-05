@@ -12,6 +12,3 @@ round_pval(pval)
 \description{
 \code{round_pval} is an internal function called by \code{glm_coef} to round p-values from model coefficients.
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-}

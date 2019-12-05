@@ -29,6 +29,3 @@ head(jack_knife(x))
 \seealso{
 \link{rank_leverage}
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-}

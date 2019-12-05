@@ -22,6 +22,3 @@ x
 mean(x)
 knife_mean(x)
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-}

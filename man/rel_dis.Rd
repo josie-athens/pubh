@@ -20,6 +20,3 @@ is defined as the standard deviation over the arithmetic mean.
 height <- rnorm(100, 170, 8)
 rel_dis(height)
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-}

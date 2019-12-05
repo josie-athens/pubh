@@ -4,10 +4,12 @@
 \alias{mhor}
 \title{Mantel-Haenszel odds ratio.}
 \usage{
-mhor(formula, data)
+mhor(object = NULL, formula = NULL, data = NULL)
 }
 \arguments{
-\item{formula}{A formula expressed as outcome ~ stratum/exposure.}
+\item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
+
+\item{formula}{A formula with shape: outcome ~ stratum/exposure.}
 
 \item{data}{A data frame containing the variables used in \code{formula}.}
 }
@@ -22,14 +24,26 @@ pooled odds ratio. The test for effect modification (test for interaction) is al
 }
 \examples{
 data(oswego, package = "epitools")
-oswego$ill <- factor(oswego$ill)
-oswego$sex <- factor(oswego$sex)
-oswego$chocolate.ice.cream <- factor(oswego$chocolate.ice.cream)
-mhor(ill ~ sex/chocolate.ice.cream, data = oswego)
+require(dplyr)
+require(sjlabelled)
+oswego <- oswego \%>\%
+  mutate(
+    ill = factor(ill, labels = c("No", "Yes")),
+    sex = factor(sex, labels = c("Female", "Male")),
+    chocolate.ice.cream = factor(chocolate.ice.cream, labels = c("No", "Yes"))
+  ) \%>\%
+  var_labels(
+    ill = "Developed illness",
+    sex = "Sex",
+    chocolate.ice.cream = "Consumed chocolate ice cream"
+  )
+
+oswego \%>\%
+  cross_tab(ill ~ sex|chocolate.ice.cream)
+
+oswego \%>\%
+  mhor(ill ~ sex/chocolate.ice.cream)
 }
 \seealso{
 \link{mh}
-}
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 }

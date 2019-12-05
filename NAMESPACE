@@ -1,15 +1,16 @@
 exportPattern("^[[:alpha:]]+")
 importFrom("stats", "addmargins", "binomial", "chisq.test", "coef",
-           "confint", "df.residual", "dnorm", "family", "fisher.test",
+           "confint", "df", "df.residual", "dnorm", "family", "fisher.test",
            "fitted", "glm", "influence.measures", "lm.wfit",
            "mantelhaen.test", "median", "pnorm", "prop.trend.test",
            "qnorm", "qt", "quantile", "sd")
+importFrom("graphics", "pairs", "plot")
 importFrom("ggformula", "gf_ash", "gf_boxplot", "gf_dhistogram",
            "gf_errorbarh", "gf_hline",  "gf_jitter", "gf_labs", "gf_point",
            "gf_qq", "gf_qqline", "gf_segment", "gf_smooth", "gf_summary",
            "gf_theme", "gf_text",  "gf_vline")
 importFrom("emmeans", "emmeans" , "pwpp")
-importFrom("expss", "is.labelled", "tab_cols" , "tab_pivot", "tab_rows",
-           "tab_stat_cases", "tab_stat_cpct",  "tab_stat_rpct", "var_lab")
-importFrom("sjlabelled", "get_label")
-importFrom("sjPlot", "plot_model")
+importFrom("expss", "tab_cols", "tab_cells", "tab_pivot", "tab_rows",
+           "tab_stat_cases", "tab_stat_cpct",  "tab_stat_rpct",
+           "total",  "var_lab")
+importFrom("magrittr", "%>%")

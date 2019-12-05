@@ -43,6 +43,7 @@ expand_df <- function(aggregate.data, index.var = "Freq", retain.freq = FALSE)
 #' pooled odds ratio. The test for effect modification (test for interaction) is also displayed.
 #'
 #' @seealso \link{mh}
+#' @param object When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.
 #' @param formula A formula with shape: outcome ~ stratum/exposure.
 #' @param data A data frame containing the variables used in \code{formula}.
 #' @return Odds ratios with 95% confidence intervals on the effect of \code{exposure} on
@@ -51,6 +52,7 @@ expand_df <- function(aggregate.data, index.var = "Freq", retain.freq = FALSE)
 #' @examples
 #' data(oswego, package = "epitools")
 #' require(dplyr)
+#' require(sjlabelled)
 #' oswego <- oswego %>%
 #'   mutate(
 #'     ill = factor(ill, labels = c("No", "Yes")),
@@ -143,7 +145,7 @@ prop_or <- function(p2, or)
 #' significant or not.
 #'
 #' @details \code{odds_trend} is a wrap function that calls \link{oddsratio} from package \code{epitools}.
-#' @seealso \link{epitools::oddsratio}
+#' @seealso \code{epitools::oddsratio}
 #' @param formula A formula with shape: outcome ~ exposure.
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param angle Angle of for the x labels (default = 45).
@@ -162,6 +164,7 @@ prop_or <- function(p2, or)
 #' breast
 #'
 #' breast <- expand_df(breast)
+#' require(sjlabelled)
 #'
 #' breast = var_labels(breast,
 #'   Weight = 'Weight group'
@@ -191,7 +194,7 @@ odds_trend <- function(formula, data, angle = 45,
   fit = glm(formula, data = data, binomial)
   fig = sjPlot::plot_model(fit, type = 'pred', terms = x,
                            title = '', dot.size = 1) %>%
-    gf_theme(axis.text.x = element_text(angle = angle, hjust = hjust))
+    gf_theme(axis.text.x = ggplot2::element_text(angle = angle, hjust = hjust))
   res <- list(df = df, fig = fig)
   res
 }
@@ -206,7 +209,7 @@ odds_trend <- function(formula, data, angle = 45,
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param ... Further arguments passed to \link{epi.tests}.
 #' @details For the \code{formula}, the outcome is the gold standard and the explanatory variable is the new (screening) test. See examples.
-#' @seealso \code{\link{epiR::epi.tests}}
+#' @seealso \code{epiR::epi.tests}
 #' @examples
 #' ## We compare the use of lung’s X-rays on the screening of TB against the gold standard test.
 #' Freq <- c(1739, 8, 51, 22)
@@ -246,7 +249,7 @@ diag_test <- function(object = NULL, formula = NULL, data = NULL, ...)
 #' @param bb Number of cases where screening test is positive but gold standard is negative.
 #' @param cc Number of cases where screening test is negative but gold standard is positive.
 #' @param dd Number of cases where both screening test and the gold standard are negative.
-#' @seealso \link{epiR::epi.tests}
+#' @seealso \code{epiR::epi.tests}
 #' @examples
 #' ## We compare the use of lung’s X-rays on the screening of TB against the gold standard test.
 #' diag_test2(22, 51, 8, 1739)
@@ -273,7 +276,7 @@ diag_test2 <- function(aa, bb, cc, dd)
 #' (table from \code{\link{epi.2by2}}). It also reports either chi-squared
 #' test or exact Fisher's test;
 #' \code{contingency} checks which one of the tests two is appropriate.
-#' @seealso \code{\link{epiR::epi.2by2}}
+#' @seealso \code{epiR::epi.2by2}
 #' @examples
 #' ## A case-control study on the effect of alcohol on oesophageal cancer.
 #' Freq <- c(386, 29, 389, 171)
@@ -284,6 +287,7 @@ diag_test2 <- function(aa, bb, cc, dd)
 #' contingency(status ~ alcohol, data = cancer, method = "case.control")
 #'
 #' data(Oncho, package = 'pubh')
+#' require(sjlabelled)
 #' Oncho <- Oncho %>%
 #'   var_labels(
 #'     mf = 'Infection',
@@ -332,7 +336,7 @@ contingency <- function(object = NULL, formula = NULL, data = NULL, method="coho
 #' @param cc Number of cases where exposure is absent but outcome is present.
 #' @param dd Number of cases where both exposure and outcome are absent.
 #' @param ... Further arguments passed to \link{epi.2by2}.
-#' @seealso \link{epiR::epi.2by2}
+#' @seealso \code{epiR::epi.2by2}
 #' @examples
 #' ## A case-control study on the effect of alcohol on oesophageal cancer.
 #' Freq <- c(386, 29, 389, 171)

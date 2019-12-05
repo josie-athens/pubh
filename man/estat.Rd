@@ -4,10 +4,12 @@
 \alias{estat}
 \title{Descriptive statistics for continuous variables.}
 \usage{
-estat(formula, data, digits = 2, label = NULL)
+estat(object = NULL, formula = NULL, data = NULL, digits = 2, label = NULL)
 }
 \arguments{
-\item{formula}{A formula of the form: ~ x or ~ x|z (for groups).}
+\item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
+
+\item{formula}{A formula with shape: ~ x or ~ x|z (for groups).}
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
@@ -23,13 +25,25 @@ A data frame with descriptive statistics.
 }
 \examples{
 data(kfm, package = "ISwR")
-estat(~ dl.milk, data = kfm, label = "Breast-milk intake (dl/day)")
-estat(~ dl.milk|sex, data = kfm, label = "Breast-milk intake (dl/day)")
-estat(~ weight|sex, data = kfm, label = "Weight of child (kg)")
+require(sjlabelled)
+kfm = kfm \%>\%
+var_labels(
+  dl.milk = 'Breast-milk intake (dl/day)',
+  sex = 'Sex',
+  weight = 'Child weight (kg)',
+  ml.suppl = 'Milk substitute (ml/day)',
+  mat.weight = 'Maternal weight (kg)',
+  mat.height = 'Maternal height (cm)'
+ )
+
+kfm \%>\%
+  estat(~ dl.milk)
+
+estat(~ dl.milk|sex, data = kfm)
+
+kfm \%>\%
+  estat(~ weight|sex)
 }
 \seealso{
-\link{summary}, \code{summarize}.
-}
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+\code{summary}, \code{moonBook::mytable}.
 }

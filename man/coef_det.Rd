@@ -34,6 +34,3 @@ mm.tx <- gnls(rate ~ SSmicmen(conc, Vm, K), data=Puromycin, subset=state=="treat
 summary(mm.tx)
 coef_det(Puromycin$rate[1:12], mm.tx$fitted)
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-}

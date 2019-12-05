@@ -26,8 +26,6 @@ It computes sensitivity, specificity and other statistics related with screening
 ## We compare the use of lung’s X-rays on the screening of TB against the gold standard test.
 diag_test2(22, 51, 8, 1739)
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-
-Mark Stevenson, Faculty of Veterinary and Agricultural Sciences, The University of Melbourne, Australia.
+\seealso{
+\code{epiR::epi.tests}
 }

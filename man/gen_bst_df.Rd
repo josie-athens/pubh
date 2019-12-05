@@ -4,10 +4,12 @@
 \alias{gen_bst_df}
 \title{Generate a data frame with estimate and bootstrap CIs.}
 \usage{
-gen_bst_df(formula, data, stat = "mean", ...)
+gen_bst_df(object = NULL, formula = NULL, data = NULL, stat = "mean", ...)
 }
 \arguments{
-\item{formula}{A formula of the form \code{y ~ x} or \code{y ~ x|z} where \code{y} is a
+\item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
+
+\item{formula}{A formula with shape: \code{y ~ x} or \code{y ~ x|z} where \code{y} is a
 numerical variable and both \code{x} and \code{z} are factors.}
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
@@ -20,22 +22,36 @@ numerical variable and both \code{x} and \code{z} are factors.}
 A data frame with the confidence intervals by level.
 }
 \description{
-\code{gen_bst_df} is an internal function called by \link{bar_error} that generates a data frame with
+\code{gen_bst_df} is a function called that generates a data frame with
 confidence intervals of a continuous variable by levels of one or two categorical ones (factors).
 }
 \examples{
 data(kfm, package = "ISwR")
-gen_bst_df(dl.milk ~ sex, data = kfm)
-bar_error(dl.milk ~ sex, data = kfm, ylim = c(0,9), ylab  = "Breast-milk intake (dl/day)")
+require(sjlabelled)
+kfm = kfm \%>\%
+  var_labels(
+     dl.milk = 'Breast-milk intake (dl/day)',
+     sex = 'Sex',
+     weight = 'Child weight (kg)',
+     ml.suppl = 'Milk substitute (ml/day)',
+     mat.weight = 'Maternal weight (kg)',
+     mat.height = 'Maternal height (cm)'
+     )
+
+kfm \%>\%
+  gen_bst_df(dl.milk ~ sex)
 
 data(birthwt, package = "MASS")
-birthwt$smoke <- factor(birthwt$smoke, labels=c("Non-smoker", "Smoker"))
-birthwt$Race <- 0
-birthwt$Race[birthwt$race>1] <- 1
-birthwt$Race <- factor(birthwt$Race, labels=c("White", "Non-white"))
+require(dplyr)
+birthwt <- mutate(birthwt,
+  smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
+  Race = factor(race > 1, labels = c("White", "Non-white")))
+
+birthwt = birthwt \%>\%
+  var_labels(
+    bwt = 'Birth weight (g)',
+    smoke = 'Smoking status'
+  )
+
 gen_bst_df(bwt ~ smoke|Race, data = birthwt)
-bar_error(bwt ~ smoke|Race, data = birthwt, ylim = c(0, 3800), ylab  = "Birth weight (g)")
-}
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 }

@@ -22,8 +22,18 @@ A clinical trial on the value of extracorporeal membrane oxygenation for term ne
 respiratory failure. RCT compares active treatment against conventional management.
 }
 \examples{
-barchart(with(Roberts, table(EMO, Survived)), horizontal = FALSE, stack = FALSE,
-         xlab = "EMO treatment", ylab = "Number of subjects",
-         auto.key = list(title = "Survived", space = "right", cex = 0.8))
+data(Roberts)
+require(sjlabelled)
+Roberts <- Roberts \%>\%
+  var_labels(
+    Survived = "Survived?",
+    EMO = "EMO treatment"
+  )
+
+require(sjPlot)
+plot_xtab(Roberts$EMO, Roberts$Survived, margin = 'row')
+
+Roberts \%>\%
+  cross_tab(Survived ~ EMO)
 }
 \keyword{datasets}

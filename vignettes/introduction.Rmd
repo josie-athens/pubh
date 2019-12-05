@@ -90,20 +90,22 @@ The `estat` function from the `pubh` package displays descriptive statistics of 
 Some examples. We start by loading packages as suggested in the Template of this package.
 
 ```{r, message=FALSE}
+library(broom)
 library(car)
-library(dplyr)
 library(Hmisc)
-library(kableExtra)
-library(latex2exp)
-library(magrittr)
 library(MASS)
-library(moonBook)
+library(kableExtra)
+library(dplyr)
 library(mosaic)
+library(latex2exp)
+library(moonBook)
 library(pubh)
+library(sjlabelled)
+library(sjPlot)
 ```
 
 ```{r}
-theme_set(theme_sjplot2(base_size = 10))
+theme_set(sjPlot::theme_sjplot2(base_size = 10))
 ```
 
 We will use a data set about blood counts of T cells from patients in remission from Hodgkin's disease or in remission from disseminated malignancies. We generate the new variable `Ratio` and add labels to the variables.

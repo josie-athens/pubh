@@ -4,40 +4,87 @@
 \alias{strip_error}
 \title{Strip plots with error bars.}
 \usage{
-strip_error(formula, data, pch = 20, aspect = 3/4, ...)
+strip_error(
+  object = NULL,
+  formula = NULL,
+  data = NULL,
+  pch = 20,
+  size = 0.6,
+  alpha = 0.7,
+  col = "indianred3",
+  ...
+)
 }
 \arguments{
-\item{formula}{A formula of the form \code{y ~ x} or \code{y ~ x|z} where \code{y} is a
+\item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
+
+\item{formula}{A formula with shape: \code{y ~ x} or \code{y ~ x|z} where \code{y} is a
 numerical variable and both \code{x} and \code{z} are factors.}
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
-\item{pch}{Point character passed to \link{stripplot}.}
+\item{pch}{Point character passed to \code{\link{gf_point}} or \code{\link{gf_jitter}}.}
 
-\item{aspect}{Physical aspect ratio passed to \link{stripplot}.}
+\item{size}{Size of the symbol (\code{pch}) for representing data values.}
 
-\item{...}{Further arguments passed to \link{stripplot}.}
+\item{alpha}{Opacity of the symbol (0 = invisible, 1 = opaque).}
+
+\item{col}{A colour or formula used for mapping colour.}
+
+\item{...}{Additional information passed to \code{\link{gf_jitter}} or \code{\link{gf_point}}.}
 }
 \description{
-\code{strip_error} constructs strip plots in \code{lattice} with error bars showing 95% bootstrapped
+\code{strip_error} constructs strip plots with error bars showing 95% bootstrapped
 confidence intervals around mean values.
 }
 \examples{
 data(energy, package="ISwR")
-strip_error(expend ~ stature, data = energy, xlab = "Stature", ylab = "Energy expenditure (MJ)")
+require(sjlabelled)
+energy = energy \%>\%
+  var_labels(
+    expend = 'Energy expenditure (MJ/day)',
+    stature = 'Stature'
+  )
+
+energy \%>\%
+  strip_error(expend ~ stature, col = 'red') \%>\%
+  axis_labs()
+
+t.test(expend ~ stature, data = energy)
 
 ## Adding an horizontal line to show significant difference:
-fig <- strip_error(expend~stature, data=energy, xlab="Stature",
-                   ylab="Energy expenditure (MJ)", ylim=c(5.5,14))
-fig + layer(panel.segments(1, 13.3, 2, 13.3, lwd=1.5)) + layer(panel.text(1.5, 13.5, "*"))
+energy \%>\%
+  strip_error(expend ~ stature, col = 'red') \%>\%
+  axis_labs() \%>\%
+  gf_star(1, 13, 2, 13.2, 13.4, "**")
 
 data(birthwt, package = "MASS")
-birthwt$smoke <- factor(birthwt$smoke, labels = c("Non-smoker", "Smoker"))
-birthwt$Race <- factor(birthwt$race > 1, labels = c("White", "Non-white"))
-strip_error(bwt ~ Race|smoke, data = birthwt, ylab = "Birth weight (g)")
-}
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+require(dplyr)
+birthwt <- birthwt \%>\%
+  mutate(
+    smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
+    Race = factor(race > 1, labels = c("White", "Non-white"))
+  ) \%>\%
+  var_labels(
+    bwt = 'Birth weight (g)',
+    smoke = 'Smoking status'
+ )
 
-Deepayan Sarkar, R-Core.
+birthwt \%>\%
+  strip_error(bwt ~ smoke|Race, col = 'darksalmon') \%>\%
+  axis_labs()
+
+birthwt \%>\%
+  strip_error(bwt ~ smoke, col = ~ Race) \%>\%
+  gf_refine(ggsci::scale_color_jama()) \%>\%
+  axis_labs()
+
+birthwt \%>\%
+  strip_error(bwt ~ smoke, pch = ~ Race, col = ~ Race) \%>\%
+  gf_refine(ggsci::scale_color_jama()) \%>\%
+  axis_labs()
+
+birthwt \%>\%
+  strip_error(bwt ~ smoke|Race) \%>\%
+  axis_labs()
 }

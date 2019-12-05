@@ -28,6 +28,19 @@ Study of onchocerciasis ("river blindness") in Sierra Leone, in which subjects w
 to whether they lived in villages in savannah or rainforest area.
 }
 \examples{
-odds_trend(mf ~ agegrp, data = Oncho)
+data(Oncho, package = 'pubh')
+require(sjlabelled)
+Oncho = Oncho \%>\%
+  var_labels(
+    mf = 'Infection',
+    area = 'Residence',
+    agegrp = 'Age group (years)',
+    sex = 'Sex',
+    mfload = 'Load',
+    lesions = 'Number of lesions'
+  )
+
+odds_trend(mf ~ agegrp, data = Oncho)$df
+odds_trend(mf ~ agegrp, data = Oncho)$fig
 }
 \keyword{datasets}

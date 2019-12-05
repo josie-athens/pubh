@@ -255,9 +255,10 @@ cross_tab <- function(object = NULL, formula = NULL, data = NULL, percent = 'col
 #' @param digits Number of digits for rounding (default = 2).
 #' @param label Label used to display the name of the variable (see examples).
 #' @return A data frame with descriptive statistics.
-#' @seealso \code{\link{summary}}, \code{\link{moonBook::mytable}}.
+#' @seealso \code{summary}, \code{moonBook::mytable}.
 #' @examples
 #' data(kfm, package = "ISwR")
+#' require(sjlabelled)
 #' kfm = kfm %>%
 #' var_labels(
 #'   dl.milk = 'Breast-milk intake (dl/day)',
@@ -290,8 +291,8 @@ estat <- function (object = NULL, formula = NULL, data = NULL, digits = 2, label
   outcome <- data[[y]]
   if (!is.numeric(outcome))
     stop(y, " must be a numerical variable")
-  if (is.null(get_label(outcome)) == FALSE & is.null(label)){
-    lab <- get_label(outcome)
+  if (is.null(sjlabelled::get_label(outcome)) == FALSE & is.null(label)){
+    lab <- sjlabelled::get_label(outcome)
   } else {
     lab <- ifelse(is.null(label), y, label)
   }
@@ -326,8 +327,8 @@ estat <- function (object = NULL, formula = NULL, data = NULL, digits = 2, label
     var[1] <- lab
     res <- data.frame(var, res)
     names(res)[1] <- ""
-    names(res)[2] <- ifelse(is.null(get_label(exposure)) == FALSE,
-                            get_label(exposure), x)
+    names(res)[2] <- ifelse(is.null(sjlabelled::get_label(exposure)) == FALSE,
+                            sjlabelled::get_label(exposure), x)
     res
   }
 }
