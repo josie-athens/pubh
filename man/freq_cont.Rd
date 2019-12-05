@@ -28,6 +28,3 @@ freq_cont(IgM, seq(0, 4.5, 0.5))
 \seealso{
 \link{hist}
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-}

@@ -25,6 +25,3 @@ model_oncho <- glm(mf ~ area, data = Oncho, binomial)
 glm_coef(model_oncho, labels = c("Constant", "Area (rainforest/savannah)"))
 pseudo_r2(model_oncho)
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-}

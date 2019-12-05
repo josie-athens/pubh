@@ -28,6 +28,3 @@ round(sd(x), 2)
 
 round(reference_range(mean(x), sd(x)), 2)
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-}

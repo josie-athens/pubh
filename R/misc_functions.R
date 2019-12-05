@@ -118,8 +118,17 @@ rank_leverage <- function(x)
 #' OD <- 0.0125 * Riboflavin + rnorm(9, 0.6, 0.03)
 #' titration <- data.frame(Riboflavin, OD)
 #'
-#' xyplot(OD ~ Riboflavin, data = titration, pch = 16, col = 1, aspect = 3/4) +
-#'   layer(panel.smoother(lwd = 1.5, col = 2, method = "lm", ...))
+#' require(sjlabelled)
+#' titration <- titration %>%
+#'   var_labels(
+#'     Riboflavin = "Riboflavin (nmol/ml),
+#'     OD = "Optical density"
+#'   )
+#'
+#' titration %>%
+#'   gf_point(OD ~ Riboflavin) %>%
+#'   gf_smooth(col = 'indianred3', se = TRUE, lwd = 0.5, method = 'loess') %>%
+#'   gf_axis()
 #'
 #' ## Model with intercept different from zero:
 #' model <- lm(OD ~ Riboflavin, data = titration)
@@ -272,7 +281,7 @@ coef_det <- function(obs, fit)
 #' @details \code{rank_influence} is a wrap function that calls \link{influence.measures}, ranks observations on
 #' their significance influence on the model and displays the 10 most influential observations
 #' (if they are significant).
-#' @seealso \link{car::influence.measures}
+#' @seealso \code{car::influence.measures}
 #' @examples
 #' data(diet, package = "Epi")
 #' model <- glm(chd ~ fibre, data = diet, family = binomial)

@@ -4,20 +4,30 @@
 \alias{qq_plot}
 \title{Quantile-quantile plots against the standard Normal distribution.}
 \usage{
-qq_plot(formula, data = NULL, pch = 20, col = 1, aspect = 3/4, ...)
+qq_plot(
+  object = NULL,
+  formula = NULL,
+  data = NULL,
+  pch = 20,
+  col = "indianred3",
+  ylab = NULL,
+  ...
+)
 }
 \arguments{
-\item{formula}{A formula of the form \code{ ~ x} or \code{ ~ x|z} where \code{x} is a numerical variable and \code{z} is a factor.}
+\item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
+
+\item{formula}{A formula with shape: \code{ ~ x} or \code{ ~ x|z} where \code{x} is a numerical variable and \code{z} is a factor.}
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
-\item{pch}{Point character passed to \link{qqmath}.}
+\item{pch}{Point character passed to \link{gf_qq}.}
 
-\item{col}{Colour passed to \link{qqmath}.}
+\item{col}{Colour of the reference line, passed to \link{gf_line}.}
 
-\item{aspect}{Physical aspect ratio passed to \link{qqmath}.}
+\item{ylab}{Optional character passed as label for the y-axis.}
 
-\item{...}{Further arguments passed to \link{qqmath}.}
+\item{...}{Further arguments passed to \link{gf_qq}.}
 }
 \description{
 \code{qq_plot} constructs quantile-quantile plots against the standard normal distribution
@@ -25,11 +35,21 @@ qq_plot(formula, data = NULL, pch = 20, col = 1, aspect = 3/4, ...)
 }
 \examples{
 data(kfm, package = "ISwR")
-qq_plot(~ dl.milk, data = kfm, ylab = "Breast-milk intake (dl/day)")
-qq_plot(~ dl.milk|sex, data = kfm, ylab = "Breast-milk intake (dl/day)", aspect = 1)
-}
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+require(sjlabelled)
+kfm = kfm \%>\%
+  var_labels(
+     dl.milk = 'Breast-milk intake (dl/day)',
+     sex = 'Sex',
+     weight = 'Child weight (kg)',
+     ml.suppl = 'Milk substitute (ml/day)',
+     mat.weight = 'Maternal weight (kg)',
+     mat.height = 'Maternal height (cm)'
+     )
 
-Deepayan Sarkar, R-Core.
+kfm \%>\%
+  qq_plot(~ dl.milk) \%>\%
+  axis_labs()
+
+qq_plot(~ dl.milk|sex, data = kfm) \%>\%
+  axis_labs()
 }

@@ -21,6 +21,3 @@ Ab <- data.frame(IgM)
 estat(~ IgM, data = Ab)
 harm_mean(IgM)
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-}

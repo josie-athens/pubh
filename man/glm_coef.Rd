@@ -4,8 +4,15 @@
 \alias{glm_coef}
 \title{Table of coefficients from generalised linear models.}
 \usage{
-glm_coef(model, digits = 2, alpha = 0.05, labels = NULL,
-  se.rob = TRUE, type = "cond")
+glm_coef(
+  model,
+  digits = 2,
+  alpha = 0.05,
+  labels = NULL,
+  se_rob = TRUE,
+  type = "cond",
+  exp_norm = FALSE
+)
 }
 \arguments{
 \item{model}{A model from any of the classes listed in the details section.}
@@ -16,9 +23,11 @@ glm_coef(model, digits = 2, alpha = 0.05, labels = NULL,
 
 \item{labels}{An optional character vector with the names of the coefficients (including intercept).}
 
-\item{se.rob}{Logical, should robust errors be used to calculate confidence intervals? (default = TRUE).}
+\item{se_rob}{Logical, should robust errors be used to calculate confidence intervals? (default = TRUE).}
 
 \item{type}{Character, either "cond" (condensed) or "ext" (extended). See details.}
+
+\item{exp_norm}{Logical, should estimates and confidence intervals should be exponentiated? (for family == "gaussian").}
 }
 \value{
 A data frame with estimates, confidence intervals and p-values from \code{glm} objects.
@@ -47,17 +56,25 @@ Please read the Vignette on Regression for more details.
 \examples{
 ## Continuous outcome.
 data(birthwt, package = "MASS")
-birthwt$smoke <- factor(birthwt$smoke, labels=c("Non-smoker", "Smoker"))
-birthwt$race <- factor(birthwt$race > 1, labels=c("White", "Non-white"))
+require(dplyr)
+birthwt <- mutate(birthwt,
+  smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
+  Race = factor(race > 1, labels = c("White", "Non-white")))
+
 model_norm <- glm(bwt ~ smoke + race, data = birthwt)
 glm_coef(model_norm)
-glm_coef(model_norm, labels=c("Constant", "Smoker vs Non-smoker", "Non-white vs White"))
+
+model_norm \%>\%
+  glm_coef(labels=c("Constant", "Smoker vs Non-smoker", "Non-white vs White"))
 
 ## Logistic regression.
 data(diet, package = "Epi")
 model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
-glm_coef(model_binom, labels = c("Constant", "Fibre intake (g/day)"))
-glm_coef(model_binom, labels = c("Constant", "Fibre intake (g/day)"), type = "ext")
+model_binom \%>\%
+  glm_coef(labels = c("Constant", "Fibre intake (g/day)"))
+
+model_binom \%>\%
+glm_coef(labels = c("Constant", "Fibre intake (g/day)"), type = "ext")
 
 ## Poisson regression.
 library(MASS)
@@ -65,20 +82,21 @@ data(quine)
 levels(quine$Eth) <- list(White = "N", Aboriginal = "A")
 levels(quine$Sex) <- list(Male = "M", Female = "F")
 model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
-glm_coef(model_pois)
+
+model_pois \%>\%
+  glm_coef()
+
 deviance(model_pois) / df.residual(model_pois) # to check for overdispersion
 
 model_negbin <- glm.nb(Days ~ Eth + Sex + Age, data = quine)
-unadj <- glm_coef(model_negbin, labels=c("Constant",
-                                   "Race: Aboriginal/White",
-                                   "Sex: Female/Male",
-                                   "F1/Primary",
-                                   "F2/Primary",
-                                   "F3/Primary"))
+unadj <- glm_coef(model_negbin,
+                  labels=c("Constant",
+                  "Race: Aboriginal/White",
+                  "Sex: Female/Male",
+                  "F1/Primary",
+                  "F2/Primary",
+                  "F3/Primary"))
 unadj # Not-adjusted for multiple comparisons
 
 ## For more examples, please read the Vignette on Regression.
-}
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 }

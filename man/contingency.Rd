@@ -4,16 +4,24 @@
 \alias{contingency}
 \title{Measures of association from two by two contingency tables (formula).}
 \usage{
-contingency(formula, data, method = "cohort.count", ...)
+contingency(
+  object = NULL,
+  formula = NULL,
+  data = NULL,
+  method = "cohort.count",
+  ...
+)
 }
 \arguments{
-\item{formula}{A formula of the form outcome ~ exposure.}
+\item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
+
+\item{formula}{A formula with shape: outcome ~ exposure.}
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
 \item{method}{A character string with options: "cohort.count", "cohort.time", "case.control", or "cross.sectional".}
 
-\item{...}{Further arguments passed to \link{epi.2by2}.}
+\item{...}{Further arguments passed to \code{\link{epi.2by2}}.}
 }
 \description{
 \code{contingency} is a wrap that calls \link{epi.2by2} from package \code{epiR}.
@@ -23,7 +31,8 @@ contingency(formula, data, method = "cohort.count", ...)
 
 \code{contingency} displays the contingency table as a way for the user to check that the reference levels
 in the categorical variables (outcome and exposure) are correct. Then displays measures of association
-(table from \link{epi.2by2}). It also reports either chi-squared test or exact Fisher's test;
+(table from \code{\link{epi.2by2}}). It also reports either chi-squared
+test or exact Fisher's test;
 \code{contingency} checks which one of the tests two is appropriate.
 }
 \examples{
@@ -34,17 +43,25 @@ alcohol <- gl(2, 2, labels=c("0-39", "40+"))
 cancer <- data.frame(Freq, status, alcohol)
 cancer <- expand_df(cancer)
 contingency(status ~ alcohol, data = cancer, method = "case.control")
+
+data(Oncho, package = 'pubh')
+require(sjlabelled)
+Oncho <- Oncho \%>\%
+  var_labels(
+    mf = 'Infection',
+    area = 'Residence',
+    agegrp = 'Age group (years)',
+    sex = 'Sex',
+    mfload = 'Load',
+    lesions = 'Number of lesions'
+ )
+
+Oncho \%>\%
+  cross_tab(mf ~ area)
+
+Oncho \%>\%
+  contingency(mf ~ area)
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-
-Mark Stevenson, Faculty of Veterinary and Agricultural Sciences, The University of Melbourne, Australia.
-
-Cord Heuer, EpiCentre, IVABS, Massey University, Palmerston North, New Zealand.
-
-Jim Robison-Cox , Department of Math Sciences, Montana State University, Montana, USA.
-
-Kazuki Yoshida, Brigham and Women's Hospital, Boston Massachusetts, USA.
-
-Simon Firestone, Faculty of Veterinary and Agricultural Sciences, The University of Melbourne, Australia.
+\seealso{
+\code{epiR::epi.2by2}
 }

@@ -36,6 +36,7 @@ round_pval <- function(pval)
 #' @examples
 #' ## Continuous outcome.
 #' data(birthwt, package = "MASS")
+#' require(dplyr)
 #' birthwt <- mutate(birthwt,
 #'   smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
 #'   Race = factor(race > 1, labels = c("White", "Non-white")))

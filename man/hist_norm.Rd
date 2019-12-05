@@ -4,28 +4,53 @@
 \alias{hist_norm}
 \title{Histogram with Normal density curve.}
 \usage{
-hist_norm(formula, data = NULL, col = "gray70", aspect = 3/4, ...)
+hist_norm(
+  object = NULL,
+  formula = NULL,
+  data = NULL,
+  binwidth = NULL,
+  fill = "gray70",
+  color = "black",
+  ...
+)
 }
 \arguments{
-\item{formula}{A formula of the form \code{ ~ x} where \code{x} is a numerical variable.}
+\item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
+
+\item{formula}{A formula with shape: \code{ ~ y} or \code{~ y|x} where \code{y} is a numerical variable and \code{x} is a factor.}
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
-\item{col}{Colour passed to \link{histogram}.}
+\item{binwidth}{The width of the histogram bins.}
 
-\item{aspect}{Physical aspect ratio passed to \link{histogram}.}
+\item{fill}{Colour to fill the bars of the histogram.}
 
-\item{...}{Further arguments passed to \link{histogram}.}
+\item{color}{Colour used for the border of the bars.}
+
+\item{...}{Further arguments passed to \link{gf_dhistogram}.}
 }
 \description{
-\code{hist_norm} constructs histograms in lattice and adds corresponding Normal density curve.
+\code{hist_norm} constructs histograms and adds corresponding Normal density curve.
 }
 \examples{
+require(dplyr)
+require(sjlabelled)
 data(birthwt, package = "MASS")
-hist_norm(~ bwt, data = birthwt, nint = 15, xlab = "Birth weight (g)")
-}
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+birthwt <- birthwt \%>\%
+  mutate(
+    smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
+    Race = factor(race > 1, labels = c("White", "Non-white"))
+  ) \%>\%
+  var_labels(
+    bwt = 'Birth weight (g)',
+    smoke = 'Smoking status'
+ )
 
-Deepayan Sarkar, R-Core.
+birthwt \%>\%
+  hist_norm(~ bwt, alpha = 0.7, bins = 20, fill = 'cadetblue') \%>\%
+  axis_labs()
+
+birthwt \%>\%
+  hist_norm(~ bwt|smoke, alpha = 0.7, bins = 20, fill = 'cadetblue') \%>\%
+  axis_labs()
 }

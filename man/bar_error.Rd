@@ -4,43 +4,61 @@
 \alias{bar_error}
 \title{Bar charts with error bars.}
 \usage{
-bar_error(formula, data, col = "gray70", aspect = 3/4, ...)
+bar_error(
+  object = NULL,
+  formula = NULL,
+  data = NULL,
+  fill = "darkgrey",
+  col = "black",
+  alpha = 0.7
+)
 }
 \arguments{
-\item{formula}{A formula of the form \code{y ~ x} or \code{y ~ x|z} where \code{y} is a
+\item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
+
+\item{formula}{A formula with shape: \code{y ~ x} or \code{y ~ x|z} where \code{y} is a
 numerical variable and both \code{x} and \code{z} are factors.}
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
-\item{col}{Colour passed to \link{barchart}.}
+\item{fill}{Colour used to fill the bars.}
 
-\item{aspect}{Physical aspect ratio passed to \link{barchart}.}
+\item{col}{Colour used for the borders of the bars.}
 
-\item{...}{Further arguments passed to \link{barchart}.}
+\item{alpha}{Opacity of the colour fill (0 = invisible, 1 = opaque).}
 }
 \description{
-\code{bar_error} constructs bar charts in \code{lattice} with error bars showing 95% bootstrapped
+\code{bar_error} constructs bar charts in with error bars showing 95% bootstrapped
 confidence intervals around mean values. High of bars represent mean values.
 }
-\details{
-Limits for the y-axis have to be estimated; lower limit should be zero and upper limit higher than
-the maximum upper confidence interval.
-}
 \examples{
+require(dplyr)
+require(sjlabelled)
 data(birthwt, package = "MASS")
-birthwt$smoke <- factor(birthwt$smoke, labels = c("Non-smoker", "Smoker"))
-gen_bst_df(bwt ~ smoke, data = birthwt) # To estimate limits of y-axis.
-bar_error(bwt ~ smoke, data = birthwt, ylab = "Birth weight (g)", ylim = c(0, 3500))
+birthwt <- birthwt \%>\%
+  mutate(
+    smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
+    Race = factor(race > 1, labels = c("White", "Non-white"))
+  ) \%>\%
+  var_labels(
+    bwt = 'Birth weight (g)',
+    smoke = 'Smoking status'
+ )
 
-birthwt$race <- factor(birthwt$race, labels = c("White", "African American", "Other"))
-gen_bst_df(bwt ~ race|smoke, data = birthwt) # To estimate limits of y-axis.
-bar_error(bwt ~ race|smoke, data = birthwt, ylab = "Birth weight (g)", ylim = c(0, 3800))
+birthwt \%>\%
+  bar_error(bwt ~ smoke, fill = 'plum3') \%>\%
+  axis_labs()
 
-bar_error(bwt ~ race|smoke, data = birthwt, ylab = "Birth weight (g)", ylim = c(0, 3800),
-          col = c("gray95", "gray20", "gray50"))
-}
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
+birthwt \%>\%
+  bar_error(bwt ~ smoke|Race, fill = 'plum3') \%>\%
+  axis_labs()
 
-Deepayan Sarkar, R-Core.
+birthwt \%>\%
+  bar_error(bwt ~ smoke, fill = ~ Race) \%>\%
+  axis_labs()
+
+birthwt \%>\%
+  bar_error(bwt ~ smoke, col = ~ Race, fill = 'white') \%>\%
+  gf_refine(ggsci::scale_color_jama()) \%>\%
+  axis_labs()
 }

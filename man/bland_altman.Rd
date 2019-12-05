@@ -4,18 +4,33 @@
 \alias{bland_altman}
 \title{Bland-Altman agreement plots.}
 \usage{
-bland_altman(formula, data, transform = FALSE, aspect = 3/4, ...)
+bland_altman(
+  object = NULL,
+  formula = NULL,
+  data = NULL,
+  pch = 20,
+  size = 1,
+  col = "black",
+  transform = FALSE,
+  ...
+)
 }
 \arguments{
-\item{formula}{A formula of the form y ~ x (see details).}
+\item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
+
+\item{formula}{A formula with shape: y ~ x (see details).}
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
+\item{pch}{Symbol for plotting data.}
+
+\item{size}{Size of the symbol using to plot data.}
+
+\item{col}{Colour used for the symbol to plot data.}
+
 \item{transform}{Logical, should ratios instead of difference be used to construct the plot?}
 
-\item{aspect}{Physical aspect ratio passed to \link{xyplot}.}
-
-\item{...}{Further arguments passed to \link{xyplot}.}
+\item{...}{Further arguments passed to \code{\link{gf_point}}.}
 }
 \description{
 Bland-Altman agreement plots.
@@ -29,13 +44,19 @@ outcomes (difference in the log scale) by using option \code{transform = TRUE}.
 }
 \examples{
 data(wright, package = "ISwR")
-bland_altman(mini.wright ~ std.wright, data = wright, pch = 16)
-bland_altman(mini.wright ~ std.wright, data = wright, pch = 16,
-             ylab = "Large-mini expiratory flow rate (l/min)",
-             xlab = "Mean expiratory flow rate (l/min)")
-}
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 
-Deepayan Sarkar, R-Core.
+wright \%>\%
+  bland_altman(mini.wright ~ std.wright, pch = 16,
+               ylab = "Large-mini expiratory flow rate (l/min)",
+               xlab = "Mean expiratory flow rate (l/min)") \%>\%
+ gf_labs(y = "Large-mini expiratory flow rate (l/min)",
+         x = "Mean expiratory flow rate (l/min)") \%>\%
+ gf_theme(theme = sjPlot::theme_sjplot2(base_size = 9))
+
+data(Sharples)
+
+Sharples \%>\%
+  bland_altman(srweight ~ weight, transform = TRUE) \%>\%
+  gf_labs(x = "Mean of weights (kg)", y = "Measured weight / Self-reported weight") \%>\%
+  gf_theme(theme = sjPlot::theme_sjplot2(base_size = 9))
 }

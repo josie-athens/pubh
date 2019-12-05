@@ -30,16 +30,6 @@ cancer <- expand_df(cancer)
 
 contingency2(171, 389, 29, 386, method = "case.control")
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-
-Mark Stevenson, Faculty of Veterinary and Agricultural Sciences, The University of Melbourne, Australia.
-
-Cord Heuer, EpiCentre, IVABS, Massey University, Palmerston North, New Zealand.
-
-Jim Robison-Cox , Department of Math Sciences, Montana State University, Montana, USA.
-
-Kazuki Yoshida, Brigham and Women's Hospital, Boston Massachusetts, USA.
-
-Simon Firestone, Faculty of Veterinary and Agricultural Sciences, The University of Melbourne, Australia.
+\seealso{
+\code{epiR::epi.2by2}
 }

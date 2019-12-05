@@ -21,6 +21,7 @@ An international case-control study to test the hypothesis that breast
 cancer is related to the age that a woman gives childbirth.
 }
 \examples{
-odds_trend(Cancer ~ Age, data = Macmahon)
+odds_trend(Cancer ~ Age, data = Macmahon)$df
+odds_trend(Cancer ~ Age, data = Macmahon)$fig
 }
 \keyword{datasets}

@@ -22,8 +22,6 @@ data(diet, package = "Epi")
 model <- glm(chd ~ fibre, data = diet, family = binomial)
 rank_influence(model)
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-
-Several R core team members and John Fox, originally in his \code{car} package.
+\seealso{
+\code{car::influence.measures}
 }

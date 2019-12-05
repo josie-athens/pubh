@@ -29,6 +29,3 @@ p2 <- 80 / 220
 prop_or(p2 = p2, or = or)
 20 / 240
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago.
-}

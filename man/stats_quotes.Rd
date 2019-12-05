@@ -16,6 +16,3 @@ stats_quotes(x, data2, digits = 2)
 \description{
 \code{stats_quotes} is an internal function called by \code{estat}.
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-}

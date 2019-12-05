@@ -4,10 +4,12 @@
 \alias{diag_test}
 \title{Diagnostic tests from variables.}
 \usage{
-diag_test(formula, data, ...)
+diag_test(object = NULL, formula = NULL, data = NULL, ...)
 }
 \arguments{
-\item{formula}{A formula of the form outcome ~ predictor (see details).}
+\item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
+
+\item{formula}{A formula with shape: outcome ~ predictor (see details).}
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
@@ -27,10 +29,10 @@ BCG <- gl(2, 1, 4, labels=c("Negative", "Positive"))
 Xray <- gl(2, 2, labels=c("Negative", "Positive"))
 tb <- data.frame(Freq, BCG, Xray)
 tb <- expand_df(tb)
-diag_test(BCG ~ Xray, data=tb)
-}
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 
-Mark Stevenson, Faculty of Veterinary and Agricultural Sciences, The University of Melbourne, Australia.
+tb \%>\%
+  diag_test(BCG ~ Xray)
+}
+\seealso{
+\code{epiR::epi.tests}
 }

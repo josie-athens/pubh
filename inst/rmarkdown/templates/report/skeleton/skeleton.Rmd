@@ -8,6 +8,8 @@ output:
     number_sections: true
     toc: yes
     toc_depth: 3
+    fig_height: 4
+    fig_width: 5
   bookdown::word_document2:
     fig_height: 4
     fig_width: 5
@@ -21,23 +23,30 @@ output:
     fig_height: 4
     fig_width: 5
 link-citations: yes
+always_allow_html: yes
+tables: true
 ---
 
-```{r echo = FALSE, message = FALSE}
+```{r message = FALSE}
 rm(list = ls())
+library(broom)
 library(car)
-library(dplyr)
 library(Hmisc)
-library(kableExtra)
-library(latex2exp)
-library(magrittr)
 library(MASS)
-library(moonBook)
+library(kableExtra)
+library(dplyr)
 library(mosaic)
+library(latex2exp)
+library(moonBook)
 library(pubh)
+library(sjlabelled)
+library(sjPlot)
 
-options(table_counter=TRUE)
-theme_set(theme_sjplot2(base_size = 10))
+theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
+options(table_counter = TRUE)
+options(knitr.table.format = 'pandoc')
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", 
+                      message = FALSE, warning = FALSE)
 ```
 

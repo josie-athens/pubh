@@ -4,7 +4,7 @@
 \alias{bst}
 \title{Bootstrap Confidence Intervals.}
 \usage{
-bst(x, stat = "mean", n = 1000, CI = 95)
+bst(x, stat = "mean", n = 1000, CI = 95, digits = 2)
 }
 \arguments{
 \item{x}{A numerical variable. Missing observations are removed by default.}
@@ -14,6 +14,8 @@ bst(x, stat = "mean", n = 1000, CI = 95)
 \item{n}{Number of replicates for the bootstrap (n=1000 by default).}
 
 \item{CI}{Confidence intervals (CI=95 by default).}
+
+\item{digits}{Number of digits for rounding (default = 2).}
 }
 \value{
 A data frame with the estimate and confidence intervals.
@@ -26,7 +28,4 @@ data(IgM, package="ISwR")
 bst(IgM, "median")
 
 bst(IgM, "gmean")
-}
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
 }

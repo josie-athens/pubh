@@ -4,17 +4,21 @@
 \alias{odds_trend}
 \title{Function to calculate OR using Wald CI, and plot trend.}
 \usage{
-odds_trend(formula, data, ...)
+odds_trend(formula, data, angle = 45, hjust = 1, ...)
 }
 \arguments{
-\item{formula}{A formula of the form outcome ~ exposure.}
+\item{formula}{A formula with shape: outcome ~ exposure.}
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
+
+\item{angle}{Angle of for the x labels (default = 45).}
+
+\item{hjust}{Horizontal adjustment for x labels (default = 1).}
 
 \item{...}{Passes optional arguments to \link{oddsratio}.}
 }
 \value{
-Displays odds ratio, analysis of trend and plot.
+A list with components \code{df} a data frame with the results and \code{fig} corresponding plot.
 }
 \description{
 \code{odds_trend} calculates the odds ratio with confidence intervals (Wald) for different levels
@@ -36,13 +40,16 @@ breast <- data.frame(Freq, Biopsy, Weight)
 breast
 
 breast <- expand_df(breast)
-odds_trend(Biopsy ~ Weight, data = breast)
+require(sjlabelled)
+
+breast = var_labels(breast,
+  Weight = 'Weight group'
+  )
+
+odds_trend(Biopsy ~ Weight, data = breast)$df
+
+odds_trend(Biopsy ~ Weight, data = breast)$fig
 }
 \seealso{
-\link{oddsratio}
-}
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-
-Tomas Aragon, University of Berkeley, USA.
+\code{epitools::oddsratio}
 }

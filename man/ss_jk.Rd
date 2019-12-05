@@ -25,6 +25,3 @@ mean(x)
 ss_jk(x, mean(x))
 jack_knife(x)
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-}

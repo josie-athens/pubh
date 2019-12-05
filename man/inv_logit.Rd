@@ -12,6 +12,3 @@ inv_logit(x)
 \description{
 \code{inv_logit} Calculates the inverse of the logit (probability in logistic regression)
 }
-\author{
-Josie Athens, Department of Preventive and Social Medicine, University of Otago, New Zealand.
-}
