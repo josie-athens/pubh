@@ -4,7 +4,7 @@
 \name{Fentress}
 \alias{Fentress}
 \title{Migraine pain reduction.}
-\format{A data frame with 18 rows and 2 variables:
+\format{A labelled data frame with 18 rows and 2 variables:
 \describe{
 \item{pain}{Reduction in weekly headache activity expressed as percentage of baseline data.}
 \item{group}{Group, a factor with levels "Untreated", "Relaxation" (alone) and "Biofeedback" (relaxation
@@ -24,6 +24,10 @@ Randomised control trial on children suffering from frequent and severe migraine
 untreated children. The active treatments were either relaxation alone or relaxation with biofeedback.
 }
 \examples{
-strip_error(pain ~ group, data = Fentress, ylab = "Pain reduction (\%)")
+data(Fentress)
+
+Fentress \%>\%
+  strip_error(pain ~ group) \%>\%
+  axis_labs()
 }
 \keyword{datasets}

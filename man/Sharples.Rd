@@ -24,7 +24,9 @@ Data on measured and self-reported weight from 40–50 year old participants in 
 Life In New Zealand Survey.
 }
 \examples{
-bland_altman(srweight ~ weight, data = Sharples, transform = TRUE, pch = 20, col = 1,
-             xlab = "Mean of weights (kg)", ylab = "Measured weight / Self-reported weight")
+Sharples \%>\%
+  bland_altman(srweight ~ weight, transform = TRUE) \%>\%
+  gf_labs(x = "Mean of weights (kg)", y = "Measured weight / Self-reported weight") \%>\%
+  gf_theme(theme = sjPlot::theme_sjplot2(base_size = 9))
 }
 \keyword{datasets}

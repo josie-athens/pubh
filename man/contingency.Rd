@@ -45,16 +45,6 @@ cancer <- expand_df(cancer)
 contingency(status ~ alcohol, data = cancer, method = "case.control")
 
 data(Oncho, package = 'pubh')
-require(sjlabelled)
-Oncho <- Oncho \%>\%
-  var_labels(
-    mf = 'Infection',
-    area = 'Residence',
-    agegrp = 'Age group (years)',
-    sex = 'Sex',
-    mfload = 'Load',
-    lesions = 'Number of lesions'
- )
 
 Oncho \%>\%
   cross_tab(mf ~ area)

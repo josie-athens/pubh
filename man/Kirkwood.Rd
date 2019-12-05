@@ -4,7 +4,7 @@
 \name{Kirkwood}
 \alias{Kirkwood}
 \title{Body weight and plasma volume.}
-\format{A data frame with 8 rows and 3 variables:
+\format{A labelled data frame with 8 rows and 3 variables:
 \describe{
 \item{subject}{Subject ID.}
 \item{weight}{Body weight in kg.}
@@ -20,7 +20,11 @@ Kirkwood
 Body weight and plasma volume in eight healthy men.
 }
 \examples{
-rbind(estat(~ weight, data = Kirkwood, label = c("Weight (kg)")),
-      estat(~ volume, data = Kirkwood, label = c("Volume (l)")))
+data(Kirkwood)
+
+Kirkwood \%>\%
+  gf_point(volume ~ weight) \%>\%
+  gf_lm(col = "indianred3", interval = "confidence", fill = "indianred3") \%>\%
+  axis_labs()
 }
 \keyword{datasets}

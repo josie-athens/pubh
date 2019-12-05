@@ -9,8 +9,9 @@ hist_norm(
   formula = NULL,
   data = NULL,
   binwidth = NULL,
-  fill = "gray70",
+  fill = "indianred3",
   color = "black",
+  alpha = 0.7,
   ...
 )
 }
@@ -26,6 +27,8 @@ hist_norm(
 \item{fill}{Colour to fill the bars of the histogram.}
 
 \item{color}{Colour used for the border of the bars.}
+
+\item{alpha}{Opacity (0 = invisible, 1 = opaque).}
 
 \item{...}{Further arguments passed to \link{gf_dhistogram}.}
 }

@@ -4,7 +4,7 @@
 \name{Brenner}
 \alias{Brenner}
 \title{Prevalence of Helicobacter pylori infection in preschool children.}
-\format{A data frame with 863 rows and 2 variables:
+\format{A labelled data frame with 863 rows and 2 variables:
 \describe{
 \item{Ulcer}{History of duodenal or gastric ulcer, factor with levels "No" and "Yes".}
 \item{Infected}{Infected with Helicobacter pylori, factor with levels "No" and "Yes".}
@@ -23,6 +23,9 @@ according to parental history of duodenal or gastric ulcer.
 }
 \examples{
 data(Brenner)
+Brenner \%>\%
+  cross_tab(Infected ~ Ulcer)
+
 contingency(Infected ~ Ulcer, data = Brenner, method = "cross.sectional")
 }
 \keyword{datasets}

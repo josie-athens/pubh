@@ -4,7 +4,7 @@
 \name{Sandler}
 \alias{Sandler}
 \title{Passive smoking in adulthood and cancer risk.}
-\format{A data frame with 998 rows and 3 variables:
+\format{A labelled data frame with 998 rows and 3 variables:
 \describe{
 \item{passive}{Passive smoker, factor with levels "No" and "Yes".}
 \item{cancer}{Diagnosed with cancer, factor with levels "No" and "Yes".}
@@ -22,6 +22,14 @@ on cancer. Passive smoking was defined as exposure to the cigarette smoke
 of a spouse who smoked at least one cigarette per day for at least 6 months.
 }
 \examples{
+data(Sandler)
+
+Sandler \%>\%
+  cross_tab(cancer ~ passive)
+
+Sandler \%>\%
+  cross_tab(cancer ~ smoke|passive)
+
 mhor(cancer ~ smoke/passive, data = Sandler)
 }
 \keyword{datasets}

@@ -336,6 +336,7 @@ qq_plot <- function(object = NULL, formula = NULL, data = NULL, pch = 20,
 #' @param binwidth The width of the histogram bins.
 #' @param fill Colour to fill the bars of the histogram.
 #' @param color Colour used for the border of the bars.
+#' @param alpha Opacity (0 = invisible, 1 = opaque).
 #' @param ... Further arguments passed to \link{gf_dhistogram}.
 #' @examples
 #' require(dplyr)
@@ -359,7 +360,8 @@ qq_plot <- function(object = NULL, formula = NULL, data = NULL, pch = 20,
 #'   hist_norm(~ bwt|smoke, alpha = 0.7, bins = 20, fill = 'cadetblue') %>%
 #'   axis_labs()
 hist_norm <- function(object = NULL, formula = NULL, data = NULL,
-                      binwidth = NULL, fill = 'gray70', color = 'black', ...)
+                      binwidth = NULL, fill = 'indianred3',
+                      color = 'black', alpha = 0.7, ...)
 {
   if (inherits(object, "formula")) {
     formula <- object
@@ -510,7 +512,7 @@ strip_error <- function(object = NULL, formula = NULL, data = NULL,
 #'   gf_refine(ggsci::scale_color_jama()) %>%
 #'   axis_labs()
 bar_error <- function(object = NULL, formula = NULL, data = NULL,
-                      fill = 'darkgrey', col = 'black', alpha = 0.7)
+                      fill = 'indianred3', col = 'black', alpha = 0.7)
 {
   if (inherits(object, "formula")) {
     formula <- object

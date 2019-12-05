@@ -4,7 +4,7 @@
 \name{Rothman}
 \alias{Rothman}
 \title{Oral contraceptives and stroke.}
-\format{A data frame with 477 rows and 3 variables:
+\format{A labelled data frame with 477 rows and 3 variables:
 \describe{
 \item{stroke}{Thrombotic stroke, factor with levels "No" and "Yes".}
 \item{oc}{Current user of oral contraceptives, factor with levels "Non-user" and "User".}
@@ -28,6 +28,10 @@ been used as an example of join exposure by Rothman for measuring interactions (
 }
 \examples{
 data(Rothman)
+
+Rothman \%>\%
+  cross_tab(stroke ~ oc|ht)
+
 mhor(stroke ~ ht/oc, data = Rothman)
 
 ## Model with standard interaction term:
@@ -41,10 +45,16 @@ Rothman$join[Rothman$oc == "User" & Rothman$ht == "No"] <- 2
 Rothman$join[Rothman$oc == "User" & Rothman$ht == "Yes"] <- 3
 Rothman$join <- factor(Rothman$join, labels=c("Unexposed", "Hypertension", "OC user",
                        "OC and hypertension"))
-with(Rothman, table(join))
+
+require(sjlabelled)
+Rothman$join <- set_label(Rothman$join, label = "Exposure")
+
+Rothman \%>\%
+  cross_tab(stroke ~ join)
 
 model2 <- glm(stroke ~ join, data = Rothman, family = binomial)
 glm_coef(model2)
-odds_trend(stroke ~ join, data = Rothman)
+odds_trend(stroke ~ join, data = Rothman)$df
+odds_trend(stroke ~ join, data = Rothman)$fig
 }
 \keyword{datasets}

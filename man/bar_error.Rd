@@ -8,7 +8,7 @@ bar_error(
   object = NULL,
   formula = NULL,
   data = NULL,
-  fill = "darkgrey",
+  fill = "indianred3",
   col = "black",
   alpha = 0.7
 )

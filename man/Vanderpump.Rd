@@ -4,7 +4,7 @@
 \name{Vanderpump}
 \alias{Vanderpump}
 \title{Smoking and mortality in Whickham, England.}
-\format{A data frame with 1314 rows and 3 variables:
+\format{A labelled data frame with 1314 rows and 3 variables:
 \describe{
 \item{vstatus}{Vitality status, factor with levels "Alive" and "Death".}
 \item{smoker}{Smoking status, factor with levels "Non-smoker" and "Smoker".}
@@ -12,6 +12,9 @@
 }}
 \source{
 Vanderpump, MP, et al (1996) Thyroid, 6:155-160.
+
+Appleton, DR, French, JM and Vanderpump, PJ (1996) Ignoring a covariate:
+An example of Simpson's paradox. The American Statistician 50:340-341.
 
 Vittinghoff, E, Glidden, DV, Shiboski, SC and McCulloh, CE (2005) Regression methods in
 Biostatistics. Springer.
@@ -23,6 +26,13 @@ Vanderpump
 Data represents women participating in a health survey in Whickham, England in 1972-1974.
 }
 \examples{
+data(Vanderpump)
+Vanderpump \%>\%
+  cross_tab(vstatus ~ smoker)
+
+Vanderpump \%>\%
+  cross_tab(vstatus ~ smoker|agegrp)
+
 mhor(vstatus ~ agegrp/smoker, data = Vanderpump)
 }
 \keyword{datasets}

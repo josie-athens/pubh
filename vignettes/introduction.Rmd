@@ -115,8 +115,6 @@ data(Hodgkin)
 Hodgkin <- Hodgkin %>%
   mutate(Ratio = CD4/CD8) %>%
   var_labels(
-    CD4 = "CD4 T cells (cells / mm3)",
-    CD8 = "CD8 T cells (cells / mm3)",
     Ratio = "CD4 / CD8 T cells ratio"
     )
 kable(head(Hodgkin))
@@ -367,14 +365,6 @@ data(Bernard)
 kable(head(Bernard))
 ```
 
-```{r}
-Bernard <- Bernard %>%
-  var_labels(treat = "Treatment",
-             race = "Race",
-             fate = "Outcome at 30 days")
-```
-
-
 Let's look at the table:
 
 ```{r}
@@ -455,14 +445,7 @@ Example: An international case-control study to test the hypothesis that breast 
 
 ```{r}
 data(Oncho)
-Oncho = var_labels(Oncho,
-                   mf = 'Infection',
-                   area = 'Residence',
-                   agegrp = 'Age group (years)',
-                   sex = 'Sex',
-                   mfload = 'Load',
-                   lesions = 'Number of lesions'
-                  )
+
 odds_trend(mf ~ agegrp, data = Oncho, angle = 0, hjust = 0.5)$fig %>%
   gf_path()
 ```

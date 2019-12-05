@@ -4,7 +4,7 @@
 \name{Bernard}
 \alias{Bernard}
 \title{Survival of patients with sepsis.}
-\format{A data frame with 455 rows and 9 variables:
+\format{A labelled data frame with 455 rows and 9 variables:
 \describe{
 \item{id}{Patient ID}
 \item{treat}{Treatment, factor with levels "Placebo" and "Ibuprofen".}
@@ -28,6 +28,11 @@ A randomised, double-blind, placebo-controlled trial of intravenous ibuprofen in
 had sepsis, defined as fever, tachycardia, tachypnea, and acute failure of at least one organ system.
 }
 \examples{
+data(Bernard)
+
+Bernard \%>\%
+  cross_tab(fate ~ treat)
+
 contingency(fate ~ treat, data = Bernard)
 }
 \keyword{datasets}

@@ -4,7 +4,7 @@
 \name{Tuzson}
 \alias{Tuzson}
 \title{Peak knee velocity in walking at flexion and extension.}
-\format{A data frame with 18 rows and 2 variables:
+\format{A labelled data frame with 18 rows and 2 variables:
 \describe{
 \item{flexion}{Peak knee velocity in gait: flexion (degree/s).}
 \item{extension}{Peak knee velocity in gait: extension (degree/s).}
@@ -21,6 +21,12 @@ Data of peak knee velocity in walking at flexion and extension in studies about 
 in cerebral palsy.
 }
 \examples{
+data(Tuzson)
+
+Tuzson \%>\%
+  gf_point(flexion ~ extension) \%>\%
+  axis_labs()
+
 cor.test(~ flexion + extension, data = Tuzson)
 }
 \keyword{datasets}
