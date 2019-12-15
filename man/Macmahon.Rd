@@ -4,7 +4,7 @@
 \name{Macmahon}
 \alias{Macmahon}
 \title{Breast cancer and age of childbirth.}
-\format{A labelled data frame with 185 rows and 2 variables:
+\format{A labelled tibble with 185 rows and 2 variables:
 \describe{
 \item{Cancer}{Diagnosed with breast cancer, a factor with levels "No" and "Yes".}
 \item{Age}{Age mother gives childbirth, factor with levels "<20", "20-24",
@@ -22,9 +22,9 @@ cancer is related to the age that a woman gives childbirth.
 }
 \examples{
 data(Macmahon)
+require(moonBook)
 
-Macmahon \%>\%
-  cross_tab(Cancer ~ Age)
+mytable(Cancer ~ Age, data = Macmahon, show.total = TRUE)
 
 odds_trend(Cancer ~ Age, data = Macmahon)$df
 odds_trend(Cancer ~ Age, data = Macmahon)$fig

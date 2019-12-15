@@ -4,7 +4,7 @@
 \name{Sharples}
 \alias{Sharples}
 \title{Measured and self-reported weight in New Zealand.}
-\format{A data frame with 343 rows and 4 variables:
+\format{A tibble with 343 rows and 4 variables:
 \describe{
 \item{srweight}{Self-reported weight in kg.}
 \item{weight}{Measured weight in kg.}

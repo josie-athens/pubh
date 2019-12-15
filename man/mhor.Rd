@@ -38,8 +38,8 @@ oswego <- oswego \%>\%
     chocolate.ice.cream = "Consumed chocolate ice cream"
   )
 
-oswego \%>\%
-  cross_tab(ill ~ sex|chocolate.ice.cream)
+require(moonBook)
+mytable(ill ~ sex + chocolate.ice.cream, data = oswego, show.total = TRUE)
 
 oswego \%>\%
   mhor(ill ~ sex/chocolate.ice.cream)

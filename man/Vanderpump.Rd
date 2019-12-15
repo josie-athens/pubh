@@ -4,7 +4,7 @@
 \name{Vanderpump}
 \alias{Vanderpump}
 \title{Smoking and mortality in Whickham, England.}
-\format{A labelled data frame with 1314 rows and 3 variables:
+\format{A labelled tibble with 1314 rows and 3 variables:
 \describe{
 \item{vstatus}{Vitality status, factor with levels "Alive" and "Death".}
 \item{smoker}{Smoking status, factor with levels "Non-smoker" and "Smoker".}
@@ -27,11 +27,11 @@ Data represents women participating in a health survey in Whickham, England in 1
 }
 \examples{
 data(Vanderpump)
-Vanderpump \%>\%
-  cross_tab(vstatus ~ smoker)
+require(moonBook)
 
-Vanderpump \%>\%
-  cross_tab(vstatus ~ smoker|agegrp)
+mytable(vstatus ~ smoker, data = Vanderpump, show.total = TRUE)
+
+mytable(vstatus + smoker ~ agegrp, data = Vanderpump, show.total = TRUE)
 
 mhor(vstatus ~ agegrp/smoker, data = Vanderpump)
 }

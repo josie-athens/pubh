@@ -45,5 +45,5 @@ kfm \%>\%
   estat(~ weight|sex)
 }
 \seealso{
-\code{summary}, \code{moonBook::mytable}.
+\code{summary}, \code{\link[moonBook]{mytable}}.
 }

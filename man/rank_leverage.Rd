@@ -26,5 +26,5 @@ mean(x)
 head(rank_leverage(x))
 }
 \seealso{
-\link{jack_knife}
+\code{\link{jack_knife}}.
 }

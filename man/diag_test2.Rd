@@ -16,7 +16,7 @@ diag_test2(aa, bb, cc, dd)
 \item{dd}{Number of cases where both screening test and the gold standard are negative.}
 }
 \description{
-\code{diag_test2} is a wrap that calls \link{epi.tests} from package \code{epiR}.
+\code{diag_test2} is a wrap that calls \code{epi.tests} from package \code{epiR}.
 It computes sensitivity, specificity and other statistics related with screening tests.
 }
 \details{
@@ -27,5 +27,5 @@ It computes sensitivity, specificity and other statistics related with screening
 diag_test2(22, 51, 8, 1739)
 }
 \seealso{
-\code{epiR::epi.tests}
+\code{\link[epiR]{epi.tests}}.
 }

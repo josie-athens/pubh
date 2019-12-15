@@ -4,7 +4,7 @@
 \name{Thall}
 \alias{Thall}
 \title{RCT on the treatment of epilepsy.}
-\format{A data frame with 59 rows and 8 variables:
+\format{A tibble with 59 rows and 8 variables:
 \describe{
 \item{id}{Subject ID.}
 \item{treat}{Treatment, factor with levels "Control" and "Prograbide".}
@@ -41,9 +41,9 @@ c3 <- cbind(Thall[, c(1:4, 7)], count = Thall$y3)[, c(1:4, 6)]
 c4 <- cbind(Thall[, c(1:4, 8)], count = Thall$y3)[, c(1:4, 6)]
 epilepsy <- rbind(c1, c2, c3, c4)
 
-library(lme4, warn.conflicts = FALSE)
+require(lme4)
 model_glmer <- glmer(count ~ treat + base + I(age - mean(age, na.rm = TRUE)) +
-                 (1|id), data=epilepsy, family=poisson)
+                 (1|id), data = epilepsy, family = poisson)
 glm_coef(model_glmer, labels = c("Treatment (Prograbide/Control)",
                                "Baseline count", "Age (years)"))
 }

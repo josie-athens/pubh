@@ -15,7 +15,7 @@ odds_trend(formula, data, angle = 45, hjust = 1, ...)
 
 \item{hjust}{Horizontal adjustment for x labels (default = 1).}
 
-\item{...}{Passes optional arguments to \link{oddsratio}.}
+\item{...}{Passes optional arguments to \code{oddsratio}.}
 }
 \value{
 A list with components \code{df} a data frame with the results and \code{fig} corresponding plot.
@@ -26,7 +26,7 @@ A list with components \code{df} a data frame with the results and \code{fig} co
 significant or not.
 }
 \details{
-\code{odds_trend} is a wrap function that calls \link{oddsratio} from package \code{epitools}.
+\code{odds_trend} is a wrap function that calls \code{oddsratio} from package \code{epitools}.
 }
 \examples{
 ## A cross-sectional study looked at the association between obesity and a biopsy resulting
@@ -52,4 +52,6 @@ odds_trend(Biopsy ~ Weight, data = breast)$fig
 }
 \seealso{
 \code{epitools::oddsratio}
+
+\code{\link[epitools]{oddsratio}}.
 }

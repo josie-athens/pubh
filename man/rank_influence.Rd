@@ -23,5 +23,5 @@ model <- glm(chd ~ fibre, data = diet, family = binomial)
 rank_influence(model)
 }
 \seealso{
-\code{car::influence.measures}
+\code{\link[stats]{influence.measures}}.
 }

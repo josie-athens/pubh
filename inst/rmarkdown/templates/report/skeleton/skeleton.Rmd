@@ -34,7 +34,7 @@ library(car)
 library(Hmisc)
 library(MASS)
 library(kableExtra)
-library(dplyr)
+library(tidyverse)
 library(mosaic)
 library(latex2exp)
 library(moonBook)
@@ -44,9 +44,8 @@ library(sjPlot)
 
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
-options(table_counter = TRUE)
-options(knitr.table.format = 'pandoc')
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", 
+options(knitr.table.format = "pandoc")
+knitr::opts_chunk$set(collapse = TRUE, comment = NA, size = "small", 
                       message = FALSE, warning = FALSE)
 ```
 

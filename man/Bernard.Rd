@@ -4,7 +4,7 @@
 \name{Bernard}
 \alias{Bernard}
 \title{Survival of patients with sepsis.}
-\format{A labelled data frame with 455 rows and 9 variables:
+\format{A labelled tibble with 455 rows and 9 variables:
 \describe{
 \item{id}{Patient ID}
 \item{treat}{Treatment, factor with levels "Placebo" and "Ibuprofen".}
@@ -29,9 +29,9 @@ had sepsis, defined as fever, tachycardia, tachypnea, and acute failure of at le
 }
 \examples{
 data(Bernard)
+require(moonBook)
 
-Bernard \%>\%
-  cross_tab(fate ~ treat)
+mytable(fate ~ treat, data = Bernard, show.total = TRUE)
 
 contingency(fate ~ treat, data = Bernard)
 }

@@ -17,3 +17,28 @@ The estimated value of the predictor.
 \description{
 \code{predict_inv} Calculates the value the predictor x that generates value y with a simple linear model.
 }
+\examples{
+## Spectrophotometry example. Titration curve for riboflavin (nmol/ml). The sample has an absorbance
+## of 1.15. Aim is to estimate the concentration of riboflavin in the sample.
+
+Riboflavin <- seq(0, 80, 10)
+OD <- 0.0125 * Riboflavin + rnorm(9, 0.6, 0.03)
+titration <- data.frame(Riboflavin, OD)
+
+require(sjlabelled)
+titration <- titration \%>\%
+  var_labels(
+    Riboflavin = "Riboflavin (nmol/ml)",
+    OD = "Optical density"
+  )
+
+titration \%>\%
+  gf_point(OD ~ Riboflavin) \%>\%
+  gf_smooth(col = 'indianred3', se = TRUE, lwd = 0.5, method = 'loess') \%>\%
+  axis_labs()
+
+## Model with intercept different from zero:
+model <- lm(OD ~ Riboflavin, data = titration)
+glm_coef(model)
+predict_inv(model, 1.15)
+}

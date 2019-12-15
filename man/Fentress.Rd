@@ -4,7 +4,7 @@
 \name{Fentress}
 \alias{Fentress}
 \title{Migraine pain reduction.}
-\format{A labelled data frame with 18 rows and 2 variables:
+\format{A labelled tibble with 18 rows and 2 variables:
 \describe{
 \item{pain}{Reduction in weekly headache activity expressed as percentage of baseline data.}
 \item{group}{Group, a factor with levels "Untreated", "Relaxation" (alone) and "Biofeedback" (relaxation

@@ -21,6 +21,7 @@ Pseudo R2 (logistic regression)
 \code{pseudo_r2} calculates three pseudo R2 of logistic regression models: 1) Nagelkerke, @0 Cox and Snell, 3) Hosmer and Lemeshow.
 }
 \examples{
+data(Oncho)
 model_oncho <- glm(mf ~ area, data = Oncho, binomial)
 glm_coef(model_oncho, labels = c("Constant", "Area (rainforest/savannah)"))
 pseudo_r2(model_oncho)

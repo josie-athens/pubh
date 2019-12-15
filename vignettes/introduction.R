@@ -1,5 +1,6 @@
 ## ----setup, include = FALSE---------------------------------------------------
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(collapse = TRUE, comment = NA, size = "small", 
+                      message = FALSE, warning = FALSE)
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  y ~ x, data = my_data
@@ -13,7 +14,7 @@ library(car)
 library(Hmisc)
 library(MASS)
 library(kableExtra)
-library(dplyr)
+library(tidyverse)
 library(mosaic)
 library(latex2exp)
 library(moonBook)
@@ -21,17 +22,16 @@ library(pubh)
 library(sjlabelled)
 library(sjPlot)
 
-## -----------------------------------------------------------------------------
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
+theme_update(legend.position = "top")
+options(knitr.table.format = 'pandoc')
 
 ## -----------------------------------------------------------------------------
 data(Hodgkin)
 Hodgkin <- Hodgkin %>%
   mutate(Ratio = CD4/CD8) %>%
   var_labels(
-    CD4 = "CD4 T cells (cells / mm3)",
-    CD8 = "CD8 T cells (cells / mm3)",
-    Ratio = "CD4 / CD8 T cells ratio"
+    Ratio = "CD4+ / CD8+ T-cells ratio"
     )
 kable(head(Hodgkin))
 
@@ -54,7 +54,8 @@ var.test(Ratio ~ Group, data = Hodgkin)
 
 ## -----------------------------------------------------------------------------
 Hodgkin %>%
-  qq_plot(~ Ratio|Group)
+  qq_plot(~ Ratio|Group) %>%
+  axis_labs()
 
 ## -----------------------------------------------------------------------------
 wilcox.test(Ratio ~ Group, data = Hodgkin)
@@ -85,7 +86,7 @@ birthwt <- birthwt %>%
 
 ## -----------------------------------------------------------------------------
 birthwt %>%
-  bar_error(bwt ~ smoke, fill = 'plum3') %>%
+  bar_error(bwt ~ smoke) %>%
   axis_labs()
 
 ## -----------------------------------------------------------------------------
@@ -98,7 +99,7 @@ t.test(bwt ~ smoke, data = birthwt)
 
 ## -----------------------------------------------------------------------------
 birthwt %>%
-  bar_error(bwt ~ smoke, fill ="plum3") %>%
+  bar_error(bwt ~ smoke) %>%
   axis_labs() %>%
   gf_star(x1 = 1, x2 = 2, y1 = 3400, y2 = 3500, y3 = 3550, "**")
 
@@ -110,7 +111,7 @@ birthwt %>%
 
 ## -----------------------------------------------------------------------------
 birthwt %>%
-  bar_error(bwt ~ smoke|Race, fill = 'plum3') %>%
+  bar_error(bwt ~ smoke|Race) %>%
   axis_labs()
 
 ## -----------------------------------------------------------------------------
@@ -154,18 +155,9 @@ data(Bernard)
 kable(head(Bernard))
 
 ## -----------------------------------------------------------------------------
-Bernard <- Bernard %>%
-  var_labels(treat = "Treatment",
-             race = "Race",
-             fate = "Outcome at 30 days")
-
-## -----------------------------------------------------------------------------
-mytable(treat ~ fate, data = Bernard, show.total = TRUE)$res[, 1:4] %>%
+mytable(treat ~ fate, data = Bernard, show.total = TRUE) %>%
+  mytable2df() %>%
   kable() 
-
-## -----------------------------------------------------------------------------
-Bernard %>%
-  cross_tab(treat ~ fate)
 
 ## -----------------------------------------------------------------------------
 dat <- matrix(c(84, 140 , 92, 139), nrow = 2, byrow = TRUE)
@@ -193,8 +185,7 @@ oswego <- oswego %>%
   )
 
 ## -----------------------------------------------------------------------------
-oswego %>%
-  cross_tab(ill ~ sex|chocolate.ice.cream)
+mytable(ill ~ sex + chocolate.ice.cream, data = oswego, show.total = TRUE)
 
 ## -----------------------------------------------------------------------------
 oswego %>%
@@ -202,14 +193,7 @@ oswego %>%
 
 ## -----------------------------------------------------------------------------
 data(Oncho)
-Oncho = var_labels(Oncho,
-                   mf = 'Infection',
-                   area = 'Residence',
-                   agegrp = 'Age group (years)',
-                   sex = 'Sex',
-                   mfload = 'Load',
-                   lesions = 'Number of lesions'
-                  )
+
 odds_trend(mf ~ agegrp, data = Oncho, angle = 0, hjust = 0.5)$fig %>%
   gf_path()
 
@@ -220,7 +204,7 @@ Xray <- gl(2, 2, labels=c("Negative", "Positive"))
 tb <- data.frame(Freq, BCG, Xray)
 tb <- expand_df(tb)
 
-diag_test(BCG ~ Xray, data=tb)
+diag_test(BCG ~ Xray, data = tb)
 
 ## -----------------------------------------------------------------------------
 diag_test2(22, 51, 8, 1739)

@@ -24,7 +24,7 @@ A data frame with the estimate and confidence intervals.
 \code{bst} estimates confidence intervals around the \link{mean}, \link{median} or \link{geo_mean}.
 }
 \examples{
-data(IgM, package="ISwR")
+data(IgM, package = "ISwR")
 bst(IgM, "median")
 
 bst(IgM, "gmean")

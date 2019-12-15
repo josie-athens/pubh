@@ -4,7 +4,7 @@
 \name{Tuzson}
 \alias{Tuzson}
 \title{Peak knee velocity in walking at flexion and extension.}
-\format{A labelled data frame with 18 rows and 2 variables:
+\format{A labelled tibble with 18 rows and 2 variables:
 \describe{
 \item{flexion}{Peak knee velocity in gait: flexion (degree/s).}
 \item{extension}{Peak knee velocity in gait: extension (degree/s).}

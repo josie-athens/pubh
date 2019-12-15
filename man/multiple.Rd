@@ -39,5 +39,5 @@ multiple(model_1, ~ race)$fig_pval \%>\%
 gf_labs(y = 'Race')
 }
 \seealso{
-\code{emmeans::emmeans}, \code{emmeans::pwpp}.
+\code{\link[emmeans]{emmeans}}, \code{\link[emmeans]{pwpp}}.
 }

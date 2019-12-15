@@ -14,7 +14,8 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(collapse = TRUE, comment = NA, size = "small", 
+                      message = FALSE, warning = FALSE)
 ```
 
 # Introduction
@@ -50,7 +51,7 @@ y ~ x, data = my_data
 
 Where `y` is the outcome or response variable, `x` is the exposure or predictor of interest and `my_data` specifies the name of the data frame where `x` and `y` can be found.
 
-The symbol `~` is used in `R` for formulas. It can be interpreted as *depends on*. In the most typical scenario, `y~x` means `y` depends on `x` or `y` is a function of `x`:
+The symbol `~` is used in `R` for formulas. It can be interpreted as *depends on*. In the most typical scenario, `y ~ x` means `y` depends on `x` or `y` is a function of `x`:
 
 `y = f(x)`
 
@@ -85,7 +86,7 @@ The main contributions of the `pubh` package to students and professionals from 
 
 Many options currently exists for displaying descriptive statistics. I recommend the function `mytable` from the `moonBook` package. It does a great job for both continuous and categorical (factors) outcomes. 
 
-The `estat` function from the `pubh` package displays descriptive statistics of continuous outcomes and like `mytable`, it can use *labels* to display nice tables. `estat` has less options than summarise and as such, is simpler to use, which is the main intention of the `pubh` package. Furthermore, as a way to aid in the understanding of the variability, `estat` displays also the relative dispersion (coefficient of variation) which is of particular interest for comparing variance between groups (factors).
+The `estat` function from the `pubh` package displays descriptive statistics of continuous outcomes and like `mytable`, it can use *labels* to display nice tables. `estat`. As a way to aid in the understanding of the variability, `estat` displays also the relative dispersion (coefficient of variation) which is of particular interest for comparing variances between groups (factors).
 
 Some examples. We start by loading packages as suggested in the Template of this package.
 
@@ -95,17 +96,17 @@ library(car)
 library(Hmisc)
 library(MASS)
 library(kableExtra)
-library(dplyr)
+library(tidyverse)
 library(mosaic)
 library(latex2exp)
 library(moonBook)
 library(pubh)
 library(sjlabelled)
 library(sjPlot)
-```
 
-```{r}
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
+theme_update(legend.position = "top")
+options(knitr.table.format = 'pandoc')
 ```
 
 We will use a data set about blood counts of T cells from patients in remission from Hodgkin's disease or in remission from disseminated malignancies. We generate the new variable `Ratio` and add labels to the variables.
@@ -115,7 +116,7 @@ data(Hodgkin)
 Hodgkin <- Hodgkin %>%
   mutate(Ratio = CD4/CD8) %>%
   var_labels(
-    Ratio = "CD4 / CD8 T cells ratio"
+    Ratio = "CD4+ / CD8+ T-cells ratio"
     )
 kable(head(Hodgkin))
 ```
@@ -129,7 +130,7 @@ Hodgkin %>%
 
 In the previous code, the left-hand side of the formula is empty as it's the case when working with only one variable.
 
-We can use `kable` to display nice tables with labels.
+We can use `kable` to display nice tables.
 
 ```{r}
 Hodgkin %>%
@@ -140,8 +141,10 @@ Hodgkin %>%
 
 For stratification, `estat` recognises the following two syntaxes:
 
-- `outcome ~ categorical predictor`
-- `~ outcome | categorical predictor`
+- `outcome ~ exposure`
+- `~ outcome | exposure`
+
+where, `outcome` is continuous and `exposure` is a categorical (`factor`) variable.
 
 For example:
 
@@ -166,7 +169,8 @@ What about normality? We can look at the QQ-plots against the standard Normal di
 
 ```{r}
 Hodgkin %>%
-  qq_plot(~ Ratio|Group)
+  qq_plot(~ Ratio|Group) %>%
+  axis_labs()
 ```
 
 Let's say we choose a non-parametric test to compare the groups:
@@ -235,7 +239,7 @@ birthwt <- birthwt %>%
 
 ```{r}
 birthwt %>%
-  bar_error(bwt ~ smoke, fill = 'plum3') %>%
+  bar_error(bwt ~ smoke) %>%
   axis_labs()
 ```
 
@@ -257,7 +261,7 @@ The final plot with annotation to highlight statistical difference (unadjusted):
 
 ```{r}
 birthwt %>%
-  bar_error(bwt ~ smoke, fill ="plum3") %>%
+  bar_error(bwt ~ smoke) %>%
   axis_labs() %>%
   gf_star(x1 = 1, x2 = 2, y1 = 3400, y2 = 3500, y3 = 3550, "**")
 ```
@@ -274,7 +278,7 @@ birthwt %>%
 
 ```{r}
 birthwt %>%
-  bar_error(bwt ~ smoke|Race, fill = 'plum3') %>%
+  bar_error(bwt ~ smoke|Race) %>%
   axis_labs()
 ```
 
@@ -368,15 +372,9 @@ kable(head(Bernard))
 Let's look at the table:
 
 ```{r}
-mytable(treat ~ fate, data = Bernard, show.total = TRUE)$res[, 1:4] %>%
+mytable(treat ~ fate, data = Bernard, show.total = TRUE) %>%
+  mytable2df() %>%
   kable() 
-```
-
-For cross-tabulation, the funciton `cross_tab` uses functions from the `expss` package to construct pretty tables.
-
-```{r}
-Bernard %>%
-  cross_tab(treat ~ fate)
 ```
 
 For `epi.2by2` we need to provide the table of counts in the correct order, so we would type something like:
@@ -429,8 +427,7 @@ oswego <- oswego %>%
 First we look at the cross-tabulation:
 
 ```{r}
-oswego %>%
-  cross_tab(ill ~ sex|chocolate.ice.cream)
+mytable(ill ~ sex + chocolate.ice.cream, data = oswego, show.total = TRUE)
 ```
 
 ```{r}
@@ -461,7 +458,7 @@ Xray <- gl(2, 2, labels=c("Negative", "Positive"))
 tb <- data.frame(Freq, BCG, Xray)
 tb <- expand_df(tb)
 
-diag_test(BCG ~ Xray, data=tb)
+diag_test(BCG ~ Xray, data = tb)
 ```
 
 Using the immediate version (direct input):

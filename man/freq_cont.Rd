@@ -25,6 +25,3 @@ Ab <- data.frame(IgM)
 estat(~ IgM, data = Ab)
 freq_cont(IgM, seq(0, 4.5, 0.5))
 }
-\seealso{
-\link{hist}
-}

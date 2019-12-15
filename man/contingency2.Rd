@@ -15,10 +15,10 @@ contingency2(aa, bb, cc, dd, ...)
 
 \item{dd}{Number of cases where both exposure and outcome are absent.}
 
-\item{...}{Further arguments passed to \link{epi.2by2}.}
+\item{...}{Further arguments passed to \code{epi.2by2}.}
 }
 \description{
-\code{contingency2} is a wrap that calls \link{epi.2by2} from package \code{epiR}.
+\code{contingency2} is a wrap that calls \code{epi.2by2} from package \code{epiR}.
 }
 \examples{
 ## A case-control study on the effect of alcohol on oesophageal cancer.
@@ -31,5 +31,5 @@ cancer <- expand_df(cancer)
 contingency2(171, 389, 29, 386, method = "case.control")
 }
 \seealso{
-\code{epiR::epi.2by2}
+\code{\link[epiR]{epi.2by2}}.
 }
