@@ -118,7 +118,7 @@ gf_star <- function(fig, x1, y1, x2, y2, y3, legend = "*", ...)
 #' The default adjusting method is "mvt" which uses the multivariate t distribution.
 #' Other options are: "bonferroni", "holm", "hochberg", "tukey" and "none".
 #' @return A list with objects: \code{df} A data frame with ajusted p-values, \code{fig_ci} a plot with confidence intervals, \code{fig_pval} a plot comparing adjusted p-values.
-#' @seealso \code{emmeans::emmeans}, \code{emmeans::pwpp}.
+#' @seealso \code{\link[emmeans]{emmeans}}, \code{\link[emmeans]{pwpp}}.
 #' @examples
 #' data(birthwt, package = "MASS")
 #' birthwt$race <- factor(birthwt$race, labels = c("White", "African American", "Other"))
@@ -230,6 +230,7 @@ bland_altman <- function(object = NULL, formula = NULL, data = NULL,
 #' @param formula A formula with shape: \code{y ~ x} where \code{y} is a numerical variable and \code{x} is a factor.
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param fill Colour used for the box passed to \code{\link{gf_boxplot}}.
+#' @param alpha Opacity (0 = invisible, 1 = opaque).
 #' @param outlier.shape Shape (\code{pch}) used as symbol for the outliers.
 #' @param outlier.size Size of the outlier symbol.
 #' @param ... Further arguments passed to \code{\link{gf_boxplot}}.
@@ -257,7 +258,7 @@ bland_altman <- function(object = NULL, formula = NULL, data = NULL,
 #'   axis_labs() %>%
 #'   gf_star(1, 10.9, 2, 11, 11.4, legend = 'p = 0.035', size = 2.5)
 box_plot <- function(object = NULL, formula = NULL, data = NULL,
-                     fill = "gray70",
+                     fill = "indianred3", alpha = 0.7,
                      outlier.shape = 20, outlier.size = 1, ...)
 {
   if (inherits(object, "formula")) {

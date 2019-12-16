@@ -29,15 +29,13 @@ tables: true
 
 ```{r message = FALSE}
 rm(list = ls())
-library(broom)
-library(car)
 library(Hmisc)
 library(MASS)
 library(kableExtra)
 library(tidyverse)
+library(finalfit)
 library(mosaic)
 library(latex2exp)
-library(moonBook)
 library(pubh)
 library(sjlabelled)
 library(sjPlot)

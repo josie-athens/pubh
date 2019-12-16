@@ -13,10 +13,10 @@ diag_test(object = NULL, formula = NULL, data = NULL, ...)
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
-\item{...}{Further arguments passed to \link{epi.tests}.}
+\item{...}{Further arguments passed to \code{epi.tests}.}
 }
 \description{
-\code{diag_test} is a wrap function that calls \link{epi.tests} from package \code{epiR}.
+\code{diag_test} is a wrap function that calls \code{epi.tests} from package \code{epiR}.
 It computes sensitivity, specificity and other statistics related with screening tests.
 }
 \details{
@@ -34,5 +34,5 @@ tb \%>\%
   diag_test(BCG ~ Xray)
 }
 \seealso{
-\code{epiR::epi.tests}
+\code{\link[epiR]{epi.tests}}.
 }

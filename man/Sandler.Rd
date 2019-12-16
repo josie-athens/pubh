@@ -23,11 +23,11 @@ of a spouse who smoked at least one cigarette per day for at least 6 months.
 }
 \examples{
 data(Sandler)
-require(moonBook)
 
-mytable(cancer ~ passive, data = Sandler, show.total = TRUE)
+Sandler \%>\%
+  cross_tab(cancer ~ passive)
 
-mytable(cancer ~ passive+smoke, data = Sandler, show.total = TRUE)
+cross_tab(cancer ~ passive + smoke, data = Sandler)
 
 mhor(cancer ~ smoke/passive, data = Sandler)
 }

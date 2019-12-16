@@ -4,7 +4,7 @@
 \name{Oncho}
 \alias{Oncho}
 \title{Onchocerciasis in Sierra Leone.}
-\format{A labelled data frame with 1302 rows and 7 variables:
+\format{A labelled tibble with 1302 rows and 7 variables:
 \describe{
 \item{id}{Subject ID.}
 \item{mf}{Infected with Onchocerciasis volvulus, factor with levels "Not-infected" and "Infected".}

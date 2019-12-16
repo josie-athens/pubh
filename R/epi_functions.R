@@ -65,8 +65,8 @@ expand_df <- function(aggregate.data, index.var = "Freq", retain.freq = FALSE)
 #'     chocolate.ice.cream = "Consumed chocolate ice cream"
 #'   )
 #'
-#' oswego %>%
-#'   cross_tab(ill ~ sex|chocolate.ice.cream)
+#' require(moonBook)
+#' mytable(ill ~ sex + chocolate.ice.cream, data = oswego, show.total = TRUE)
 #'
 #' oswego %>%
 #'   mhor(ill ~ sex/chocolate.ice.cream)
@@ -144,14 +144,15 @@ prop_or <- function(p2, or)
 #' (three or more) of the exposure variable, constructs the corresponding plot and calculates if the trend is
 #' significant or not.
 #'
-#' @details \code{odds_trend} is a wrap function that calls \link{oddsratio} from package \code{epitools}.
+#' @details \code{odds_trend} is a wrap function that calls \code{oddsratio} from package \code{epitools}.
 #' @seealso \code{epitools::oddsratio}
 #' @param formula A formula with shape: outcome ~ exposure.
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param angle Angle of for the x labels (default = 45).
 #' @param hjust Horizontal adjustment for x labels (default = 1).
-#' @param ... Passes optional arguments to \link{oddsratio}.
+#' @param ... Passes optional arguments to \code{oddsratio}.
 #' @return A list with components \code{df} a data frame with the results and \code{fig} corresponding plot.
+#' @seealso \code{\link[epitools]{oddsratio}}.
 #' @examples
 #' ## A cross-sectional study looked at the association between obesity and a biopsy resulting
 #' ## from mammography screening.
@@ -201,15 +202,15 @@ odds_trend <- function(formula, data, angle = 45,
 
 #' Diagnostic tests from variables.
 #'
-#' \code{diag_test} is a wrap function that calls \link{epi.tests} from package \code{epiR}.
+#' \code{diag_test} is a wrap function that calls \code{epi.tests} from package \code{epiR}.
 #' It computes sensitivity, specificity and other statistics related with screening tests.
 #'
 #' @param object When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.
 #' @param formula A formula with shape: outcome ~ predictor (see details).
 #' @param data A data frame where the variables in the \code{formula} can be found.
-#' @param ... Further arguments passed to \link{epi.tests}.
+#' @param ... Further arguments passed to \code{epi.tests}.
 #' @details For the \code{formula}, the outcome is the gold standard and the explanatory variable is the new (screening) test. See examples.
-#' @seealso \code{epiR::epi.tests}
+#' @seealso \code{\link[epiR]{epi.tests}}.
 #' @examples
 #' ## We compare the use of lung’s X-rays on the screening of TB against the gold standard test.
 #' Freq <- c(1739, 8, 51, 22)
@@ -240,7 +241,7 @@ diag_test <- function(object = NULL, formula = NULL, data = NULL, ...)
 
 #' Diagnostic tests from direct input.
 #'
-#' \code{diag_test2} is a wrap that calls \link{epi.tests} from package \code{epiR}.
+#' \code{diag_test2} is a wrap that calls \code{epi.tests} from package \code{epiR}.
 #' It computes sensitivity, specificity and other statistics related with screening tests.
 #'
 #' @details \code{diag.test} uses direct input variables.
@@ -249,7 +250,7 @@ diag_test <- function(object = NULL, formula = NULL, data = NULL, ...)
 #' @param bb Number of cases where screening test is positive but gold standard is negative.
 #' @param cc Number of cases where screening test is negative but gold standard is positive.
 #' @param dd Number of cases where both screening test and the gold standard are negative.
-#' @seealso \code{epiR::epi.tests}
+#' @seealso \code{\link[epiR]{epi.tests}}.
 #' @examples
 #' ## We compare the use of lung’s X-rays on the screening of TB against the gold standard test.
 #' diag_test2(22, 51, 8, 1739)
@@ -263,20 +264,20 @@ diag_test2 <- function(aa, bb, cc, dd)
 
 #' Measures of association from two by two contingency tables (formula).
 #'
-#' \code{contingency} is a wrap that calls \link{epi.2by2} from package \code{epiR}.
+#' \code{contingency} is a wrap that calls \code{epi.2by2} from package \code{epiR}.
 #'
 #' @param object When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.
 #' @param formula A formula with shape: outcome ~ exposure.
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param method A character string with options: "cohort.count", "cohort.time", "case.control", or "cross.sectional".
-#' @param ... Further arguments passed to \code{\link{epi.2by2}}.
+#' @param ... Further arguments passed to \code{epi.2by2}.
 #' @details \code{contingency} uses a formula as a way to input variables.
 #' @details \code{contingency} displays the contingency table as a way for the user to check that the reference levels
 #' in the categorical variables (outcome and exposure) are correct. Then displays measures of association
-#' (table from \code{\link{epi.2by2}}). It also reports either chi-squared
+#' (table from \code{epi.2by2}). It also reports either chi-squared
 #' test or exact Fisher's test;
 #' \code{contingency} checks which one of the tests two is appropriate.
-#' @seealso \code{epiR::epi.2by2}
+#' @seealso \code{\link[epiR]{epi.2by2}}.
 #' @examples
 #' ## A case-control study on the effect of alcohol on oesophageal cancer.
 #' Freq <- c(386, 29, 389, 171)
@@ -286,10 +287,10 @@ diag_test2 <- function(aa, bb, cc, dd)
 #' cancer <- expand_df(cancer)
 #' contingency(status ~ alcohol, data = cancer, method = "case.control")
 #'
-#' data(Oncho, package = 'pubh')
+#' data(Oncho)
+#' require(moonBook)
 #'
-#' Oncho %>%
-#'   cross_tab(mf ~ area)
+#' mytable(mf ~ area, data = Oncho, show.total = TRUE)
 #'
 #' Oncho %>%
 #'   contingency(mf ~ area)
@@ -319,14 +320,14 @@ contingency <- function(object = NULL, formula = NULL, data = NULL, method="coho
 
 #' Measures of association from two by two contingency tables (direct input).
 #'
-#' \code{contingency2} is a wrap that calls \link{epi.2by2} from package \code{epiR}.
+#' \code{contingency2} is a wrap that calls \code{epi.2by2} from package \code{epiR}.
 #'
 #' @param aa Number of cases where both exposure and outcome are present.
 #' @param bb Number of cases where exposure is present but outcome is absent.
 #' @param cc Number of cases where exposure is absent but outcome is present.
 #' @param dd Number of cases where both exposure and outcome are absent.
-#' @param ... Further arguments passed to \link{epi.2by2}.
-#' @seealso \code{epiR::epi.2by2}
+#' @param ... Further arguments passed to \code{epi.2by2}.
+#' @seealso \code{\link[epiR]{epi.2by2}}.
 #' @examples
 #' ## A case-control study on the effect of alcohol on oesophageal cancer.
 #' Freq <- c(386, 29, 389, 171)

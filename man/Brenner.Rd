@@ -6,8 +6,8 @@
 \title{Prevalence of Helicobacter pylori infection in preschool children.}
 \format{A labelled tibble with 863 rows and 2 variables:
 \describe{
-\item{Ulcer}{History of duodenal or gastric ulcer, factor with levels "No" and "Yes".}
-\item{Infected}{Infected with Helicobacter pylori, factor with levels "No" and "Yes".}
+\item{ulcer}{History of duodenal or gastric ulcer, factor with levels "No" and "Yes".}
+\item{infected}{Infected with Helicobacter pylori, factor with levels "No" and "Yes".}
 }}
 \source{
 Brenner H, Rothenbacher D, Bode G, Adler G (1998) Parental history of gastric or duodenal ulcer
@@ -23,10 +23,10 @@ according to parental history of duodenal or gastric ulcer.
 }
 \examples{
 data(Brenner)
-require(moonBook)
 
-mytable(Infected ~ Ulcer, data = Brenner, show.total =TRUE)
+Brenner \%>\%
+  cross_tab(infected ~ ulcer)
 
-contingency(Infected ~ Ulcer, data = Brenner, method = "cross.sectional")
+contingency(infected ~ ulcer, data = Brenner, method = "cross.sectional")
 }
 \keyword{datasets}

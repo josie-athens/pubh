@@ -29,7 +29,7 @@ ss_jk <- function(obs, stat)
 #'
 #' @param x A numeric variable. Missing values are removed by default.
 #' @return Data frame with the ranked squared differences.
-#' @seealso \link{rank_leverage}
+#' @seealso \code{\link{rank_leverage}}.
 #' @examples
 #' x <- rnorm(10, 170, 8)
 #' x
@@ -82,7 +82,7 @@ leverage <- function(x)
 #'
 #' @param x A numeric variable. Missing values are removed by default.
 #' @return A data frame ranking observations by their leverage around the mean.
-#' @seealso \link{jack_knife}
+#' @seealso \code{\link{jack_knife}}.
 #' @examples
 #' x <- rnorm(10, 170, 8)
 #' x
@@ -121,14 +121,14 @@ rank_leverage <- function(x)
 #' require(sjlabelled)
 #' titration <- titration %>%
 #'   var_labels(
-#'     Riboflavin = "Riboflavin (nmol/ml),
+#'     Riboflavin = "Riboflavin (nmol/ml)",
 #'     OD = "Optical density"
 #'   )
 #'
 #' titration %>%
 #'   gf_point(OD ~ Riboflavin) %>%
 #'   gf_smooth(col = 'indianred3', se = TRUE, lwd = 0.5, method = 'loess') %>%
-#'   gf_axis()
+#'   axis_labs()
 #'
 #' ## Model with intercept different from zero:
 #' model <- lm(OD ~ Riboflavin, data = titration)
@@ -173,7 +173,6 @@ knife_mean <- function(x)
 #' @param bks Breaks defining the classes (see example).
 #' @param dg Number of digits for rounding (default = 2).
 #' @return A data frame with the classes, the mid-point, the frequencies, the relative and cumulative frequencies.
-#' @seealso \link{hist}
 #' @examples
 #' data(IgM, package="ISwR")
 #' Ab <- data.frame(IgM)
@@ -254,14 +253,15 @@ logistic_gof <- function(model)
 #' Riboflavin <- seq(0, 80, 10)
 #' OD <- 0.0125*Riboflavin + rnorm(9, 0.6, 0.03)
 #' titration <- data.frame(Riboflavin, OD)
-#' model1 <- lm(OD ~ Riboflavin, data=titration)
+#' model1 <- lm(OD ~ Riboflavin, data = titration)
 #' summary(model1)
 #' coef_det(titration$OD, fitted(model1))
 #'
 #' ## Non-linear regression:
 #' library(nlme)
 #' data(Puromycin)
-#' mm.tx <- gnls(rate ~ SSmicmen(conc, Vm, K), data=Puromycin, subset=state=="treated")
+#' mm.tx <- gnls(rate ~ SSmicmen(conc, Vm, K), data = Puromycin,
+#'   subset = state == "treated")
 #' summary(mm.tx)
 #' coef_det(Puromycin$rate[1:12], mm.tx$fitted)
 coef_det <- function(obs, fit)
@@ -281,7 +281,7 @@ coef_det <- function(obs, fit)
 #' @details \code{rank_influence} is a wrap function that calls \link{influence.measures}, ranks observations on
 #' their significance influence on the model and displays the 10 most influential observations
 #' (if they are significant).
-#' @seealso \code{car::influence.measures}
+#' @seealso \code{\link[stats]{influence.measures}}.
 #' @examples
 #' data(diet, package = "Epi")
 #' model <- glm(chd ~ fibre, data = diet, family = binomial)
@@ -332,6 +332,7 @@ inv_logit <- function(x)
 #' @details \code{pseudo_r2} calculates three pseudo R2 of logistic regression models: 1) Nagelkerke, @0 Cox and Snell, 3) Hosmer and Lemeshow.
 #' @return A data frame with the calculated pseudo R2 values.
 #' @examples
+#' data(Oncho)
 #' model_oncho <- glm(mf ~ area, data = Oncho, binomial)
 #' glm_coef(model_oncho, labels = c("Constant", "Area (rainforest/savannah)"))
 #' pseudo_r2(model_oncho)

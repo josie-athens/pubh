@@ -4,7 +4,7 @@
 \name{Hodgkin}
 \alias{Hodgkin}
 \title{T-cell counts from Hodgkin's disease patients.}
-\format{A labelled data frame with 40 rows and 3 variables:
+\format{A labelled tibble with 40 rows and 3 variables:
 \describe{
 \item{CD4}{Concentration of CD4+ T-cells (cells / mm^3).}
 \item{CD8}{Concentration of CD8+ T-cells (cells / mm^3).}
@@ -33,7 +33,7 @@ Hodgkin <- Hodgkin \%>\%
     Ratio = CD4/CD8
   ) \%>\%
   var_labels(
-    Ratio = "CD4 / CD8 T-cells"
+    Ratio = "CD4+ / CD8+ T-cells"
   )
 
 estat(~ Ratio|Group, data = Hodgkin)
@@ -41,5 +41,11 @@ estat(~ Ratio|Group, data = Hodgkin)
 Hodgkin \%>\%
   qq_plot(~ Ratio|Group) \%>\%
   axis_labs()
+
+Hodgkin$Ratio <- Hodgkin$CD4/Hodgkin$CD8
+estat(~ Ratio|Group, data = Hodgkin)
+
+qq_plot(~ Ratio|Group, data = Hodgkin) \%>\%
+axis_labs()
 }
 \keyword{datasets}

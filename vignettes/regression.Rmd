@@ -14,7 +14,7 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", 
+knitr::opts_chunk$set(collapse = TRUE, comment = NA, size = "small", 
                       message = FALSE, warning = FALSE)
 ```
 
@@ -33,23 +33,20 @@ The aim of this vignette is to illustrate the use/functionality of the `glm_coef
 We start by loading relevant packages and setting the theme for the plots (as suggested in the Template of this package):
 
 ```{r, message=FALSE}
-library(broom)
-library(car)
 library(Hmisc)
 library(MASS)
 library(kableExtra)
-library(dplyr)
+library(tidyverse)
+library(finalfit)
 library(mosaic)
 library(latex2exp)
-library(moonBook)
 library(pubh)
 library(sjlabelled)
 library(sjPlot)
 
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
-options(table_counter = TRUE)
-options(knitr.table.format = 'pandoc')
+options(knitr.table.format = "pandoc")
 ```
 
 
@@ -80,9 +77,9 @@ birthwt %>%
   group_by(race, smoke) %>%
   summarise(
     n = n(),
-    Mean = round(w_mean(bwt), 2),
-    SD = round(w_sd(bwt), 2),
-    Median = round(w_median(bwt), 2),
+    Mean = round(mean(bwt, na.rm = TRUE), 2),
+    SD = round(sd(bwt, na.rm = TRUE), 2),
+    Median = round(median(bwt, na.rm = TRUE), 2),
     CV = round(rel_dis(bwt), 2)
   ) %>%
   kable(caption = "Descriptive statistics of birth weight (g) by ethnicity
@@ -109,13 +106,21 @@ birthwt %>%
   gf_labs(fill = "Smoking status:")
 ```
 
+
 We fit a linear model.
 
 ```{r}
 model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 ```
 
-> **Model diagnostics are not be discussed in this vignette**
+> **Note:** Model diagnostics are not be discussed in this vignette.
+
+First, we load the following packages to help us with regression:
+
+```{r}
+library(car)
+library(broom)
+```
 
 Traditional output from the model:
 
@@ -157,7 +162,8 @@ model_norm %>%
                       "Smoker - No smoker",
                       "African American - White",
                       "Other - White")) %>%
-  kable(caption = "Table of coefficients using robust standard errors.")
+  kable(caption = "Table of coefficients using robust standard errors.",
+        align = "r")
 ```
 
 The function `glance` from the `broom` package allow us to have a quick look at statistics related with the model.
@@ -199,7 +205,7 @@ diet <- diet %>%
 We start with descriptive statistics:
 
 ```{r}
-diet %>% estat(fibre~chd) %>% kable
+diet %>% estat(fibre ~ chd) %>% kable
 ```
 
 It is standard to plot the dependent variable in the $y$-axis, so in this case, we can use horizontal box-plots.
@@ -226,7 +232,7 @@ model_binom %>% glance %>% round(digits = 2)
 Effect plot:
 
 ```{r}
-plot_model(model_binom, "pred", terms="fibre [all]", title = "")
+plot_model(model_binom, "pred", terms = "fibre [all]", title = "")
 ```
 
 ## Matched Case-Control Studies: Conditional Logistic Regression
@@ -252,7 +258,8 @@ We start with descriptive statistics:
 
 ```{r}
 bdendo %>%
- cross_tab(cancer ~ est|gall)
+  cross_tab(cancer ~ est + gall) %>%
+  kable()
 ```
 
 We fit the conditional logistic model:
@@ -269,7 +276,7 @@ model_clogit %>%
 model_clogit %>% glance %>% round(digits = 2)
 ```
 
-Creating data frame for effect plot:
+Creating data frame needed to construct the effect plot:
 
 ```{r}
 require(ggeffects)
@@ -368,12 +375,25 @@ quine <- quine %>%
     )
 ```
 
+Descriptive statistics:
 
-We start fitting a standard Poisson linear model:
+```{r}
+quine %>%
+  group_by(Eth, Sex, Age) %>%
+  summarise(
+    n = n(),
+    Mean = round(mean(Days, na.rm = TRUE), 2),
+    SD = round(sd(Days, na.rm = TRUE), 2),
+    Median = round(median(Days, na.rm = TRUE), 2)
+  ) %>%
+  kable()
+```
+
+We start by fitting a standard Poisson linear regression model:
 
 ```{r}
 model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
-glm_coef(model_pois) 
+glm_coef(model_pois) %>% kable
 ```
 
 ```{r}
@@ -439,10 +459,6 @@ We adjust for multiple comparisons:
 multiple(model_negbin, ~ Age|Eth)$df 
 ```
 
-```{r}
-multiple(model_negbin, ~ Age|Sex)$df 
-```
-
 
 We can see the comparison graphically with:
 
@@ -450,6 +466,7 @@ We can see the comparison graphically with:
 multiple(model_negbin, ~ Age + Sex|Eth)$fig_ci %>%
   gf_labs(y = "Age group", x = "Number of absent days")
 ```
+
 
 # Survival Analysis
 
@@ -541,7 +558,7 @@ plot_model(model_cox, type = "pred", terms = ~ rx, dot.size = 1,
 We look at the relationship between sex and age on the distance from the pituitary to the pterygomaxillary fissure (mm).
 
 ```{r}
-library(nlme, warn.conflicts = FALSE)
+library(nlme)
 data(Orthodont)
 ```
 
@@ -556,7 +573,6 @@ Orthodont <- Orthodont %>%
 We fit the model:
 
 ```{r}
-require(lme4)
 model_lme <- lme(distance ~ Sex * I(age - mean(age, na.rm = TRUE)), random = ~ 1|Subject, 
                  method = "ML", data = Orthodont)
 ```

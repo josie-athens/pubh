@@ -1,6 +1,6 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 1.1.1
+Version: 1.1.4
 Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@otago.ac.nz", role = c("aut", "cre")),
     person("Frank", "Harell", email = "f.harrell@vanderbilt.edu", role = "ctb"),
@@ -11,57 +11,59 @@ Description: A toolbox for making R functions and capabilities more
     accessible to students and professionals from Epidemiology and
     Public Health related disciplines. Includes a function to report 
     coefficients and confidence intervals from models using robust
-    standard errors (when available), functions that expand ggplot2
+    standard errors (when available), functions that expand "ggplot2"
     plots and functions relevant for introductory papers in Epidemiology 
     or Public Health. Please note that use of the 
     provided data sets is for educational purposes only.
 Depends:
-    R (>= 3.5.0),
+    R (>= 3.6.0),
     emmeans,
-    expss,
     ggformula,
     magrittr,
 		stats
 Imports:
-    broom,
-    car,
-    bookdown,
-    dplyr,
-		Epi,
-		epiR,
-		epitools,
-		GGally,
-		ggeffects,
-		ggplot2,
-		Hmisc,
-		kableExtra,
-		knitr,
-		latex2exp,
-		lmtest,
-		lme4,
-		MASS,
-		moonBook,
-		mosaic,
-		nlme,
-		nnet,
-		ordinal,
-		reshape2,
-		sandwich,
-		sjlabelled,
-		sjPlot,
-		survival
+    car, 
+    dplyr, 
+    Epi, 
+    epiR, 
+    epitools,
+    finalfit,
+    ggplot2, 
+    Hmisc, 
+    lmtest,
+    sandwich, 
+    sjlabelled, 
+    sjPlot, 
+    survival
 Suggests:
-    ggsci,
-		epibasix,
-		epiDisplay,
-		haven,
-		ISwR,
-		psych,
-		rmarkdown
+    broom, 
+    bookdown, 
+    GGally, 
+    ggeffects,
+    ggpubr,
+    ggsci, 
+    haven, 
+    ISwR,
+    kableExtra, 
+    knitr, 
+    latex2exp, 
+    lme4, 
+    MASS, 
+    moonBook, 
+    mosaic,
+    nlme, 
+    nnet, 
+    ordinal, 
+    psych, 
+    reshape2, 
+    rmarkdown, 
+    rms,
+    scales,
+    tidyverse
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.1
+RoxygenNote: 7.0.2
 VignetteBuilder: knitr
 URL: https://github.com/josie-athens/pubh
 BugReports: https://github.com/josie-athens/pubh/issues

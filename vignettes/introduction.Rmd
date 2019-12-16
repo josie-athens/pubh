@@ -84,22 +84,23 @@ The main contributions of the `pubh` package to students and professionals from 
 
 # Descriptive statistics
 
-Many options currently exists for displaying descriptive statistics. I recommend the function `mytable` from the `moonBook` package. It does a great job for both continuous and categorical (factors) outcomes. 
+Many options currently exists for displaying descriptive statistics. I recommend the function `mytable` from the `moonBook` package for construcing tables of descriptive statistics where results don't need to be stratified. 
+
+In Public Health and Epidemiology it is common to have a categorical outcome and thus, report descriptive statistics stratified by the outcome. Package `pubh` introduces the function `cross_tab` as a wrapper to functions from `finalfit`. The idea is to construct these tables, using formulas, in a simple way.
+
 
 The `estat` function from the `pubh` package displays descriptive statistics of continuous outcomes and like `mytable`, it can use *labels* to display nice tables. `estat`. As a way to aid in the understanding of the variability, `estat` displays also the relative dispersion (coefficient of variation) which is of particular interest for comparing variances between groups (factors).
 
 Some examples. We start by loading packages as suggested in the Template of this package.
 
 ```{r, message=FALSE}
-library(broom)
-library(car)
 library(Hmisc)
 library(MASS)
 library(kableExtra)
 library(tidyverse)
+library(finalfit)
 library(mosaic)
 library(latex2exp)
-library(moonBook)
 library(pubh)
 library(sjlabelled)
 library(sjPlot)
@@ -109,7 +110,31 @@ theme_update(legend.position = "top")
 options(knitr.table.format = 'pandoc')
 ```
 
-We will use a data set about blood counts of T cells from patients in remission from Hodgkin's disease or in remission from disseminated malignancies. We generate the new variable `Ratio` and add labels to the variables.
+We will use a data set about a study of onchocerciasis in Sierra Leone.
+
+```{r}
+data("Oncho")
+head(Oncho)
+```
+
+A two-by-two contingency table:
+
+```{r}
+Oncho %>%
+  cross_tab(mf ~ area) %>%
+  kable
+```
+
+Table with all descriptive statistics except `id`:
+
+```{r}
+Oncho %>%
+  select(- id) %>%
+  cross_tab(mf ~ .) %>%
+  kable
+```
+
+Next, we use a data set about blood counts of T cells from patients in remission from Hodgkin's disease or in remission from disseminated malignancies. We generate the new variable `Ratio` and add labels to the variables.
 
 ```{r}
 data(Hodgkin)
@@ -118,25 +143,18 @@ Hodgkin <- Hodgkin %>%
   var_labels(
     Ratio = "CD4+ / CD8+ T-cells ratio"
     )
-kable(head(Hodgkin))
+head(Hodgkin)
 ```
 
 Descriptive statistics for CD4+ T cells:
 
 ```{r}
 Hodgkin %>%
-  estat(~ CD4)
+  estat(~ CD4) %>%
+  kable
 ```
 
 In the previous code, the left-hand side of the formula is empty as it's the case when working with only one variable.
-
-We can use `kable` to display nice tables.
-
-```{r}
-Hodgkin %>%
-  estat(~ CD4) %>%
-  kable()
-```
 
 
 For stratification, `estat` recognises the following two syntaxes:
@@ -151,6 +169,14 @@ For example:
 ```{r}
 Hodgkin %>%
   estat(~ Ratio|Group) %>%
+  kable()
+```
+
+As before, we can report a table of descriptive statistics for all variables in the data set:
+
+```{r}
+Hodgkin %>%
+  cross_tab(Group ~ .) %>%
   kable()
 ```
 
@@ -329,11 +355,15 @@ Some advantages of `tab_model` over `glm_coef` are:
 - Tables are more aesthetically appealing.
 
 ```{r, eval = FALSE, echo = FALSE}
-unadj <- glm_coef(model_bwt, labels = c("Constant",
-                                      "Smoking: smoker - non-smoker",
-                                      "Race: African American - White",
-                                      "Race: Other - White"))
-kable(unadj)
+model_bwt %>%
+  glm_coef(model_bwt, 
+           labels = c(
+             "Constant",
+             "Smoking: smoker - non-smoker",
+             "Race: African American - White",
+             "Race: Other - White")
+           ) %>%
+  kable()
 ```
 
 In the previous table of coefficients confidence intervals and p-values for race had not been adjusted for multiple comparisons. We use functions from the `emmeans` package to make the corrections.
@@ -372,8 +402,8 @@ kable(head(Bernard))
 Let's look at the table:
 
 ```{r}
-mytable(treat ~ fate, data = Bernard, show.total = TRUE) %>%
-  mytable2df() %>%
+Bernard %>%
+  cross_tab(treat ~ fate) %>%
   kable() 
 ```
 
@@ -388,7 +418,7 @@ For `contingency` we only need to provide the information in a formula:
 
 ```{r}
 Bernard %>%
-  contingency(fate ~ treat)
+  contingency(fate ~ treat) 
 ```
 
 Advantages of `contingency`:
@@ -427,7 +457,9 @@ oswego <- oswego %>%
 First we look at the cross-tabulation:
 
 ```{r}
-mytable(ill ~ sex + chocolate.ice.cream, data = oswego, show.total = TRUE)
+oswego %>%
+  cross_tab(ill ~ sex + chocolate.ice.cream) %>%
+  kable()
 ```
 
 ```{r}

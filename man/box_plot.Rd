@@ -8,7 +8,8 @@ box_plot(
   object = NULL,
   formula = NULL,
   data = NULL,
-  fill = "gray70",
+  fill = "indianred3",
+  alpha = 0.7,
   outlier.shape = 20,
   outlier.size = 1,
   ...
@@ -22,6 +23,8 @@ box_plot(
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
 \item{fill}{Colour used for the box passed to \code{\link{gf_boxplot}}.}
+
+\item{alpha}{Opacity (0 = invisible, 1 = opaque).}
 
 \item{outlier.shape}{Shape (\code{pch}) used as symbol for the outliers.}
 

@@ -28,9 +28,8 @@ been used as an example of join exposure by Rothman for measuring interactions (
 }
 \examples{
 data(Rothman)
-require(moonBook)
 
-mytable(stroke ~ oc + ht, data = Rothman, show.total = TRUE)
+cross_tab(stroke ~ oc + ht, data = Rothman)
 
 mhor(stroke ~ ht/oc, data = Rothman)
 
@@ -49,7 +48,7 @@ Rothman$join <- factor(Rothman$join, labels=c("Unexposed", "Hypertension", "OC u
 require(sjlabelled)
 Rothman$join <- set_label(Rothman$join, label = "Exposure")
 
-mytable(stroke ~ join, data = Rothman, show.total = TRUE)
+cross_tab(stroke ~ join, data = Rothman)
 
 model2 <- glm(stroke ~ join, data = Rothman, family = binomial)
 glm_coef(model2)

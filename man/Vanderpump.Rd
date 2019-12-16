@@ -27,11 +27,9 @@ Data represents women participating in a health survey in Whickham, England in 1
 }
 \examples{
 data(Vanderpump)
-require(moonBook)
 
-mytable(vstatus ~ smoker, data = Vanderpump, show.total = TRUE)
-
-mytable(vstatus + smoker ~ agegrp, data = Vanderpump, show.total = TRUE)
+Vanderpump \%>\%
+  cross_tab(vstatus ~ .)
 
 mhor(vstatus ~ agegrp/smoker, data = Vanderpump)
 }

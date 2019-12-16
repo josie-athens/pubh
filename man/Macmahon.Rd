@@ -6,8 +6,8 @@
 \title{Breast cancer and age of childbirth.}
 \format{A labelled tibble with 185 rows and 2 variables:
 \describe{
-\item{Cancer}{Diagnosed with breast cancer, a factor with levels "No" and "Yes".}
-\item{Age}{Age mother gives childbirth, factor with levels "<20", "20-24",
+\item{cancer}{Diagnosed with breast cancer, a factor with levels "No" and "Yes".}
+\item{age}{Age mother gives childbirth, factor with levels "<20", "20-24",
 "25-29", "30-34" and ">34".}
 }}
 \source{
@@ -22,11 +22,11 @@ cancer is related to the age that a woman gives childbirth.
 }
 \examples{
 data(Macmahon)
-require(moonBook)
 
-mytable(Cancer ~ Age, data = Macmahon, show.total = TRUE)
+Macmahon \%>\%
+  cross_tab(cancer ~ age)
 
-odds_trend(Cancer ~ Age, data = Macmahon)$df
-odds_trend(Cancer ~ Age, data = Macmahon)$fig
+odds_trend(cancer ~ age, data = Macmahon)$df
+odds_trend(cancer ~ age, data = Macmahon)$fig
 }
 \keyword{datasets}
