@@ -1,6 +1,6 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 1.1.4
+Version: 1.1.5
 Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@otago.ac.nz", role = c("aut", "cre")),
     person("Frank", "Harell", email = "f.harrell@vanderbilt.edu", role = "ctb"),
@@ -11,7 +11,7 @@ Description: A toolbox for making R functions and capabilities more
     accessible to students and professionals from Epidemiology and
     Public Health related disciplines. Includes a function to report 
     coefficients and confidence intervals from models using robust
-    standard errors (when available), functions that expand "ggplot2"
+    standard errors (when available), functions that expand 'ggplot2'
     plots and functions relevant for introductory papers in Epidemiology 
     or Public Health. Please note that use of the 
     provided data sets is for educational purposes only.

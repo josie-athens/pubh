@@ -274,8 +274,9 @@ box_plot <- function(object = NULL, formula = NULL, data = NULL,
   x <- vars[2]
   outcome <- data[[y]]
   exposure <- data[[x]]
-  gf_boxplot(formula, data = data, fill = fill,
-             outlier.shape = outlier.shape, outlier.size = outlier.size, ...)
+  gf_boxplot(formula, data = data, fill = fill, alpha = alpha,
+             outlier.shape = outlier.shape,
+             outlier.size = outlier.size, ...)
 }
 
 #' Quantile-quantile plots against the standard Normal distribution.
