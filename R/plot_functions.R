@@ -335,7 +335,7 @@ qq_plot <- function(object = NULL, formula = NULL, data = NULL, pch = 20,
 #' @param object When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.
 #' @param formula A formula with shape: \code{ ~ y} or \code{~ y|x} where \code{y} is a numerical variable and \code{x} is a factor.
 #' @param data A data frame where the variables in the \code{formula} can be found.
-#' @param binwidth The width of the histogram bins.
+#' @param bins Number of bins of the histogram.
 #' @param fill Colour to fill the bars of the histogram.
 #' @param color Colour used for the border of the bars.
 #' @param alpha Opacity (0 = invisible, 1 = opaque).
@@ -362,8 +362,8 @@ qq_plot <- function(object = NULL, formula = NULL, data = NULL, pch = 20,
 #'   hist_norm(~ bwt|smoke, alpha = 0.7, bins = 20, fill = 'cadetblue') %>%
 #'   axis_labs()
 hist_norm <- function(object = NULL, formula = NULL, data = NULL,
-                      binwidth = NULL, fill = 'indianred3',
-                      color = 'black', alpha = 0.7, ...)
+                      bins = 20, fill = 'indianred3',
+                      color = 'black', alpha = 0.4, ...)
 {
   if (inherits(object, "formula")) {
     formula <- object
@@ -376,14 +376,10 @@ hist_norm <- function(object = NULL, formula = NULL, data = NULL,
   vars <- all.vars(formula)
   y <- vars[1]
   outcome <- data[[y]]
-  bw1 <- (max(outcome, na.rm = TRUE) - min(outcome, na.rm = TRUE))/5
-  bw <- ifelse(bw1 < 0.5, binwidth, round(bw1))
-  bw <- ifelse(is.null(binwidth), bw, binwidth)
-  gf_ash(formula, data = data, binwidth = bw) %>%
-    gf_dhistogram(formula, data = data, fill = fill,
-                  ylab = 'Density', color = color, ...)
+  gf_dhistogram(formula, data = data, fill = fill, bins = bins,
+                alpha = alpha, ylab = 'Density', color = color, ...) %>%
+    gf_fitdistr(lwd = 0.7)
 }
-
 #' Strip plots with error bars.
 #'
 #' \code{strip_error} constructs strip plots with error bars showing 95% bootstrapped

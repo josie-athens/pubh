@@ -8,10 +8,10 @@ hist_norm(
   object = NULL,
   formula = NULL,
   data = NULL,
-  binwidth = NULL,
+  bins = 20,
   fill = "indianred3",
   color = "black",
-  alpha = 0.7,
+  alpha = 0.4,
   ...
 )
 }
@@ -22,7 +22,7 @@ hist_norm(
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
-\item{binwidth}{The width of the histogram bins.}
+\item{bins}{Number of bins of the histogram.}
 
 \item{fill}{Colour to fill the bars of the histogram.}
 

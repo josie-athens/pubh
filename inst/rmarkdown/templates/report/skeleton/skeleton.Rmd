@@ -28,12 +28,8 @@ tables: true
 ---
 
 ```{r message = FALSE}
-rm(list = ls())
-library(Hmisc)
-library(MASS)
 library(kableExtra)
 library(tidyverse)
-library(finalfit)
 library(mosaic)
 library(latex2exp)
 library(pubh)

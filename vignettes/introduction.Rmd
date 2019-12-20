@@ -94,11 +94,8 @@ The `estat` function from the `pubh` package displays descriptive statistics of 
 Some examples. We start by loading packages as suggested in the Template of this package.
 
 ```{r, message=FALSE}
-library(Hmisc)
-library(MASS)
 library(kableExtra)
 library(tidyverse)
-library(finalfit)
 library(mosaic)
 library(latex2exp)
 library(pubh)
