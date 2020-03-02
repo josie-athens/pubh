@@ -2,7 +2,7 @@
 
 #' Sum of squares for Jackknife.
 #'
-#' \code{ss_jk} is an internal function called by \link{jack_knife}. It calculates the squared
+#' \code{ss_jk} is an internal function called by \code{\link{jack_knife}}. It calculates the squared
 #' difference of a numerical variable around a given value (for example, the mean).
 #'
 #' @param obs A numerical vector with no missing values (NA's).
@@ -55,7 +55,7 @@ jack_knife <- function(x)
 
 #' Leverage.
 #'
-#' \code{leverage} is an internal function called by \link{rank_leverage}.
+#' \code{leverage} is an internal function called by \code{\link{rank_leverage}}.
 #'
 #' Estimates the leverage of each observation around the arithmetic mean.
 #'
@@ -278,7 +278,7 @@ coef_det <- function(obs, fit)
 #' \code{rank_influence} calculates influence measures of each data observation on models and then ranks them.
 #'
 #' @param model A generalised linear model object.
-#' @details \code{rank_influence} is a wrap function that calls \link{influence.measures}, ranks observations on
+#' @details \code{rank_influence} is a wrap function that calls \code{\link[stats]{influence.measures}}, ranks observations on
 #' their significance influence on the model and displays the 10 most influential observations
 #' (if they are significant).
 #' @seealso \code{\link[stats]{influence.measures}}.

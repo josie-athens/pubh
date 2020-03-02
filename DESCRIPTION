@@ -1,6 +1,6 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 1.1.5
+Version: 1.1.6
 Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@otago.ac.nz", role = c("aut", "cre")),
     person("Frank", "Harell", email = "f.harrell@vanderbilt.edu", role = "ctb"),
@@ -20,7 +20,7 @@ Depends:
     emmeans,
     ggformula,
     magrittr,
-		stats
+    stats
 Imports:
     car, 
     dplyr, 

@@ -479,6 +479,7 @@ strip_error <- function(object = NULL, formula = NULL, data = NULL,
 #' @param fill Colour used to fill the bars.
 #' @param col Colour used for the borders of the bars.
 #' @param alpha Opacity of the colour fill (0 = invisible, 1 = opaque).
+#' @param ... Additional information passed to \code{\link{gf_summary}}.
 #' @examples
 #' require(dplyr)
 #' require(sjlabelled)
@@ -510,7 +511,7 @@ strip_error <- function(object = NULL, formula = NULL, data = NULL,
 #'   gf_refine(ggsci::scale_color_jama()) %>%
 #'   axis_labs()
 bar_error <- function(object = NULL, formula = NULL, data = NULL,
-                      fill = 'indianred3', col = 'black', alpha = 0.7)
+                      fill = 'indianred3', col = 'black', alpha = 0.7, ...)
 {
   if (inherits(object, "formula")) {
     formula <- object
@@ -522,11 +523,11 @@ bar_error <- function(object = NULL, formula = NULL, data = NULL,
   }
   if(is.character(fill) & is.character(col)) {
     gf_summary(formula, fun.y = "mean", data = data, geom = 'bar',
-               fill = fill, alpha = alpha, col = col) %>%
+               fill = fill, alpha = alpha, col = col, ...) %>%
       gf_summary(fun.data = "mean_cl_boot", geom = 'errorbar', width = 0.3)
   } else {
     gf_summary(formula, data = data, fill = fill, fun.y = "mean", geom = 'bar',
-               alpha = alpha, col = col, position = ggplot2::position_dodge()) %>%
+               alpha = alpha, col = col, position = ggplot2::position_dodge(), ...) %>%
       gf_summary(fun.data = "mean_cl_boot", geom = 'errorbar', width = 0.3,
                  position = ggplot2::position_dodge(width = 1))
   }
