@@ -4,7 +4,7 @@ author: "Name"
 date: "`r Sys.Date()`"
 output:
   bookdown::html_document2:
-    highlight: kate
+    highlight: tango
     number_sections: true
     toc: yes
     toc_depth: 3
@@ -18,7 +18,7 @@ output:
   bookdown::pdf_document2:
     citation_package: natbib
     latex_engine: pdflatex
-    highlight: kate
+    highlight: tango
     keep_tex: yes
     fig_height: 4
     fig_width: 5
@@ -39,7 +39,6 @@ library(sjPlot)
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
 options(knitr.table.format = "pandoc")
-knitr::opts_chunk$set(collapse = TRUE, comment = NA, size = "small", 
-                      message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(collapse = TRUE, comment = NA)
 ```
 

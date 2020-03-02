@@ -13,7 +13,7 @@ leverage(x)
 Variable with corresponding leverage estimations
 }
 \description{
-\code{leverage} is an internal function called by \link{rank_leverage}.
+\code{leverage} is an internal function called by \code{\link{rank_leverage}}.
 }
 \details{
 Estimates the leverage of each observation around the arithmetic mean.

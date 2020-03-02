@@ -4,14 +4,7 @@
 \alias{cross_tab}
 \title{Cross-tabulation.}
 \usage{
-cross_tab(
-  object = NULL,
-  formula = NULL,
-  data = NULL,
-  label = NULL,
-  catTest = chisq.fisher,
-  ...
-)
+cross_tab(object = NULL, formula = NULL, data = NULL, label = NULL, ...)
 }
 \arguments{
 \item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
@@ -21,8 +14,6 @@ cross_tab(
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
 \item{label}{A character, label used to name the first column of the data frame.}
-
-\item{catTest}{A function of a frequency table (an integer matrix) that returns a list with the same components as created by conTest. By default, the Pearson chi-square test is done, without continuity correction (the continuity correction would make the test conservative like the Fisher exact test).}
 
 \item{...}{Aditional arguments passed to \code{\link[finalfit]{summary_factorlist}}.}
 }

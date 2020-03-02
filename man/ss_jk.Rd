@@ -15,7 +15,7 @@ ss_jk(obs, stat)
 The squared difference between a variable and a given value.
 }
 \description{
-\code{ss_jk} is an internal function called by \link{jack_knife}. It calculates the squared
+\code{ss_jk} is an internal function called by \code{\link{jack_knife}}. It calculates the squared
 difference of a numerical variable around a given value (for example, the mean).
 }
 \examples{

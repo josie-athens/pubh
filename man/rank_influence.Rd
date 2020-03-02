@@ -13,7 +13,7 @@ rank_influence(model)
 \code{rank_influence} calculates influence measures of each data observation on models and then ranks them.
 }
 \details{
-\code{rank_influence} is a wrap function that calls \link{influence.measures}, ranks observations on
+\code{rank_influence} is a wrap function that calls \code{\link[stats]{influence.measures}}, ranks observations on
 their significance influence on the model and displays the 10 most influential observations
 (if they are significant).
 }

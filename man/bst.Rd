@@ -21,7 +21,7 @@ bst(x, stat = "mean", n = 1000, CI = 95, digits = 2)
 A data frame with the estimate and confidence intervals.
 }
 \description{
-\code{bst} estimates confidence intervals around the \link{mean}, \link{median} or \link{geo_mean}.
+\code{bst} estimates confidence intervals around the \code{\link[base]{mean}}, \code{\link[stats]{median}} or \code{\link{geo_mean}}.
 }
 \examples{
 data(IgM, package = "ISwR")

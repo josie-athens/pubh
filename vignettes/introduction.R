@@ -9,11 +9,8 @@ knitr::opts_chunk$set(collapse = TRUE, comment = NA, size = "small",
 #  y ~ x|z, data = my_data
 
 ## ---- message=FALSE-----------------------------------------------------------
-library(Hmisc)
-library(MASS)
 library(kableExtra)
 library(tidyverse)
-library(finalfit)
 library(mosaic)
 library(latex2exp)
 library(pubh)

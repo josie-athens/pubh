@@ -85,7 +85,7 @@ harm_mean <- function(x)
 
 #' Bootstrap Confidence Intervals.
 #'
-#' \code{bst} estimates confidence intervals around the \link{mean}, \link{median} or \link{geo_mean}.
+#' \code{bst} estimates confidence intervals around the \code{\link[base]{mean}}, \code{\link[stats]{median}} or \code{\link{geo_mean}}.
 #'
 #' @param x A numerical variable. Missing observations are removed by default.
 #' @param stat Statistic, either "mean" (default), "median" or "gmean" (geometric mean).
@@ -159,7 +159,6 @@ stats_quotes <- function(x, data2, digits = 2)
 #' @param formula A formula with shape: \code{y ~ x}, where \code{y} is a categorical outcome and \code{x} is the explanatory variable or a set of explanatory variables (see Details and Examples).
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param label A character, label used to name the first column of the data frame.
-#' @param catTest A function of a frequency table (an integer matrix) that returns a list with the same components as created by conTest. By default, the Pearson chi-square test is done, without continuity correction (the continuity correction would make the test conservative like the Fisher exact test).
 #' @param ... Aditional arguments passed to \code{\link[finalfit]{summary_factorlist}}.
 #' @details Function \code{cross_tab} is a relatively simple wrapper to functions of package \code{finalfit}. Its main purpose is to construct contingency tables but it can also be used to report a table with descriptives for all variables as long as they are still stratified by the outcome. Please see examples to see how to list explanatory variables. For categorical explanatory variables, the function reports column percentages by default; row proportions can be obtained with additional argument: \code{column = FALSE}. If data is labelled with \code{sjlabelled}, the label of the outcome (dependent) variable is used to name the first column of the resulting data frame; this name can be changed with argument \code{label}.
 #' @return A data frame with descriptive statistics stratifed by levels of the outcome.
@@ -189,7 +188,7 @@ stats_quotes <- function(x, data2, digits = 2)
 #'   select(- id) %>%
 #'   cross_tab(mf ~ ., label = "Parameter")
 cross_tab <- function(object = NULL, formula = NULL, data = NULL,
-                      label = NULL, catTest = chisq.fisher, ...)
+                      label = NULL, ...)
 {
   if (inherits(object, "formula")) {
     formula <- object
@@ -209,7 +208,7 @@ cross_tab <- function(object = NULL, formula = NULL, data = NULL,
     lab <- ifelse(is.null(label), dependent, label)
   }
   data %>%
-    finalfit::summary_factorlist(dependent, explanatory, total_col = TRUE, catTest = catTest, ...) %>%
+    finalfit::summary_factorlist(dependent, explanatory, total_col = TRUE, ...) %>%
     finalfit::ff_column_totals(data, dependent) -> tbl1
   names(tbl1)[1] <- lab
   tbl1
@@ -225,7 +224,7 @@ cross_tab <- function(object = NULL, formula = NULL, data = NULL,
 #' @param digits Number of digits for rounding (default = 2).
 #' @param label Label used to display the name of the variable (see examples).
 #' @return A data frame with descriptive statistics.
-#' @seealso \code{summary}, \code{\link[moonBook]{mytable}}.
+#' @seealso \code{\link{summary}}, \code{\link[moonBook]{mytable}}.
 #' @examples
 #' data(kfm, package = "ISwR")
 #' require(sjlabelled)

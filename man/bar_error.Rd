@@ -10,7 +10,8 @@ bar_error(
   data = NULL,
   fill = "indianred3",
   col = "black",
-  alpha = 0.7
+  alpha = 0.7,
+  ...
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ numerical variable and both \code{x} and \code{z} are factors.}
 \item{col}{Colour used for the borders of the bars.}
 
 \item{alpha}{Opacity of the colour fill (0 = invisible, 1 = opaque).}
+
+\item{...}{Additional information passed to \code{\link{gf_summary}}.}
 }
 \description{
 \code{bar_error} constructs bar charts in with error bars showing 95% bootstrapped
