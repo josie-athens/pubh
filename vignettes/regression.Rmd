@@ -114,7 +114,7 @@ model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 
 First, we load the following packages to help us with regression:
 
-```{r}
+```{r message=FALSE}
 library(car)
 library(broom)
 ```
@@ -122,20 +122,17 @@ library(broom)
 Traditional output from the model:
 
 ```{r}
-model_norm %>%
-  Anova() 
+model_norm %>% Anova
 ```
 
 ```{r}
-model_norm %>%
-  summary()
+model_norm %>% summary
 ```
 
 Table of coefficients:
 
 ```{r}
-model_norm %>%
-  glm_coef() 
+model_norm %>% glm_coef
 ```
 
 Once we know the order in which the parameters are displayed, we can add labels to our final table:
@@ -149,7 +146,7 @@ model_norm %>%
                                       "African American - White",
                                       "Other - White")) %>%
   kable(caption = "Table of coefficients using naive standard errors.",
-        align = 'r')
+        align = 'rr')
 ```
 
 
@@ -160,13 +157,13 @@ model_norm %>%
                       "African American - White",
                       "Other - White")) %>%
   kable(caption = "Table of coefficients using robust standard errors.",
-        align = "r")
+        align = "rr")
 ```
 
 The function `glance` from the `broom` package allow us to have a quick look at statistics related with the model.
 
 ```{r}
-model_norm %>% glance %>% round(digits = 2)
+model_norm %>% glance
 ```
 
 To construct the effect plot, we can use `plot_model` from the `sjPlot` package. The advantage of `plot_model` is that recognises labelled data and uses that information for annotating the plots.
@@ -219,11 +216,11 @@ We fit a linear logistic model:
 model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
 model_binom %>%
   glm_coef(labels = c("Constant", "Fibre intake (g/day)")) %>%
-  kable(caption = "Parameter estimates from logistic regression.", align = "r")
+  kable(caption = "Parameter estimates from logistic regression.", align = "rr")
 ```
 
 ```{r}
-model_binom %>% glance %>% round(digits = 2)
+model_binom %>% glance %>% round(2)
 ```
 
 Effect plot:
@@ -267,11 +264,11 @@ model_clogit <- clogit(cancer == 'Case'  ~ est * gall + strata(set), data = bden
 model_clogit %>%
   glm_coef(labels = c("Oestrogen/No oestrogen", "GBD/No GBD",
                       "Oestrogen:GBD Interaction")) %>%
-  kable()
+  kable(align = "rr")
 ```
 
 ```{r}
-model_clogit %>% glance %>% round(digits = 2)
+model_clogit %>% glance
 ```
 
 Creating data frame needed to construct the effect plot:
@@ -321,14 +318,15 @@ labs_ord <- c("Constant: Low/Medium satisfaction",
               "Accommodation: Terrace/Tower",
               "Afforded: High/Low")
 kable(glm_coef(model_clm, labels = labs_ord), 
-      caption = "Parameter estimates on satisfaction of householders.")
+      caption = "Parameter estimates on satisfaction of householders.",
+      align = "rr")
 ```
 
 ```{r}
-model_clm %>% glance %>% round(digits = 2)
+model_clm %>% glance
 ```
 
-Effect plot:
+Effect plots:
 
 ```{r}
 plot_model(model_clm, dot.size = 1, title = "")
@@ -391,11 +389,11 @@ We start by fitting a standard Poisson linear regression model:
 
 ```{r}
 model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
-glm_coef(model_pois) %>% kable
+glm_coef(model_pois) %>% kable(align = "rr")
 ```
 
 ```{r}
-model_pois %>% glance %>% round(digits = 2)
+model_pois %>% glance
 ```
 
 
@@ -421,18 +419,17 @@ glm_coef(model_negbin,
            "F2/Primary",
            "F3/Primary")
          ) %>%
-  kable()
+  kable(align = "rr")
 ```
 
 ```{r}
-model_negbin %>% glance %>% round(digits = 2)
+model_negbin %>% glance
 ```
 
 Notice that age group is a factor with more than two levels and is significant:
 
 ```{r}
-model_negbin %>%
-  Anova() 
+model_negbin %>% Anova
 ```
 
 Thus, we want to report confidence intervals and $p$-values adjusted for multiple comparisons.
@@ -458,12 +455,11 @@ We adjust for multiple comparisons:
 multiple(model_negbin, ~ Age|Eth)$df 
 ```
 
-
 We can see the comparison graphically with:
 
 ```{r}
-multiple(model_negbin, ~ Age + Sex|Eth)$fig_ci %>%
-  gf_labs(y = "Age group", x = "Number of absent days")
+multiple(model_negbin, ~ Age|Eth)$fig_ci %>%
+  gf_labs(x = "IRR")
 ```
 
 
@@ -492,9 +488,8 @@ Using robust standard errors (default):
 ```{r}
 model_surv %>%
   glm_coef(labels = c("Treatment: Thiotepa/Placebo", "Scale")) %>%
-  kable()
+  kable(align = "rr")
 ```
-
 
 In this example the scale parameter is not statistically different from one, meaning hazard is constant and thus, we can use the exponential distribution:
 
@@ -502,11 +497,11 @@ In this example the scale parameter is not statistically different from one, mea
 model_exp <- survreg(Surv(times, event) ~ rx, data = bladder, dist = "exponential")
 model_exp %>%
   glm_coef(labels = c("Treatment: Thiotepa/Placebo")) %>%
-  kable()
+  kable(align = "rr")
 ```
 
 ```{r}
-model_exp %>% glance %>% round(digits = 2)
+model_exp %>% glance
 ```
 
 > **Interpretation:** Patients receiving Thiotepa live on average 64% more than those in the Placebo group.
@@ -516,7 +511,7 @@ Using naive standard errors:
 ```{r}
 model_exp %>%
   glm_coef(labels = c("Treatment: Thiotepa/Placebo"), se_rob = FALSE) %>%
-  kable()
+  kable(align = "rr")
 ```
 
 
@@ -535,11 +530,11 @@ model_cox <-  coxph(Surv(times, event) ~ rx, data = bladder)
 ```{r}
 model_cox %>%
   glm_coef(labels = c("Treatment: Thiotepa/Placebo")) %>%
-  kable()
+  kable(align = "rr")
 ```
 
 ```{r}
-model_cox %>% glance %>% round(digits = 2)
+model_cox %>% glance
 ```
 
 > **Interpretation:** Patients receiving Thiotepa are 64% less likely of dying than those in the Placebo group.
@@ -580,7 +575,7 @@ model_lme <- lme(distance ~ Sex * I(age - mean(age, na.rm = TRUE)), random = ~ 1
 model_lme %>%
   glm_coef(labels = c("Constant", "Sex: female-male", "Age (years)",
                       "Sex:Age interaction")) %>%
-  kable()
+  kable(align = "rr")
 ```
 
 ```{r}
@@ -590,7 +585,7 @@ model_lme %>% glance
 Effect plot:
 
 ```{r}
-plot_model(model_lme, type = "pred", terms = age ~ Sex) %>%
+plot_model(model_lme, type = "pred", terms = age ~ Sex, show.data = TRUE) %>%
   gf_labs(y = get_label(Orthodont$distance), x = "Age (years)", title = "")
 ```
 

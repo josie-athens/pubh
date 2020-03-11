@@ -114,13 +114,13 @@ gf_star <- function(fig, x1, y1, x2, y2, y3, legend = "*", ...)
 #' @param formula A formula with shape: \code{~ y} or \code{~ y|x} (for interactions). Where \code{y} is the term of the model on which comparisons are made and \code{x} is a term interacting with \code{y}.
 #' @param adjust Method to adjust CIs and p-values (see details).
 #' @param type Type of prediction  (matching "linear.predictor", "link", or "response").
-#' @param alpha Significant level (default = 0.05) used to calculate confidence intervals.
+#' @param level Confidence interval significance level.
 #' @param digits Number of digits for rounding (default = 2).
 #' @param ... Further arguments passed to \code{\link[emmeans]{emmeans}}.
 #' @details
 #' The default adjusting method is "mvt" which uses the multivariate t distribution.
 #' Other options are: "bonferroni", "holm", "hochberg", "tukey" and "none".
-#' @return A list with objects: \code{df} A data frame with ajusted p-values, \code{fig} a plot with pair comparisons, \code{fig_ci} a plot with confidence intervals for each condition, \code{fig_pval} a plot comparing adjusted p-values.
+#' @return A list with objects: \code{df} A data frame with ajusted p-values, \code{fig_ci} a plot with estimates and adjusted confidence intervals and \code{fig_pval} a plot comparing adjusted p-values.
 #' @seealso \code{\link[emmeans]{emmeans}}, \code{\link[emmeans]{pwpp}}.
 #' @examples
 #' data(birthwt, package = "MASS")
@@ -129,59 +129,60 @@ gf_star <- function(fig, x1, y1, x2, y2, y3, legend = "*", ...)
 #' model_1 <- aov(bwt ~ race, data = birthwt)
 #' multiple(model_1, ~ race)$df
 #'
-#' multiple(model_1, ~ race)$fig %>%
-#'   gf_labs(x = 'Difference in birth weights (g)')
-#'
 #' multiple(model_1, ~ race)$fig_ci %>%
-#'   gf_labs(y = 'Race', x = 'Birth weight (g)')
+#'   gf_labs(y = 'Race', x = 'Difference in birth weights (g)')
 #'
 #' multiple(model_1, ~ race)$fig_pval %>%
 #'   gf_labs(y = 'Race')
 multiple <- function (model, formula, adjust = "mvt",
-                      type = "response", alpha = 0.05, digits = 2, ...)
+                      type = "response", level = 0.95, digits = 2, ...)
 {
   term_emm <- emmeans(model, formula, type = type, ...)
   emm_df <- as.data.frame(pairs(term_emm, adjust = adjust))
+  emm_ci <- as.data.frame(confint(pairs(term_emm, adjust = adjust), level = level))
   log10_pval <- log10(emm_df[["p.value"]])
   emm_df$p.value <- round_pval(emm_df[["p.value"]])
   emm_df <- emm_df %>%
     dplyr::select(- df)
-  conf.int <- 1 - alpha
-  zcrit <- qnorm((1 + conf.int)/2)
+  emm_ci <- emm_ci %>%
+    dplyr::select(- df)
   vars <- all.vars(formula)
   n <- length(vars)
-  emm_df$lower <- emm_df[, (n + 1)] - emm_df[, (n + 2)]*zcrit
-  emm_df$upper <- emm_df[, (n + 1)] + emm_df[, (n + 2)]*zcrit
+  if(n == 1){
+    names(emm_ci)[4:5] <- c("lower.CL", "upper.CL")
+  } else {
+    names(emm_ci)[5:6] <- c("lower.CL", "upper.CL")
+  }
+  emm_df = cbind(emm_df, lower.CL = emm_ci[["lower.CL"]], upper.CL = emm_ci[["upper.CL"]])
   emm_df <- sjmisc::round_num(emm_df, digits = digits)
   emm_plot <- emm_df
   emm_plot$p_val <- log10_pval
   if(n == 1){
     names(emm_plot)[2] <- "Effect"
     if(names(emm_df)[2] == "estimate") {
-      fig <- emm_plot %>%
-        gf_pointrangeh(contrast ~ Effect + lower + upper, col = ~ log10_pval, ylab = " ") %>%
+      fig_ci <- emm_plot %>%
+        gf_pointrangeh(contrast ~ Effect + lower.CL + upper.CL, col = ~ log10_pval, ylab = " ") %>%
         gf_vline(xintercept = ~ 0, lty = 2, col = "indianred")
     } else {
-      fig <- emm_plot %>%
-        gf_pointrangeh(contrast ~ Effect + lower + upper, col = ~ log10_pval, ylab = " ") %>%
+      fig_ci <- emm_plot %>%
+        gf_pointrangeh(contrast ~ Effect + lower.CL + upper.CL, col = ~ log10_pval, ylab = " ") %>%
         gf_vline(xintercept = ~ 1, lty = 2, col = "indianred")
     }
   } else{
     names(emm_plot)[3] <- "Effect"
     names(emm_plot)[2] <- "confounder"
     if(names(emm_df)[3] == "estimate") {
-      fig <- emm_plot %>%
-        gf_pointrangeh(contrast ~ Effect + lower + upper|confounder, col = ~ log10_pval, ylab = " ") %>%
+      fig_ci <- emm_plot %>%
+        gf_pointrangeh(contrast ~ Effect + lower.CL + upper.CL|confounder, col = ~ log10_pval, ylab = " ") %>%
         gf_vline(xintercept = ~ 0, lty = 2, col = "indianred")
     } else {
-      fig <- emm_plot %>%
-        gf_pointrangeh(contrast ~ Effect + lower + upper|confounder, col = ~ log10_pval, ylab = " ") %>%
+      fig_ci <- emm_plot %>%
+        gf_pointrangeh(contrast ~ Effect + lower.CL + upper.CL|confounder, col = ~ log10_pval, ylab = " ") %>%
         gf_vline(xintercept = ~ 1, lty = 2, col = "indianred")
     }
   }
-  fig_ci <- plot(term_emm, adjust = adjust, comparisons = TRUE)
   fig_pval <- pwpp(term_emm, adjust = adjust)
-  res = list(df = emm_df, fig = fig, fig_ci = fig_ci, fig_pval = fig_pval)
+  res = list(df = emm_df, fig_ci = fig_ci, fig_pval = fig_pval)
 }
 
 #' Bland-Altman agreement plots.

@@ -91,7 +91,7 @@ In Public Health and Epidemiology it is common to have a categorical outcome and
 
 The `estat` function from the `pubh` package displays descriptive statistics of continuous outcomes and like `mytable`, it can use *labels* to display nice tables. `estat`. As a way to aid in the understanding of the variability, `estat` displays also the relative dispersion (coefficient of variation) which is of particular interest for comparing variances between groups (factors).
 
-Some examples. We start by loading packages as suggested in the Template of this package.
+Some examples. We start by loading packages.
 
 ```{r, message=FALSE}
 library(kableExtra)
@@ -353,8 +353,7 @@ Some advantages of `tab_model` over `glm_coef` are:
 
 ```{r, eval = FALSE, echo = FALSE}
 model_bwt %>%
-  glm_coef(model_bwt, 
-           labels = c(
+  glm_coef(labels = c(
              "Constant",
              "Smoking: smoker - non-smoker",
              "Race: African American - White",
@@ -366,17 +365,17 @@ model_bwt %>%
 In the previous table of coefficients confidence intervals and p-values for race had not been adjusted for multiple comparisons. We use functions from the `emmeans` package to make the corrections.
 
 ```{r}
-multiple(model_bwt, "race" )$df
+multiple(model_bwt, ~ race)$df
 ```
 
 ```{r}
-multiple(model_bwt, "race" )$fig_ci %>%
-  gf_labs(y = "Race", x = get_label(birthwt$bwt))
+multiple(model_bwt, ~ race)$fig_ci %>%
+  gf_labs(x = "Difference in birth weights (g)")
 ```
 
 ```{r}
-multiple(model_bwt, "race" )$fig_pval %>%
-  gf_labs(y = "Race")
+multiple(model_bwt, ~ race)$fig_pval %>%
+  gf_labs(y = " ")
 ```
 
 
@@ -401,7 +400,7 @@ Let's look at the table:
 ```{r}
 Bernard %>%
   cross_tab(treat ~ fate) %>%
-  kable() 
+  kable(align = "llrrr") 
 ```
 
 For `epi.2by2` we need to provide the table of counts in the correct order, so we would type something like:
@@ -455,8 +454,8 @@ First we look at the cross-tabulation:
 
 ```{r}
 oswego %>%
-  cross_tab(ill ~ sex + chocolate.ice.cream) %>%
-  kable()
+  cross_tab(ill ~ sex + chocolate.ice.cream, na_include = TRUE) %>%
+  kable(align = "llrrr")
 ```
 
 ```{r}
@@ -472,8 +471,7 @@ Example: An international case-control study to test the hypothesis that breast 
 ```{r}
 data(Oncho)
 
-odds_trend(mf ~ agegrp, data = Oncho, angle = 0, hjust = 0.5)$fig %>%
-  gf_path()
+odds_trend(mf ~ agegrp, data = Oncho, angle = 0, hjust = 0.5)$fig
 ```
 
 ## Diagnostic tests

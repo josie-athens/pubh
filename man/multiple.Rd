@@ -9,7 +9,7 @@ multiple(
   formula,
   adjust = "mvt",
   type = "response",
-  alpha = 0.05,
+  level = 0.95,
   digits = 2,
   ...
 )
@@ -23,14 +23,14 @@ multiple(
 
 \item{type}{Type of prediction  (matching "linear.predictor", "link", or "response").}
 
-\item{alpha}{Significant level (default = 0.05) used to calculate confidence intervals.}
+\item{level}{Confidence interval significance level.}
 
 \item{digits}{Number of digits for rounding (default = 2).}
 
 \item{...}{Further arguments passed to \code{\link[emmeans]{emmeans}}.}
 }
 \value{
-A list with objects: \code{df} A data frame with ajusted p-values, \code{fig} a plot with pair comparisons, \code{fig_ci} a plot with confidence intervals for each condition, \code{fig_pval} a plot comparing adjusted p-values.
+A list with objects: \code{df} A data frame with ajusted p-values, \code{fig_ci} a plot with estimates and adjusted confidence intervals and \code{fig_pval} a plot comparing adjusted p-values.
 }
 \description{
 \code{multiple} displays results from post-doc analysis and constructs corresponding plot.
@@ -46,11 +46,8 @@ birthwt$race <- factor(birthwt$race, labels = c("White", "African American", "Ot
 model_1 <- aov(bwt ~ race, data = birthwt)
 multiple(model_1, ~ race)$df
 
-multiple(model_1, ~ race)$fig \%>\%
-  gf_labs(x = 'Difference in birth weights (g)')
-
 multiple(model_1, ~ race)$fig_ci \%>\%
-  gf_labs(y = 'Race', x = 'Birth weight (g)')
+  gf_labs(y = 'Race', x = 'Difference in birth weights (g)')
 
 multiple(model_1, ~ race)$fig_pval \%>\%
   gf_labs(y = 'Race')
