@@ -9,14 +9,14 @@ multiple(model, formula, adjust = "mvt", digits = 2)
 \arguments{
 \item{model}{A fitted model supported by \code{emmeans}, such as the result of a call to \code{aov}, \code{lm}, \code{glm}, etc.}
 
-\item{formula}{A formula with shape: \code{~ y} or \code{~ y|x} (for interactions). Where \code{y} is the term of the model that on which comparisons are made and \code{x} is a term interacting with \code{y}.}
+\item{formula}{A formula with shape: \code{~ y} or \code{~ y|x} (for interactions). Where \code{y} is the term of the model on which comparisons are made and \code{x} is a term interacting with \code{y}.}
 
 \item{adjust}{Method to adjust CIs and p-values (see details).}
 
 \item{digits}{Number of digits for rounding (default = 2).}
 }
 \value{
-A list with objects: \code{df} A data frame with ajusted p-values, \code{fig_ci} a plot with confidence intervals, \code{fig_pval} a plot comparing adjusted p-values.
+A list with objects: \code{df} A data frame with ajusted p-values, \code{fig} a plot with pair comparisons, \code{fig_ci} a plot with confidence intervals for each condition, \code{fig_pval} a plot comparing adjusted p-values.
 }
 \description{
 \code{multiple} displays results from post-doc analysis and constructs corresponding plot.
@@ -32,11 +32,14 @@ birthwt$race <- factor(birthwt$race, labels = c("White", "African American", "Ot
 model_1 <- aov(bwt ~ race, data = birthwt)
 multiple(model_1, ~ race)$df
 
+multiple(model_1, ~ race)$fig \%>\%
+  gf_labs(x = 'Difference in birth weights (g)')
+
 multiple(model_1, ~ race)$fig_ci \%>\%
-gf_labs(y = 'Race', x = 'Birth weight (g)')
+  gf_labs(y = 'Race', x = 'Birth weight (g)')
 
 multiple(model_1, ~ race)$fig_pval \%>\%
-gf_labs(y = 'Race')
+  gf_labs(y = 'Race')
 }
 \seealso{
 \code{\link[emmeans]{emmeans}}, \code{\link[emmeans]{pwpp}}.

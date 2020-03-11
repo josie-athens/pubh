@@ -111,13 +111,13 @@ gf_star <- function(fig, x1, y1, x2, y2, y3, legend = "*", ...)
 #' \code{multiple} displays results from post-doc analysis and constructs corresponding plot.
 #'
 #' @param model A fitted model supported by \code{emmeans}, such as the result of a call to \code{aov}, \code{lm}, \code{glm}, etc.
-#' @param formula A formula with shape: \code{~ y} or \code{~ y|x} (for interactions). Where \code{y} is the term of the model that on which comparisons are made and \code{x} is a term interacting with \code{y}.
-#' @param digits Number of digits for rounding (default = 2).
+#' @param formula A formula with shape: \code{~ y} or \code{~ y|x} (for interactions). Where \code{y} is the term of the model on which comparisons are made and \code{x} is a term interacting with \code{y}.
 #' @param adjust Method to adjust CIs and p-values (see details).
+#' @param digits Number of digits for rounding (default = 2).
 #' @details
 #' The default adjusting method is "mvt" which uses the multivariate t distribution.
 #' Other options are: "bonferroni", "holm", "hochberg", "tukey" and "none".
-#' @return A list with objects: \code{df} A data frame with ajusted p-values, \code{fig_ci} a plot with confidence intervals, \code{fig_pval} a plot comparing adjusted p-values.
+#' @return A list with objects: \code{df} A data frame with ajusted p-values, \code{fig} a plot with pair comparisons, \code{fig_ci} a plot with confidence intervals for each condition, \code{fig_pval} a plot comparing adjusted p-values.
 #' @seealso \code{\link[emmeans]{emmeans}}, \code{\link[emmeans]{pwpp}}.
 #' @examples
 #' data(birthwt, package = "MASS")
@@ -126,29 +126,57 @@ gf_star <- function(fig, x1, y1, x2, y2, y3, legend = "*", ...)
 #' model_1 <- aov(bwt ~ race, data = birthwt)
 #' multiple(model_1, ~ race)$df
 #'
+#' multiple(model_1, ~ race)$fig %>%
+#'   gf_labs(x = 'Difference in birth weights (g)')
+#'
 #' multiple(model_1, ~ race)$fig_ci %>%
-#' gf_labs(y = 'Race', x = 'Birth weight (g)')
+#'   gf_labs(y = 'Race', x = 'Birth weight (g)')
 #'
 #' multiple(model_1, ~ race)$fig_pval %>%
-#' gf_labs(y = 'Race')
-multiple <- function(model, formula, adjust = 'mvt', digits = 2)
+#'   gf_labs(y = 'Race')
+multiple = function (model, formula, adjust = "mvt", digits = 2)
 {
-  term_emm <- emmeans(model, formula)
-  df <- as.data.frame(pairs(term_emm, adjust = adjust))
-  df$p.value <- round_pval(df[['p.value']])
-  df$estimate <- round(df[['estimate']], digits = digits)
-  df$SE <- round(df[['SE']], digits = digits)
-  if (is.null(df$t.ratio)) {
-    df$z.ratio <- round(df[['z.ratio']], digits = digits)
-  } else {
-    df$t.ratio <- round(df[['t.ratio']], digits = digits)
+  term_emm <- emmeans(model, formula, type = "response")
+  emm_df <- as.data.frame(pairs(term_emm, adjust = adjust))
+  emm_df$p.value <- round_pval(emm_df[["p.value"]])
+  emm_df <- emm_df %>%
+    dplyr::select(- df)
+  zcrit <- qnorm(0.975)
+  vars <- all.vars(formula)
+  n <- length(vars)
+  emm_df$lower <- emm_df[, (n + 1)] - emm_df[, (n + 2)]*zcrit
+  emm_df$upper <- emm_df[, (n + 1)] + emm_df[, (n + 2)]*zcrit
+  emm_df <- sjmisc::round_num(emm_df, digits = digits)
+  emm_plot <- emm_df
+  if(n == 1){
+    names(emm_plot)[2] <- "Effect"
+    if(names(emm_df)[2] == "estimate") {
+      fig <- emm_plot %>%
+        gf_pointrangeh(contrast ~ Effect + lower + upper, ylab = " ") %>%
+        gf_vline(xintercept = ~ 0, lty = 2, col = "indianred")
+    } else {
+      fig <- emm_plot %>%
+        gf_pointrangeh(contrast ~ Effect + lower + upper, ylab = " ") %>%
+        gf_vline(xintercept = ~ 1, lty = 2, col = "indianred")
+    }
+  } else{
+    names(emm_plot)[3] <- "Effect"
+    names(emm_plot)[2] <- "confounder"
+    if(names(emm_df)[3] == "estimate") {
+      fig <- emm_plot %>%
+        gf_pointrangeh(contrast ~ Effect + lower + upper|confounder, ylab = " ") %>%
+        gf_vline(xintercept = ~ 0, lty = 2, col = "indianred")
+    } else {
+      fig <- emm_plot %>%
+        gf_pointrangeh(contrast ~ Effect + lower + upper|confounder, ylab = " ") %>%
+        gf_vline(xintercept = ~ 1, lty = 2, col = "indianred")
+    }
   }
-  model_formula <- formula(model)
-  vars <- all.vars(model_formula)
-  fig_ci <- plot(term_emm, adjust = adjust, comparisons = TRUE, type = 'response')
+  fig_ci <- plot(term_emm, adjust = adjust, comparisons = TRUE)
   fig_pval <- pwpp(term_emm, adjust = adjust)
-  res = list(df = df, fig_ci = fig_ci, fig_pval = fig_pval)
+  res = list(df = emm_df, fig = fig, fig_ci = fig_ci, fig_pval = fig_pval)
 }
+
 #' Bland-Altman agreement plots.
 #'
 #' @details \code{bland_altman} constructs Bland-Altman agreement plots.
