@@ -15,7 +15,7 @@ contingency2(aa, bb, cc, dd, ...)
 
 \item{dd}{Number of cases where both exposure and outcome are absent.}
 
-\item{...}{Further arguments passed to \code{epi.2by2}.}
+\item{...}{Further arguments passed to \code{\link[epiR]{epi.2by2}}.}
 }
 \description{
 \code{contingency2} is a wrap that calls \code{epi.2by2} from package \code{epiR}.
