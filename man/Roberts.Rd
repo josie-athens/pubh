@@ -4,11 +4,13 @@
 \name{Roberts}
 \alias{Roberts}
 \title{Extracorporeal membrane oxygenation in neonates.}
-\format{A labelled tibble with 185 rows and 2 variables:
+\format{
+A labelled tibble with 185 rows and 2 variables:
 \describe{
 \item{emo}{Extracorporeal membrane oxygenation treatment, factor with levels "No" and "Yes".}
 \item{survived}{One year survival, factor with levels "No" and "Yes".}
-}}
+}
+}
 \source{
 Roberts, TE (1998) Extracorporeal Membrane Oxygenation Economics Working Group. Economic
 evaluation and randomised controlled trial of extracorporeal membrane oxygenation: UK collaborative

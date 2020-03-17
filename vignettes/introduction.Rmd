@@ -94,17 +94,16 @@ The `estat` function from the `pubh` package displays descriptive statistics of 
 Some examples. We start by loading packages.
 
 ```{r, message=FALSE}
+rm(list = ls())
 library(kableExtra)
 library(tidyverse)
-library(mosaic)
-library(latex2exp)
 library(pubh)
 library(sjlabelled)
 library(sjPlot)
 
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
-options(knitr.table.format = 'pandoc')
+options('huxtable.knit_print_df' = FALSE)
 ```
 
 We will use a data set about a study of onchocerciasis in Sierra Leone.
@@ -255,7 +254,8 @@ birthwt <- birthwt %>%
     ) %>%
   var_labels(
     bwt = 'Birth weight (g)',
-    smoke = 'Smoking status'
+    smoke = 'Smoking status',
+    race = 'Race',
   )
 ```
 
@@ -324,11 +324,8 @@ For simplicity, here we show the analysis of the linear model of smoking on birt
 ```{r}
 model_bwt <- lm(bwt ~ smoke + race, data = birthwt)
 model_bwt %>%
-  glm_coef(labels = c("Constant",
-                      "Smoker vs Non smoker",
-                      "African American vs White",
-                      "Other vs White")) %>%
-  kable(align = "r")
+  glm_coef(labels = model_labels(model_bwt)) %>%
+  kable(align = "rr")
 ```
 
 Similar results can be obtained with the function `tab_model` from the `sjPlot` package. 
@@ -350,17 +347,6 @@ Some advantages of `tab_model` over `glm_coef` are:
 - Includes some statistics about the model.
 - It can display more than one model on the same output.
 - Tables are more aesthetically appealing.
-
-```{r, eval = FALSE, echo = FALSE}
-model_bwt %>%
-  glm_coef(labels = c(
-             "Constant",
-             "Smoking: smoker - non-smoker",
-             "Race: African American - White",
-             "Race: Other - White")
-           ) %>%
-  kable()
-```
 
 In the previous table of coefficients confidence intervals and p-values for race had not been adjusted for multiple comparisons. We use functions from the `emmeans` package to make the corrections.
 
@@ -392,7 +378,7 @@ Let's say we want to look at the effect of ibuprofen on preventing death in pati
 
 ```{r}
 data(Bernard)
-kable(head(Bernard))
+head(Bernard)
 ```
 
 Let's look at the table:

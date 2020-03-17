@@ -4,13 +4,15 @@
 \name{Sharples}
 \alias{Sharples}
 \title{Measured and self-reported weight in New Zealand.}
-\format{A tibble with 343 rows and 4 variables:
+\format{
+A tibble with 343 rows and 4 variables:
 \describe{
 \item{srweight}{Self-reported weight in kg.}
 \item{weight}{Measured weight in kg.}
 \item{srbmi}{Body mass index calculated from self-reported weight and self-reported height in kg/m^2.}
 \item{mbmi}{Body mass index calculated from measured weight and measured height in kg/m^2.}
-}}
+}
+}
 \source{
 Sharples, H, et al. (2012) Agreement between measured and self-reported height, weight and BMI
 in predominantly European middle-aged New Zealanders: findings from a nationwide 1989 survey. New Zealand

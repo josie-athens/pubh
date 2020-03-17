@@ -4,11 +4,13 @@
 \name{Tuzson}
 \alias{Tuzson}
 \title{Peak knee velocity in walking at flexion and extension.}
-\format{A labelled tibble with 18 rows and 2 variables:
+\format{
+A labelled tibble with 18 rows and 2 variables:
 \describe{
 \item{flexion}{Peak knee velocity in gait: flexion (degree/s).}
 \item{extension}{Peak knee velocity in gait: extension (degree/s).}
-}}
+}
+}
 \source{
 Tuzson, AE, Granata, KP, and Abel, MF (2003) Spastic velocity threshold constrains functional
 performance in cerebral palsy. Arch Phys Med Rehabil 84: 1363-1368.

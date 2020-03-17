@@ -4,12 +4,14 @@
 \name{Sandler}
 \alias{Sandler}
 \title{Passive smoking in adulthood and cancer risk.}
-\format{A labelled tibble with 998 rows and 3 variables:
+\format{
+A labelled tibble with 998 rows and 3 variables:
 \describe{
 \item{passive}{Passive smoker, factor with levels "No" and "Yes".}
 \item{cancer}{Diagnosed with cancer, factor with levels "No" and "Yes".}
 \item{smoke}{Active smoker, factor with levels "No" and "Yes".}
-}}
+}
+}
 \source{
 Sandler, DP, Everson, RB, Wilcox, AJ (1985). Passive smoking in adulthood and cancer risk. Amer J Epidem, 121: 37-48.
 }

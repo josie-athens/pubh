@@ -4,11 +4,13 @@
 \name{Brenner}
 \alias{Brenner}
 \title{Prevalence of Helicobacter pylori infection in preschool children.}
-\format{A labelled tibble with 863 rows and 2 variables:
+\format{
+A labelled tibble with 863 rows and 2 variables:
 \describe{
 \item{ulcer}{History of duodenal or gastric ulcer, factor with levels "No" and "Yes".}
 \item{infected}{Infected with Helicobacter pylori, factor with levels "No" and "Yes".}
-}}
+}
+}
 \source{
 Brenner H, Rothenbacher D, Bode G, Adler G (1998) Parental history of gastric or duodenal ulcer
 and prevalence of Helicobacter pylori infection in preschool children: population based study.

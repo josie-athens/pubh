@@ -4,12 +4,14 @@
 \name{Rothman}
 \alias{Rothman}
 \title{Oral contraceptives and stroke.}
-\format{A labelled tibble with 477 rows and 3 variables:
+\format{
+A labelled tibble with 477 rows and 3 variables:
 \describe{
 \item{stroke}{Thrombotic stroke, factor with levels "No" and "Yes".}
 \item{oc}{Current user of oral contraceptives, factor with levels "Non-user" and "User".}
 \item{ht}{Hypertension, factor with levels "No" (<160/95 mm Hg) and "Yes".}
-}}
+}
+}
 \source{
 Collaborative Group for the Study of Stroke in Young Women (1975) Oral contraceptives and stroke in
 young women. JAMA 231:718-722.

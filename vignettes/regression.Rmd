@@ -33,17 +33,18 @@ The aim of this vignette is to illustrate the use/functionality of the `glm_coef
 We start by loading relevant packages and setting the theme for the plots (as suggested in the Template of this package):
 
 ```{r, message=FALSE}
+rm(list = ls())
+library(broom)
+library(car)
 library(kableExtra)
 library(tidyverse)
-library(mosaic)
-library(latex2exp)
 library(pubh)
 library(sjlabelled)
 library(sjPlot)
 
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
-options(knitr.table.format = "pandoc")
+options('huxtable.knit_print_df' = FALSE)
 ```
 
 
@@ -112,13 +113,6 @@ model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 
 > **Note:** Model diagnostics are not be discussed in this vignette.
 
-First, we load the following packages to help us with regression:
-
-```{r message=FALSE}
-library(car)
-library(broom)
-```
-
 Traditional output from the model:
 
 ```{r}
@@ -132,31 +126,19 @@ model_norm %>% summary
 Table of coefficients:
 
 ```{r}
-model_norm %>% glm_coef
-```
-
-Once we know the order in which the parameters are displayed, we can add labels to our final table:
-
-> **Note:** Compare results using naive and robust standard errors.
-
-```{r}
-model_norm %>%
-  glm_coef(se_rob = FALSE, labels = c("Constant",
-                                      "Smoker - No smoker",
-                                      "African American - White",
-                                      "Other - White")) %>%
-  kable(caption = "Table of coefficients using naive standard errors.",
+model_norm %>% 
+  glm_coef(labels = model_labels(model_norm)) %>%
+  kable(caption = "Table of coefficients using robust standard errors.",
         align = 'rr')
 ```
 
 
+> **Note:** Compare results using naive standard errors.
+
 ```{r}
 model_norm %>%
-  glm_coef(labels = c("Constant",
-                      "Smoker - No smoker",
-                      "African American - White",
-                      "Other - White")) %>%
-  kable(caption = "Table of coefficients using robust standard errors.",
+  glm_coef(se_rob = FALSE, labels = model_labels(model_norm)) %>%
+  kable(caption = "Table of coefficients using naive standard errors.",
         align = "rr")
 ```
 
@@ -215,7 +197,7 @@ We fit a linear logistic model:
 ```{r}
 model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
 model_binom %>%
-  glm_coef(labels = c("Constant", "Fibre intake (g/day)")) %>%
+  glm_coef(labels = model_labels(model_binom)) %>%
   kable(caption = "Parameter estimates from logistic regression.", align = "rr")
 ```
 
@@ -309,16 +291,9 @@ model_clm <- clm(Sat ~ Infl + Type + Cont, weights = Freq, data = housing)
 ```
 
 ```{r}
-labs_ord <- c("Constant: Low/Medium satisfaction",
-              "Constant: Medium/High satisfaction",
-              "Perceived influence: Medium/Low",
-              "Perceived influence: High/Low",
-              "Accommodation: Apartment/Tower",
-              "Accommodation: Atrium/Tower",
-              "Accommodation: Terrace/Tower",
-              "Afforded: High/Low")
-kable(glm_coef(model_clm, labels = labs_ord), 
-      caption = "Parameter estimates on satisfaction of householders.",
+model_clm %>%
+  glm_coef(labels = model_labels(model_clm, intercept = FALSE)) %>%
+  kable(caption = "Parameter estimates on satisfaction of householders.",
       align = "rr")
 ```
 
@@ -389,7 +364,10 @@ We start by fitting a standard Poisson linear regression model:
 
 ```{r}
 model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
-glm_coef(model_pois) %>% kable(align = "rr")
+
+model_pois %>%
+  glm_coef(labels = model_labels(model_pois)) %>% 
+  kable(align = "rr")
 ```
 
 ```{r}
@@ -410,15 +388,9 @@ Thus, we have over-dispersion. One option is to use a negative binomial distribu
 ```{r}
 library(MASS)
 model_negbin <- glm.nb(Days ~ Eth + Sex + Age, data = quine)
-glm_coef(model_negbin, 
-         labels=c(
-           "Constant",
-           "Race: Aboriginal/White",
-           "Sex: Female/Male",
-           "F1/Primary",
-           "F2/Primary",
-           "F3/Primary")
-         ) %>%
+
+model_negbin %>%
+  glm_coef(labels = model_labels(model_negbin)) %>%
   kable(align = "rr")
 ```
 
@@ -573,8 +545,12 @@ model_lme <- lme(distance ~ Sex * I(age - mean(age, na.rm = TRUE)), random = ~ 1
 
 ```{r}
 model_lme %>%
-  glm_coef(labels = c("Constant", "Sex: female-male", "Age (years)",
-                      "Sex:Age interaction")) %>%
+  glm_coef(labels = c(
+    "Constant", 
+    "Sex: female-male", 
+    "Age (years)",
+    "Sex:Age interaction"
+    )) %>%
   kable(align = "rr")
 ```
 
@@ -585,7 +561,8 @@ model_lme %>% glance
 Effect plot:
 
 ```{r}
-plot_model(model_lme, type = "pred", terms = age ~ Sex, show.data = TRUE) %>%
+plot_model(model_lme, type = "pred", terms = age ~ Sex, 
+           show.data = TRUE, jitter = 0.1) %>%
   gf_labs(y = get_label(Orthodont$distance), x = "Age (years)", title = "")
 ```
 

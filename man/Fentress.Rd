@@ -4,12 +4,14 @@
 \name{Fentress}
 \alias{Fentress}
 \title{Migraine pain reduction.}
-\format{A labelled tibble with 18 rows and 2 variables:
+\format{
+A labelled tibble with 18 rows and 2 variables:
 \describe{
 \item{pain}{Reduction in weekly headache activity expressed as percentage of baseline data.}
 \item{group}{Group, a factor with levels "Untreated", "Relaxation" (alone) and "Biofeedback" (relaxation
 and biofeedback).}
-}}
+}
+}
 \source{
 Fentress, DW, et al. (1986) Biofeedback and relaxation-response in the treatment of pediatric
 migraine. Dev Med Child Neurol 28:1 39-46.
