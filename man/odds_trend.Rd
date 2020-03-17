@@ -51,7 +51,5 @@ odds_trend(Biopsy ~ Weight, data = breast)$df
 odds_trend(Biopsy ~ Weight, data = breast)$fig
 }
 \seealso{
-\code{epitools::oddsratio}
-
 \code{\link[epitools]{oddsratio}}.
 }

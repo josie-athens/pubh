@@ -4,7 +4,8 @@
 \name{Oncho}
 \alias{Oncho}
 \title{Onchocerciasis in Sierra Leone.}
-\format{A labelled tibble with 1302 rows and 7 variables:
+\format{
+A labelled tibble with 1302 rows and 7 variables:
 \describe{
 \item{id}{Subject ID.}
 \item{mf}{Infected with Onchocerciasis volvulus, factor with levels "Not-infected" and "Infected".}
@@ -13,7 +14,8 @@
 \item{sex}{Subject sex, factor with levels "Male" and "Female".}
 \item{mfload}{Microfiliariae load.}
 \item{lesions}{Severe eye lesions, factor with levels "No" and "Yes".}
-}}
+}
+}
 \source{
 McMahon, JE, Sowa, SIC, Maude, GH and Kirkwood BR (1988) Onchocerciasis in Sierra Leone 2:
 a comparison of forest and savannah villages. Trans Roy Soc Trop Med Hyg 82: 595-600.

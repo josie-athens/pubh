@@ -4,12 +4,14 @@
 \name{Hodgkin}
 \alias{Hodgkin}
 \title{T-cell counts from Hodgkin's disease patients.}
-\format{A labelled tibble with 40 rows and 3 variables:
+\format{
+A labelled tibble with 40 rows and 3 variables:
 \describe{
 \item{CD4}{Concentration of CD4+ T-cells (cells / mm^3).}
 \item{CD8}{Concentration of CD8+ T-cells (cells / mm^3).}
 \item{Group}{Group, factor with levels "Non-Hodgkin" and "Hodgkin".}
-}}
+}
+}
 \source{
 Shapiro, CM, et al (1986) Immunologic status of patients in remission from Hodgkin's disease and
 disseminated malignancies. Am J Med Sci 293:366-370.

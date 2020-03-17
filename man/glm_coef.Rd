@@ -54,18 +54,25 @@ in a different column and includes standard errors.
 Please read the Vignette on Regression for more details.
 }
 \examples{
+require(dplyr)
+require(sjlabelled)
+
 ## Continuous outcome.
 data(birthwt, package = "MASS")
-require(dplyr)
-birthwt <- mutate(birthwt,
-  smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
-  Race = factor(race > 1, labels = c("White", "Non-white")))
+birthwt <- birthwt \%>\%
+  mutate(
+    smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
+    race = factor(race, labels = c("White", "African American", "Other"))
+  ) \%>\%
+  var_labels(
+    bwt = 'Birth weight (g)',
+    smoke = 'Smoking status',
+    race = 'Race'
+  )
 
-model_norm <- glm(bwt ~ smoke + race, data = birthwt)
-glm_coef(model_norm)
+model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 
-model_norm \%>\%
-  glm_coef(labels=c("Constant", "Smoker vs Non-smoker", "Non-white vs White"))
+glm_coef(model_norm, labels = model_labels(model_norm))
 
 ## Logistic regression.
 data(diet, package = "Epi")
@@ -74,29 +81,7 @@ model_binom \%>\%
   glm_coef(labels = c("Constant", "Fibre intake (g/day)"))
 
 model_binom \%>\%
-glm_coef(labels = c("Constant", "Fibre intake (g/day)"), type = "ext")
-
-## Poisson regression.
-library(MASS)
-data(quine)
-levels(quine$Eth) <- list(White = "N", Aboriginal = "A")
-levels(quine$Sex) <- list(Male = "M", Female = "F")
-model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
-
-model_pois \%>\%
-  glm_coef()
-
-deviance(model_pois) / df.residual(model_pois) # to check for overdispersion
-
-model_negbin <- glm.nb(Days ~ Eth + Sex + Age, data = quine)
-unadj <- glm_coef(model_negbin,
-                  labels=c("Constant",
-                  "Race: Aboriginal/White",
-                  "Sex: Female/Male",
-                  "F1/Primary",
-                  "F2/Primary",
-                  "F3/Primary"))
-unadj # Not-adjusted for multiple comparisons
+  glm_coef(labels = c("Constant", "Fibre intake (g/day)"), type = "ext")
 
 ## For more examples, please read the Vignette on Regression.
 }

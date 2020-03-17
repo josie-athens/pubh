@@ -4,12 +4,14 @@
 \name{Macmahon}
 \alias{Macmahon}
 \title{Breast cancer and age of childbirth.}
-\format{A labelled tibble with 185 rows and 2 variables:
+\format{
+A labelled tibble with 185 rows and 2 variables:
 \describe{
 \item{cancer}{Diagnosed with breast cancer, a factor with levels "No" and "Yes".}
 \item{age}{Age mother gives childbirth, factor with levels "<20", "20-24",
 "25-29", "30-34" and ">34".}
-}}
+}
+}
 \source{
 Macmahon, B. et al. (1970). Age at first birth and breast cancer risk. Bull WHO 43, 209-221.
 }

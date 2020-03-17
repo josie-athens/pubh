@@ -4,7 +4,8 @@
 \name{Thall}
 \alias{Thall}
 \title{RCT on the treatment of epilepsy.}
-\format{A tibble with 59 rows and 8 variables:
+\format{
+A tibble with 59 rows and 8 variables:
 \describe{
 \item{id}{Subject ID.}
 \item{treat}{Treatment, factor with levels "Control" and "Prograbide".}
@@ -14,7 +15,8 @@
 \item{y2}{Number of seizures at year two follow-up.}
 \item{y3}{Number of seizures at year three follow-up.}
 \item{y4}{Number of seizures at year four follow-up.}
-}}
+}
+}
 \source{
 Thall, PF and Vail, SC (1990) Some covariance models for longitudinal count data with over-dispersion.
 Biometrics, 46: 657-671.

@@ -4,12 +4,14 @@
 \name{Kirkwood}
 \alias{Kirkwood}
 \title{Body weight and plasma volume.}
-\format{A labelled data frame with 8 rows and 3 variables:
+\format{
+A labelled data frame with 8 rows and 3 variables:
 \describe{
 \item{subject}{Subject ID.}
 \item{weight}{Body weight in kg.}
 \item{volume}{Plasma volume in litres.}
-}}
+}
+}
 \source{
 Kirkwood, BR and Sterne, JAC (2003) Essential Medical Statistics. Second Edition. Blackwell.
 }

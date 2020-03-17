@@ -4,12 +4,14 @@
 \name{Vanderpump}
 \alias{Vanderpump}
 \title{Smoking and mortality in Whickham, England.}
-\format{A labelled tibble with 1314 rows and 3 variables:
+\format{
+A labelled tibble with 1314 rows and 3 variables:
 \describe{
 \item{vstatus}{Vitality status, factor with levels "Alive" and "Death".}
 \item{smoker}{Smoking status, factor with levels "Non-smoker" and "Smoker".}
 \item{agegrp}{Age group, factor with levels "18-44", "45-64" and "64+".}
-}}
+}
+}
 \source{
 Vanderpump, MP, et al (1996) Thyroid, 6:155-160.
 

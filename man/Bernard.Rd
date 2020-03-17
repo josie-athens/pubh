@@ -4,7 +4,8 @@
 \name{Bernard}
 \alias{Bernard}
 \title{Survival of patients with sepsis.}
-\format{A labelled tibble with 455 rows and 9 variables:
+\format{
+A labelled tibble with 455 rows and 9 variables:
 \describe{
 \item{id}{Patient ID}
 \item{treat}{Treatment, factor with levels "Placebo" and "Ibuprofen".}
@@ -15,7 +16,8 @@
 \item{followup}{Follow-up time in hours.}
 \item{temp0}{Baseline temperature in centigrades.}
 \item{temp10}{Temperature after 36 hr in centigrades.}
-}}
+}
+}
 \source{
 Bernard, GR, et al. (1997) The effects of ibuprofen on the physiology and survival of patients
 with sepsis, N Engl J Med 336: 912–918.

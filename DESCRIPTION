@@ -1,6 +1,6 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 1.1.8
+Version: 1.1.9
 Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@otago.ac.nz", role = c("aut", "cre")),
     person("Frank", "Harell", email = "f.harrell@vanderbilt.edu", role = "ctb"),
@@ -29,13 +29,15 @@ Imports:
     epitools,
     finalfit,
     ggplot2, 
-    Hmisc, 
+    Hmisc,
+    huxtable,
     lmtest,
     sandwich, 
     sjlabelled,
     sjmisc,
     sjPlot, 
-    survival
+    survival,
+    tidyselect
 Suggests:
     broom, 
     bookdown, 
@@ -45,6 +47,7 @@ Suggests:
     ggsci, 
     haven, 
     ISwR,
+    jtools,
     kableExtra, 
     knitr, 
     latex2exp, 
@@ -64,7 +67,7 @@ Suggests:
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 VignetteBuilder: knitr
 URL: https://github.com/josie-athens/pubh
 BugReports: https://github.com/josie-athens/pubh/issues

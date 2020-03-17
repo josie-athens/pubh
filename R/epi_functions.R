@@ -145,7 +145,6 @@ prop_or <- function(p2, or)
 #' significant or not.
 #'
 #' @details \code{odds_trend} is a wrap function that calls \code{oddsratio} from package \code{epitools}.
-#' @seealso \code{epitools::oddsratio}
 #' @param formula A formula with shape: outcome ~ exposure.
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param angle Angle of for the x labels (default = 45).
