@@ -28,15 +28,17 @@ always_allow_html: yes
 
 ```{r message = FALSE, results = 'hide'}
 rm(list = ls())
+library(car)
+library(broom)
 library(kableExtra)
 library(tidyverse)
+library(ggfortify)
 library(mosaic)
 library(huxtable)
 library(jtools)
 library(latex2exp)
 library(pubh)
 library(strengejacke)
-Anova <- car::Anova
 
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")

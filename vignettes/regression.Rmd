@@ -13,11 +13,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = NA, size = "small", 
-                      message = FALSE, warning = FALSE)
-```
-
 # Introduction
 
 The aim of this vignette is to illustrate the use/functionality of the `glm_coef` function. `glm_coef` can be used to display model coefficients with confidence intervals and p-values. The advantages and limitations of `glm_coef` are:
@@ -32,19 +27,26 @@ The aim of this vignette is to illustrate the use/functionality of the `glm_coef
 
 We start by loading relevant packages and setting the theme for the plots (as suggested in the Template of this package):
 
-```{r, message=FALSE}
+```{r message=FALSE, results = 'hide'}
 rm(list = ls())
-library(broom)
 library(car)
+library(broom)
 library(kableExtra)
 library(tidyverse)
+library(ggfortify)
+library(mosaic)
+library(huxtable)
+library(jtools)
+library(latex2exp)
 library(pubh)
-library(sjlabelled)
-library(sjPlot)
+library(strengejacke)
 
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
-options('huxtable.knit_print_df' = FALSE)
+# options('huxtable.knit_print_df' = FALSE)
+options('huxtable.knit_print_df_theme' = theme_article)
+options('huxtable.autoformat_number_format' = list(numeric = "%5.2f"))
+knitr::opts_chunk$set(collapse = TRUE, comment = NA)
 ```
 
 
@@ -70,19 +72,19 @@ birthwt <- birthwt %>%
 
 Is good to start with some basic descriptive statistics, so we can compare the birth weight between groups.
 
+
 ```{r}
 birthwt %>%
   group_by(race, smoke) %>%
   summarise(
     n = n(),
-    Mean = round(mean(bwt, na.rm = TRUE), 2),
-    SD = round(sd(bwt, na.rm = TRUE), 2),
-    Median = round(median(bwt, na.rm = TRUE), 2),
-    CV = round(rel_dis(bwt), 2)
-  ) %>%
-  kable(caption = "Descriptive statistics of birth weight (g) by ethnicity
-        and smoking status.")
+    Mean = mean(bwt, na.rm = TRUE),
+    SD = sd(bwt, na.rm = TRUE),
+    Median = median(bwt, na.rm = TRUE),
+    CV = rel_dis(bwt)
+  ) 
 ```
+
 
 From the previous table, the group with the lower birth weight was from babies born from African Americans who were smokers. The highest birth weight was from babies born from White non-smokers.
 
@@ -90,9 +92,7 @@ Another way to compare the means between the groups is with `gen_bst_df` which e
 
 ```{r}
 birthwt %>%
-  gen_bst_df(bwt ~ race|smoke) %>%
-  kable(caption = "Mean birth weight (g) by ethnicity
-        and smoking status with 95% CIs.")
+  gen_bst_df(bwt ~ race|smoke)
 ```
 
 Another approach to tabular analysis is graphical analysis. For this comparison, box-plots would be the way to go, but in health sciences it is more common to see bar charts with error bars.
@@ -116,20 +116,18 @@ model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 Traditional output from the model:
 
 ```{r}
-model_norm %>% Anova
+model_norm %>% Anova %>% tidy
 ```
 
 ```{r}
-model_norm %>% summary
+model_norm %>% tidy
 ```
 
 Table of coefficients:
 
 ```{r}
 model_norm %>% 
-  glm_coef(labels = model_labels(model_norm)) %>%
-  kable(caption = "Table of coefficients using robust standard errors.",
-        align = 'rr')
+  glm_coef(labels = model_labels(model_norm))
 ```
 
 
@@ -137,9 +135,7 @@ model_norm %>%
 
 ```{r}
 model_norm %>%
-  glm_coef(se_rob = FALSE, labels = model_labels(model_norm)) %>%
-  kable(caption = "Table of coefficients using naive standard errors.",
-        align = "rr")
+  glm_coef(se_rob = FALSE, labels = model_labels(model_norm))
 ```
 
 The function `glance` from the `broom` package allow us to have a quick look at statistics related with the model.
@@ -181,7 +177,7 @@ diet <- diet %>%
 We start with descriptive statistics:
 
 ```{r}
-diet %>% estat(fibre ~ chd) %>% kable
+diet %>% estat(fibre ~ chd)
 ```
 
 It is standard to plot the dependent variable in the $y$-axis, so in this case, we can use horizontal box-plots.
@@ -197,12 +193,7 @@ We fit a linear logistic model:
 ```{r}
 model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
 model_binom %>%
-  glm_coef(labels = model_labels(model_binom)) %>%
-  kable(caption = "Parameter estimates from logistic regression.", align = "rr")
-```
-
-```{r}
-model_binom %>% glance %>% round(2)
+  glm_coef(labels = model_labels(model_binom))
 ```
 
 Effect plot:
@@ -234,8 +225,7 @@ We start with descriptive statistics:
 
 ```{r}
 bdendo %>%
-  cross_tab(cancer ~ est + gall) %>%
-  kable()
+  cross_tab(cancer ~ est + gall) 
 ```
 
 We fit the conditional logistic model:
@@ -243,15 +233,12 @@ We fit the conditional logistic model:
 ```{r}
 library(survival)
 model_clogit <- clogit(cancer == 'Case'  ~ est * gall + strata(set), data = bdendo)
+
 model_clogit %>%
   glm_coef(labels = c("Oestrogen/No oestrogen", "GBD/No GBD",
-                      "Oestrogen:GBD Interaction")) %>%
-  kable(align = "rr")
+                      "Oestrogen:GBD Interaction")) 
 ```
 
-```{r}
-model_clogit %>% glance
-```
 
 Creating data frame needed to construct the effect plot:
 
@@ -292,13 +279,7 @@ model_clm <- clm(Sat ~ Infl + Type + Cont, weights = Freq, data = housing)
 
 ```{r}
 model_clm %>%
-  glm_coef(labels = model_labels(model_clm, intercept = FALSE)) %>%
-  kable(caption = "Parameter estimates on satisfaction of householders.",
-      align = "rr")
-```
-
-```{r}
-model_clm %>% glance
+  glm_coef(labels = model_labels(model_clm, intercept = FALSE))
 ```
 
 Effect plots:
@@ -353,11 +334,11 @@ quine %>%
   group_by(Eth, Sex, Age) %>%
   summarise(
     n = n(),
-    Mean = round(mean(Days, na.rm = TRUE), 2),
-    SD = round(sd(Days, na.rm = TRUE), 2),
-    Median = round(median(Days, na.rm = TRUE), 2)
-  ) %>%
-  kable()
+    Mean = mean(Days, na.rm = TRUE),
+    SD = sd(Days, na.rm = TRUE),
+    Median = median(Days, na.rm = TRUE),
+    CV = rel_dis(Days)
+  ) 
 ```
 
 We start by fitting a standard Poisson linear regression model:
@@ -366,8 +347,7 @@ We start by fitting a standard Poisson linear regression model:
 model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
 
 model_pois %>%
-  glm_coef(labels = model_labels(model_pois)) %>% 
-  kable(align = "rr")
+  glm_coef(labels = model_labels(model_pois))
 ```
 
 ```{r}
@@ -390,8 +370,7 @@ library(MASS)
 model_negbin <- glm.nb(Days ~ Eth + Sex + Age, data = quine)
 
 model_negbin %>%
-  glm_coef(labels = model_labels(model_negbin)) %>%
-  kable(align = "rr")
+  glm_coef(labels = model_labels(model_negbin)) 
 ```
 
 ```{r}
@@ -459,21 +438,16 @@ Using robust standard errors (default):
 
 ```{r}
 model_surv %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo", "Scale")) %>%
-  kable(align = "rr")
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo", "Scale"))
 ```
 
 In this example the scale parameter is not statistically different from one, meaning hazard is constant and thus, we can use the exponential distribution:
 
 ```{r}
 model_exp <- survreg(Surv(times, event) ~ rx, data = bladder, dist = "exponential")
-model_exp %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo")) %>%
-  kable(align = "rr")
-```
 
-```{r}
-model_exp %>% glance
+model_exp %>%
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo"))
 ```
 
 > **Interpretation:** Patients receiving Thiotepa live on average 64% more than those in the Placebo group.
@@ -482,8 +456,7 @@ Using naive standard errors:
 
 ```{r}
 model_exp %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo"), se_rob = FALSE) %>%
-  kable(align = "rr")
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo"), se_rob = FALSE)
 ```
 
 
@@ -501,13 +474,9 @@ model_cox <-  coxph(Surv(times, event) ~ rx, data = bladder)
 
 ```{r}
 model_cox %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo")) %>%
-  kable(align = "rr")
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo"))
 ```
 
-```{r}
-model_cox %>% glance
-```
 
 > **Interpretation:** Patients receiving Thiotepa are 64% less likely of dying than those in the Placebo group.
 
@@ -550,12 +519,7 @@ model_lme %>%
     "Sex: female-male", 
     "Age (years)",
     "Sex:Age interaction"
-    )) %>%
-  kable(align = "rr")
-```
-
-```{r}
-model_lme %>% glance
+    )) 
 ```
 
 Effect plot:

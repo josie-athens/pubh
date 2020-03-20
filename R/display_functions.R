@@ -9,56 +9,6 @@ round_pval <- function(pval)
 	res <- ifelse(pval < 0.001, "< 0.001", round(pval, 3))
 }
 
-#' Displaying data frames and table of coefficients as huxtables
-#'
-#' \code{pubh_hux} extends \code{huxtable} objects by addin column names and rounding numeric cells.
-#' @param data A data frame.
-#' @param label A Character used to name the predictors in a table of coefficients.
-#' @param arn Logical, should row names be added as a column \code{glm_coef}?
-#' @param digits Number of digits to round numerical values (not including p-values).
-#' @return A huxtable.
-#' @seealso \code{\link[huxtable]{as_hux}}.
-#' @examples
-#' require(huxtable)
-#' require(dplyr)
-#' require(sjlabelled)
-#'
-#' data(birthwt, package = "MASS")
-#' birthwt <- birthwt %>%
-#'   mutate(
-#'     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
-#'     race = factor(race, labels = c("White", "African American", "Other"))
-#'   ) %>%
-#'   var_labels(
-#'     bwt = 'Birth weight (g)',
-#'     smoke = 'Smoking status',
-#'     race = 'Race'
-#'   )
-#'
-#' model_norm <- lm(bwt ~ smoke + race, data = birthwt)
-#'
-#' glm_coef(model_norm, labels = model_labels(model_norm)) %>%
-#'   pubh_hux(arn = TRUE) %>%
-#'   theme_article()
-pubh_hux <- function(data, label = "Parameter", arn = FALSE, digits = 2)
-{
-  if(arn == TRUE) {
-    data %>%
-      huxtable::as_hux() %>%
-      huxtable::add_rownames(label) %>%
-      huxtable::add_colnames() %>%
-      huxtable::set_number_format(digits) %>%
-      huxtable::set_number_format(huxtable::everywhere, tidyselect::matches("Pr*"), 3) %>%
-      huxtable::set_align("right") %>%
-      huxtable::set_align(huxtable::everywhere, tidyselect::matches("Param*"), "left")
-  } else {
-    data %>%
-      huxtable::as_hux() %>%
-      huxtable::set_number_format(digits) %>%
-      huxtable::add_colnames()
-  }
-}
-
 #' Using labels as coefficient names in tables of coefficients.
 #'
 #' \code{model_labels} replaces row names in \code{glm_coef} with labels from the original data frame.
@@ -96,7 +46,7 @@ pubh_hux <- function(data, label = "Parameter", arn = FALSE, digits = 2)
 #'  ))
 model_labels <- function(model, intercept = TRUE) {
   tl <- sjlabelled::term_labels(model, prefix = "label")
-  rn <- rownames(glm_coef(model))
+  rn <- glm_coef(model)$Parameter
   if(intercept == TRUE) {
     labs <- c("Constant", tl[tidyselect::vars_select(names(tl), tidyselect::matches(rn))])
   } else {
@@ -192,7 +142,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = TR
     } else {
       rownames(coeff.df) <- labels
     }
-    coeff.df
+    tibble::rownames_to_column(coeff.df, var = "Parameter")
   } else if (class(model)[1] == "multinom") {
     n.mod <- length(rownames(mod$coefficients))
     if (type == "cond") {
@@ -270,7 +220,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = TR
     } else {
       rownames(out.df) <- labels
     }
-    out.df
+    tibble::rownames_to_column(out.df, var = "Parameter")
   } else if (class(model)[1] == "clogit") {
     mod.coef <- mod$coefficients
     or.low <- exp(mod.coef[, 1] - mod.coef[, 3] * zcrit)
@@ -292,7 +242,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = TR
     } else {
       rownames(out.df) <- labels
     }
-    out.df
+    tibble::rownames_to_column(out.df, var = "Parameter")
   } else if (class(model)[1] == "survreg") {
     mod.coef <- mod$table
     hc <- sandwich::vcovHAC(model)
@@ -327,7 +277,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = TR
     } else {
       rownames(out.df) <- labels
     }
-    out.df
+    tibble::rownames_to_column(out.df, var = "Parameter")
   } else if (class(model)[1] == "coxph") {
     mod.coef <- mod$coefficients
     or.low <- exp(mod.coef[, 1] - mod.coef[, 3] * zcrit)
@@ -350,7 +300,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = TR
     } else {
       rownames(out.df) <- labels
     }
-    out.df
+    tibble::rownames_to_column(out.df, var = "Parameter")
   } else if (class(model)[1] == "gee" & (family(model)$family == "binomial" | family(model)$family ==
                                          "poisson") | family(model)$family == "quasi") {
     mod <- mod$coefficients
@@ -386,7 +336,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = TR
     } else {
       rownames(out.df) <- labels
     }
-    out.df
+    tibble::rownames_to_column(out.df, var = "Parameter")
   } else if (class(model)[1] == "gee" & family(model)$family == "gaussian") {
     mod <- mod$coefficients
     n <- nrow(mod)
@@ -416,7 +366,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = TR
     } else {
       rownames(out.df) <- labels
     }
-    out.df
+    tibble::rownames_to_column(out.df, var = "Parameter")
   } else if (class(model)[1] == "glmerMod" & (family(model)$family == "binomial" |
                                               family(model)$family == "poisson")) {
     mod <- mod$coefficients
@@ -445,7 +395,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = TR
     } else {
       rownames(out.df) <- labels
     }
-    out.df
+    tibble::rownames_to_column(out.df, var = "Parameter")
   } else if (class(model)[1] == "glmerMod" & family(model)$family == "gaussian") {
     mod <- mod$coefficients
     n <- nrow(mod)
@@ -469,7 +419,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = TR
     } else {
       rownames(out.df) <- labels
     }
-    out.df
+    tibble::rownames_to_column(out.df, var = "Parameter")
   } else {
     if (class(model)[1] != "glm" & class(model)[1] != "negbin" & class(model)[1] !=
         "lm")
@@ -550,6 +500,6 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = TR
     } else {
       rownames(out.df) <- labels
     }
-    out.df
+    tibble::rownames_to_column(out.df, var = "Parameter")
   }
 }

@@ -13,11 +13,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = NA, size = "small", 
-                      message = FALSE, warning = FALSE)
-```
-
 # Introduction
 
 ## Rationale for the package
@@ -93,17 +88,26 @@ The `estat` function from the `pubh` package displays descriptive statistics of 
 
 Some examples. We start by loading packages.
 
-```{r, message=FALSE}
+```{r message=FALSE, results='hide'}
 rm(list = ls())
+library(car)
+library(broom)
 library(kableExtra)
 library(tidyverse)
+library(ggfortify)
+library(mosaic)
+library(huxtable)
+library(jtools)
+library(latex2exp)
 library(pubh)
-library(sjlabelled)
-library(sjPlot)
+library(strengejacke)
 
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
-options('huxtable.knit_print_df' = FALSE)
+# options('huxtable.knit_print_df' = FALSE)
+options('huxtable.knit_print_df_theme' = theme_article)
+options('huxtable.autoformat_number_format' = list(numeric = "%5.2f"))
+knitr::opts_chunk$set(collapse = TRUE, comment = NA)
 ```
 
 We will use a data set about a study of onchocerciasis in Sierra Leone.
@@ -117,8 +121,7 @@ A two-by-two contingency table:
 
 ```{r}
 Oncho %>%
-  cross_tab(mf ~ area) %>%
-  kable
+  cross_tab(mf ~ area)
 ```
 
 Table with all descriptive statistics except `id`:
@@ -126,8 +129,7 @@ Table with all descriptive statistics except `id`:
 ```{r}
 Oncho %>%
   select(- id) %>%
-  cross_tab(mf ~ .) %>%
-  kable
+  cross_tab(mf ~ .)
 ```
 
 Next, we use a data set about blood counts of T cells from patients in remission from Hodgkin's disease or in remission from disseminated malignancies. We generate the new variable `Ratio` and add labels to the variables.
@@ -146,8 +148,7 @@ Descriptive statistics for CD4+ T cells:
 
 ```{r}
 Hodgkin %>%
-  estat(~ CD4) %>%
-  kable
+  estat(~ CD4)
 ```
 
 In the previous code, the left-hand side of the formula is empty as it's the case when working with only one variable.
@@ -164,16 +165,14 @@ For example:
 
 ```{r}
 Hodgkin %>%
-  estat(~ Ratio|Group) %>%
-  kable()
+  estat(~ Ratio|Group)
 ```
 
 As before, we can report a table of descriptive statistics for all variables in the data set:
 
 ```{r}
 Hodgkin %>%
-  cross_tab(Group ~ .) %>%
-  kable()
+  cross_tab(Group ~ .)
 ```
 
 
@@ -323,9 +322,9 @@ For simplicity, here we show the analysis of the linear model of smoking on birt
 
 ```{r}
 model_bwt <- lm(bwt ~ smoke + race, data = birthwt)
+
 model_bwt %>%
-  glm_coef(labels = model_labels(model_bwt)) %>%
-  kable(align = "rr")
+  glm_coef(labels = model_labels(model_bwt))
 ```
 
 Similar results can be obtained with the function `tab_model` from the `sjPlot` package. 
@@ -385,8 +384,7 @@ Let's look at the table:
 
 ```{r}
 Bernard %>%
-  cross_tab(treat ~ fate) %>%
-  kable(align = "llrrr") 
+  cross_tab(treat ~ fate)
 ```
 
 For `epi.2by2` we need to provide the table of counts in the correct order, so we would type something like:
@@ -423,6 +421,7 @@ Example: effect of eating chocolate ice cream on being ill by sex from the `oswe
 
 ```{r}
 data(oswego, package = "epitools")
+
 oswego <- oswego %>%
   mutate(
     ill = factor(ill, labels = c("No", "Yes")),
@@ -440,8 +439,7 @@ First we look at the cross-tabulation:
 
 ```{r}
 oswego %>%
-  cross_tab(ill ~ sex + chocolate.ice.cream, na_include = TRUE) %>%
-  kable(align = "llrrr")
+  cross_tab(ill ~ sex + chocolate.ice.cream, na_include = TRUE)
 ```
 
 ```{r}

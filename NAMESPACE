@@ -17,3 +17,4 @@ importFrom("sjlabelled", "get_label", "term_labels")
 importFrom("huxtable", "add_colnames", "add_rownames", "as_hux",
            "everywhere", "set_align", "set_number_format")
 importFrom("tidyselect",  "matches", "vars_select")
+importFrom("tibble",  "rownames_to_column")
