@@ -1,25 +1,29 @@
-## ----setup, include = FALSE---------------------------------------------------
-knitr::opts_chunk$set(collapse = TRUE, comment = NA, size = "small", 
-                      message = FALSE, warning = FALSE)
-
 ## ----eval=FALSE---------------------------------------------------------------
 #  y ~ x, data = my_data
 
 ## ----eval=FALSE---------------------------------------------------------------
 #  y ~ x|z, data = my_data
 
-## ---- message=FALSE-----------------------------------------------------------
+## ----message=FALSE, results='hide'--------------------------------------------
+rm(list = ls())
+library(car)
+library(broom)
 library(kableExtra)
 library(tidyverse)
+library(ggfortify)
 library(mosaic)
+library(huxtable)
+library(jtools)
 library(latex2exp)
 library(pubh)
-library(sjlabelled)
-library(sjPlot)
+library(strengejacke)
 
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
-options(knitr.table.format = 'pandoc')
+# options('huxtable.knit_print_df' = FALSE)
+options('huxtable.knit_print_df_theme' = theme_article)
+options('huxtable.autoformat_number_format' = list(numeric = "%5.2f"))
+knitr::opts_chunk$set(collapse = TRUE, comment = NA)
 
 ## -----------------------------------------------------------------------------
 data("Oncho")
@@ -27,14 +31,12 @@ head(Oncho)
 
 ## -----------------------------------------------------------------------------
 Oncho %>%
-  cross_tab(mf ~ area) %>%
-  kable
+  cross_tab(mf ~ area)
 
 ## -----------------------------------------------------------------------------
 Oncho %>%
   select(- id) %>%
-  cross_tab(mf ~ .) %>%
-  kable
+  cross_tab(mf ~ .)
 
 ## -----------------------------------------------------------------------------
 data(Hodgkin)
@@ -47,18 +49,15 @@ head(Hodgkin)
 
 ## -----------------------------------------------------------------------------
 Hodgkin %>%
-  estat(~ CD4) %>%
-  kable
+  estat(~ CD4)
 
 ## -----------------------------------------------------------------------------
 Hodgkin %>%
-  estat(~ Ratio|Group) %>%
-  kable()
+  estat(~ Ratio|Group)
 
 ## -----------------------------------------------------------------------------
 Hodgkin %>%
-  cross_tab(Group ~ .) %>%
-  kable()
+  cross_tab(Group ~ .)
 
 ## -----------------------------------------------------------------------------
 var.test(Ratio ~ Group, data = Hodgkin)
@@ -92,7 +91,8 @@ birthwt <- birthwt %>%
     ) %>%
   var_labels(
     bwt = 'Birth weight (g)',
-    smoke = 'Smoking status'
+    smoke = 'Smoking status',
+    race = 'Race',
   )
 
 ## -----------------------------------------------------------------------------
@@ -133,46 +133,31 @@ birthwt %>%
 
 ## -----------------------------------------------------------------------------
 model_bwt <- lm(bwt ~ smoke + race, data = birthwt)
+
 model_bwt %>%
-  glm_coef(labels = c("Constant",
-                      "Smoker vs Non smoker",
-                      "African American vs White",
-                      "Other vs White")) %>%
-  kable(align = "r")
+  glm_coef(labels = model_labels(model_bwt))
 
 ## -----------------------------------------------------------------------------
 tab_model(model_bwt,  collapse.ci = TRUE)
 
-## ---- eval = FALSE, echo = FALSE----------------------------------------------
-#  model_bwt %>%
-#    glm_coef(model_bwt,
-#             labels = c(
-#               "Constant",
-#               "Smoking: smoker - non-smoker",
-#               "Race: African American - White",
-#               "Race: Other - White")
-#             ) %>%
-#    kable()
+## -----------------------------------------------------------------------------
+multiple(model_bwt, ~ race)$df
 
 ## -----------------------------------------------------------------------------
-multiple(model_bwt, "race" )$df
+multiple(model_bwt, ~ race)$fig_ci %>%
+  gf_labs(x = "Difference in birth weights (g)")
 
 ## -----------------------------------------------------------------------------
-multiple(model_bwt, "race" )$fig_ci %>%
-  gf_labs(y = "Race", x = get_label(birthwt$bwt))
-
-## -----------------------------------------------------------------------------
-multiple(model_bwt, "race" )$fig_pval %>%
-  gf_labs(y = "Race")
+multiple(model_bwt, ~ race)$fig_pval %>%
+  gf_labs(y = " ")
 
 ## -----------------------------------------------------------------------------
 data(Bernard)
-kable(head(Bernard))
+head(Bernard)
 
 ## -----------------------------------------------------------------------------
 Bernard %>%
-  cross_tab(treat ~ fate) %>%
-  kable() 
+  cross_tab(treat ~ fate)
 
 ## -----------------------------------------------------------------------------
 dat <- matrix(c(84, 140 , 92, 139), nrow = 2, byrow = TRUE)
@@ -187,6 +172,7 @@ Bernard %>%
 
 ## -----------------------------------------------------------------------------
 data(oswego, package = "epitools")
+
 oswego <- oswego %>%
   mutate(
     ill = factor(ill, labels = c("No", "Yes")),
@@ -201,8 +187,7 @@ oswego <- oswego %>%
 
 ## -----------------------------------------------------------------------------
 oswego %>%
-  cross_tab(ill ~ sex + chocolate.ice.cream) %>%
-  kable()
+  cross_tab(ill ~ sex + chocolate.ice.cream, na_include = TRUE)
 
 ## -----------------------------------------------------------------------------
 oswego %>%
@@ -211,8 +196,7 @@ oswego %>%
 ## -----------------------------------------------------------------------------
 data(Oncho)
 
-odds_trend(mf ~ agegrp, data = Oncho, angle = 0, hjust = 0.5)$fig %>%
-  gf_path()
+odds_trend(mf ~ agegrp, data = Oncho, angle = 0, hjust = 0.5)$fig
 
 ## -----------------------------------------------------------------------------
 Freq <- c(1739, 8, 51, 22)

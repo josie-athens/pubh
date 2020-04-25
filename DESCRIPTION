@@ -1,6 +1,6 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 1.1.11
+Version: 1.1.12
 Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@otago.ac.nz", role = c("aut", "cre")),
     person("Frank", "Harell", email = "f.harrell@vanderbilt.edu", role = "ctb"),
@@ -65,7 +65,6 @@ Suggests:
     rmarkdown, 
     rms,
     scales,
-    strengejacke,
     tidyverse
 License: GPL-2
 Encoding: UTF-8

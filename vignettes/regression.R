@@ -1,19 +1,23 @@
-## ----setup, include = FALSE---------------------------------------------------
-knitr::opts_chunk$set(collapse = TRUE, comment = NA, size = "small", 
-                      message = FALSE, warning = FALSE)
-
-## ---- message=FALSE-----------------------------------------------------------
+## ----message=FALSE, results = 'hide'------------------------------------------
+rm(list = ls())
+library(car)
+library(broom)
 library(kableExtra)
 library(tidyverse)
+library(ggfortify)
 library(mosaic)
+library(huxtable)
+library(jtools)
 library(latex2exp)
 library(pubh)
-library(sjlabelled)
-library(sjPlot)
+library(strengejacke)
 
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
-options(knitr.table.format = "pandoc")
+# options('huxtable.knit_print_df' = FALSE)
+options('huxtable.knit_print_df_theme' = theme_article)
+options('huxtable.autoformat_number_format' = list(numeric = "%5.2f"))
+knitr::opts_chunk$set(collapse = TRUE, comment = NA)
 
 ## -----------------------------------------------------------------------------
 data(birthwt, package = "MASS")
@@ -33,19 +37,15 @@ birthwt %>%
   group_by(race, smoke) %>%
   summarise(
     n = n(),
-    Mean = round(mean(bwt, na.rm = TRUE), 2),
-    SD = round(sd(bwt, na.rm = TRUE), 2),
-    Median = round(median(bwt, na.rm = TRUE), 2),
-    CV = round(rel_dis(bwt), 2)
-  ) %>%
-  kable(caption = "Descriptive statistics of birth weight (g) by ethnicity
-        and smoking status.")
+    Mean = mean(bwt, na.rm = TRUE),
+    SD = sd(bwt, na.rm = TRUE),
+    Median = median(bwt, na.rm = TRUE),
+    CV = rel_dis(bwt)
+  ) 
 
 ## -----------------------------------------------------------------------------
 birthwt %>%
-  gen_bst_df(bwt ~ race|smoke) %>%
-  kable(caption = "Mean birth weight (g) by ethnicity
-        and smoking status with 95% CIs.")
+  gen_bst_df(bwt ~ race|smoke)
 
 ## -----------------------------------------------------------------------------
 birthwt %>%
@@ -57,41 +57,21 @@ birthwt %>%
 model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 
 ## -----------------------------------------------------------------------------
-library(car)
-library(broom)
+model_norm %>% Anova %>% tidy
+
+## -----------------------------------------------------------------------------
+model_norm %>% tidy
+
+## -----------------------------------------------------------------------------
+model_norm %>% 
+  glm_coef(labels = model_labels(model_norm))
 
 ## -----------------------------------------------------------------------------
 model_norm %>%
-  Anova() 
+  glm_coef(se_rob = FALSE, labels = model_labels(model_norm))
 
 ## -----------------------------------------------------------------------------
-model_norm %>%
-  summary()
-
-## -----------------------------------------------------------------------------
-model_norm %>%
-  glm_coef() 
-
-## -----------------------------------------------------------------------------
-model_norm %>%
-  glm_coef(se_rob = FALSE, labels = c("Constant",
-                                      "Smoker - No smoker",
-                                      "African American - White",
-                                      "Other - White")) %>%
-  kable(caption = "Table of coefficients using naive standard errors.",
-        align = 'r')
-
-## -----------------------------------------------------------------------------
-model_norm %>%
-  glm_coef(labels = c("Constant",
-                      "Smoker - No smoker",
-                      "African American - White",
-                      "Other - White")) %>%
-  kable(caption = "Table of coefficients using robust standard errors.",
-        align = "r")
-
-## -----------------------------------------------------------------------------
-model_norm %>% glance %>% round(digits = 2)
+model_norm %>% glance
 
 ## -----------------------------------------------------------------------------
 plot_model(model_norm, "pred", terms = ~race|smoke, dot.size = 2, title = "")
@@ -112,7 +92,7 @@ diet <- diet %>%
     )
 
 ## -----------------------------------------------------------------------------
-diet %>% estat(fibre ~ chd) %>% kable
+diet %>% estat(fibre ~ chd)
 
 ## -----------------------------------------------------------------------------
 diet %>%
@@ -122,11 +102,7 @@ diet %>%
 ## -----------------------------------------------------------------------------
 model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
 model_binom %>%
-  glm_coef(labels = c("Constant", "Fibre intake (g/day)")) %>%
-  kable(caption = "Parameter estimates from logistic regression.", align = "r")
-
-## -----------------------------------------------------------------------------
-model_binom %>% glance %>% round(digits = 2)
+  glm_coef(labels = model_labels(model_binom))
 
 ## -----------------------------------------------------------------------------
 plot_model(model_binom, "pred", terms = "fibre [all]", title = "")
@@ -147,19 +123,15 @@ bdendo <- bdendo %>%
 
 ## -----------------------------------------------------------------------------
 bdendo %>%
-  cross_tab(cancer ~ est + gall) %>%
-  kable()
+  cross_tab(cancer ~ est + gall) 
 
 ## -----------------------------------------------------------------------------
 library(survival)
 model_clogit <- clogit(cancer == 'Case'  ~ est * gall + strata(set), data = bdendo)
+
 model_clogit %>%
   glm_coef(labels = c("Oestrogen/No oestrogen", "GBD/No GBD",
-                      "Oestrogen:GBD Interaction")) %>%
-  kable()
-
-## -----------------------------------------------------------------------------
-model_clogit %>% glance %>% round(digits = 2)
+                      "Oestrogen:GBD Interaction")) 
 
 ## -----------------------------------------------------------------------------
 require(ggeffects)
@@ -185,19 +157,8 @@ housing <- housing %>%
 model_clm <- clm(Sat ~ Infl + Type + Cont, weights = Freq, data = housing)
 
 ## -----------------------------------------------------------------------------
-labs_ord <- c("Constant: Low/Medium satisfaction",
-              "Constant: Medium/High satisfaction",
-              "Perceived influence: Medium/Low",
-              "Perceived influence: High/Low",
-              "Accommodation: Apartment/Tower",
-              "Accommodation: Atrium/Tower",
-              "Accommodation: Terrace/Tower",
-              "Afforded: High/Low")
-kable(glm_coef(model_clm, labels = labs_ord), 
-      caption = "Parameter estimates on satisfaction of householders.")
-
-## -----------------------------------------------------------------------------
-model_clm %>% glance %>% round(digits = 2)
+model_clm %>%
+  glm_coef(labels = model_labels(model_clm, intercept = FALSE))
 
 ## -----------------------------------------------------------------------------
 plot_model(model_clm, dot.size = 1, title = "")
@@ -234,18 +195,20 @@ quine %>%
   group_by(Eth, Sex, Age) %>%
   summarise(
     n = n(),
-    Mean = round(mean(Days, na.rm = TRUE), 2),
-    SD = round(sd(Days, na.rm = TRUE), 2),
-    Median = round(median(Days, na.rm = TRUE), 2)
-  ) %>%
-  kable()
+    Mean = mean(Days, na.rm = TRUE),
+    SD = sd(Days, na.rm = TRUE),
+    Median = median(Days, na.rm = TRUE),
+    CV = rel_dis(Days)
+  ) 
 
 ## -----------------------------------------------------------------------------
 model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
-glm_coef(model_pois) %>% kable
+
+model_pois %>%
+  glm_coef(labels = model_labels(model_pois))
 
 ## -----------------------------------------------------------------------------
-model_pois %>% glance %>% round(digits = 2)
+model_pois %>% glance
 
 ## -----------------------------------------------------------------------------
 deviance(model_pois) / df.residual(model_pois)
@@ -253,23 +216,15 @@ deviance(model_pois) / df.residual(model_pois)
 ## -----------------------------------------------------------------------------
 library(MASS)
 model_negbin <- glm.nb(Days ~ Eth + Sex + Age, data = quine)
-glm_coef(model_negbin, 
-         labels=c(
-           "Constant",
-           "Race: Aboriginal/White",
-           "Sex: Female/Male",
-           "F1/Primary",
-           "F2/Primary",
-           "F3/Primary")
-         ) %>%
-  kable()
 
-## -----------------------------------------------------------------------------
-model_negbin %>% glance %>% round(digits = 2)
-
-## -----------------------------------------------------------------------------
 model_negbin %>%
-  Anova() 
+  glm_coef(labels = model_labels(model_negbin)) 
+
+## -----------------------------------------------------------------------------
+model_negbin %>% glance
+
+## -----------------------------------------------------------------------------
+model_negbin %>% Anova
 
 ## -----------------------------------------------------------------------------
 plot_model(model_negbin, type = "pred", terms = c("Age", "Eth"), 
@@ -283,8 +238,8 @@ emmip(model_negbin, Eth ~ Age|Sex) %>%
 multiple(model_negbin, ~ Age|Eth)$df 
 
 ## -----------------------------------------------------------------------------
-multiple(model_negbin, ~ Age + Sex|Eth)$fig_ci %>%
-  gf_labs(y = "Age group", x = "Number of absent days")
+multiple(model_negbin, ~ Age|Eth)$fig_ci %>%
+  gf_labs(x = "IRR")
 
 ## -----------------------------------------------------------------------------
 data(bladder)
@@ -300,22 +255,17 @@ model_surv <- survreg(Surv(times, event) ~ rx, data = bladder)
 
 ## -----------------------------------------------------------------------------
 model_surv %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo", "Scale")) %>%
-  kable()
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo", "Scale"))
 
 ## -----------------------------------------------------------------------------
 model_exp <- survreg(Surv(times, event) ~ rx, data = bladder, dist = "exponential")
-model_exp %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo")) %>%
-  kable()
 
-## -----------------------------------------------------------------------------
-model_exp %>% glance %>% round(digits = 2)
+model_exp %>%
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo"))
 
 ## -----------------------------------------------------------------------------
 model_exp %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo"), se_rob = FALSE) %>%
-  kable()
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo"), se_rob = FALSE)
 
 ## -----------------------------------------------------------------------------
 plot_model(model_exp, type = "pred", terms = ~ rx, dot.size = 1, title = "") %>%
@@ -326,11 +276,7 @@ model_cox <-  coxph(Surv(times, event) ~ rx, data = bladder)
 
 ## -----------------------------------------------------------------------------
 model_cox %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo")) %>%
-  kable()
-
-## -----------------------------------------------------------------------------
-model_cox %>% glance %>% round(digits = 2)
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo"))
 
 ## -----------------------------------------------------------------------------
 plot_model(model_cox, type = "pred", terms = ~ rx, dot.size = 1, 
@@ -354,14 +300,15 @@ model_lme <- lme(distance ~ Sex * I(age - mean(age, na.rm = TRUE)), random = ~ 1
 
 ## -----------------------------------------------------------------------------
 model_lme %>%
-  glm_coef(labels = c("Constant", "Sex: female-male", "Age (years)",
-                      "Sex:Age interaction")) %>%
-  kable()
+  glm_coef(labels = c(
+    "Constant", 
+    "Sex: female-male", 
+    "Age (years)",
+    "Sex:Age interaction"
+    )) 
 
 ## -----------------------------------------------------------------------------
-model_lme %>% glance
-
-## -----------------------------------------------------------------------------
-plot_model(model_lme, type = "pred", terms = age ~ Sex) %>%
+plot_model(model_lme, type = "pred", terms = age ~ Sex, 
+           show.data = TRUE, jitter = 0.1) %>%
   gf_labs(y = get_label(Orthodont$distance), x = "Age (years)", title = "")
 
