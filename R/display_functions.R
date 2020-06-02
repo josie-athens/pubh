@@ -75,7 +75,7 @@ model_labels <- function(model, intercept = TRUE) {
 #' @param digits A scalar, number of digits for rounding the results (default = 2).
 #' @param alpha Significant level (default = 0.05) used to calculate confidence intervals.
 #' @param labels An optional character vector with the names of the coefficients (including intercept).
-#' @param se_rob Logical, should robust errors be used to calculate confidence intervals? (default = TRUE).
+#' @param se_rob Logical, should robust errors be used to calculate confidence intervals? (default = FALSE).
 #' @param type Character, either "cond" (condensed) or "ext" (extended). See details.
 #' @param exp_norm Logical, should estimates and confidence intervals should be exponentiated? (for family == "gaussian").
 #' @return A data frame with estimates, confidence intervals and p-values from \code{glm} objects.
@@ -110,7 +110,7 @@ model_labels <- function(model, intercept = TRUE) {
 #'   glm_coef(labels = c("Constant", "Fibre intake (g/day)"), type = "ext")
 #'
 #' ## For more examples, please read the Vignette on Regression.
-glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = TRUE,
+glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = FALSE,
                       type = "cond", exp_norm = FALSE) {
   if (type != "cond" & type != "ext")
     stop("Option type not supported")
@@ -427,7 +427,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = TR
     if (class(model)[1] == "glm" | class(model)[1] == "negbin" |
         class(model)[1] == "lm") {
       tcrit <- qt((1 + conf.int)/2, df.residual(model))
-      hc <- sandwich::vcovHAC(model)
+      hc <- sandwich::vcovHC(model)
       ct <- lmtest::coeftest(model, vcov = hc)
       if (se_rob == TRUE) {
         mod.coef <- ct[, ]

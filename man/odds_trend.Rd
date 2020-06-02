@@ -4,7 +4,7 @@
 \alias{odds_trend}
 \title{Function to calculate OR using Wald CI, and plot trend.}
 \usage{
-odds_trend(formula, data, angle = 45, hjust = 1, ...)
+odds_trend(formula, data, angle = 45, hjust = 1, method = "wald", ...)
 }
 \arguments{
 \item{formula}{A formula with shape: outcome ~ exposure.}
@@ -14,6 +14,8 @@ odds_trend(formula, data, angle = 45, hjust = 1, ...)
 \item{angle}{Angle of for the x labels (default = 45).}
 
 \item{hjust}{Horizontal adjustment for x labels (default = 1).}
+
+\item{method}{Method for calculating confidence interval around odds ratio.}
 
 \item{...}{Passes optional arguments to \code{oddsratio}.}
 }
@@ -27,6 +29,8 @@ significant or not.
 }
 \details{
 \code{odds_trend} is a wrap function that calls \code{oddsratio} from package \code{epitools}.
+
+Additional methods for confidence intervals include: \code{"midp"}, \code{"fisher"}, and \code{"small"}.
 }
 \examples{
 ## A cross-sectional study looked at the association between obesity and a biopsy resulting

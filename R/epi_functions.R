@@ -149,7 +149,9 @@ prop_or <- function(p2, or)
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param angle Angle of for the x labels (default = 45).
 #' @param hjust Horizontal adjustment for x labels (default = 1).
+#' @param method Method for calculating confidence interval around odds ratio.
 #' @param ... Passes optional arguments to \code{oddsratio}.
+#' @details Additional methods for confidence intervals include: \code{"midp"}, \code{"fisher"}, and \code{"small"}.
 #' @return A list with components \code{df} a data frame with the results and \code{fig} corresponding plot.
 #' @seealso \code{\link[epitools]{oddsratio}}.
 #' @examples
@@ -174,13 +176,13 @@ prop_or <- function(p2, or)
 #'
 #' odds_trend(Biopsy ~ Weight, data = breast)$fig
 odds_trend <- function(formula, data, angle = 45,
-                       hjust = 1, ...)
+                       hjust = 1, method = "wald", ...)
 {
   vars <- all.vars(formula)
   x <- vars[2]
   outcome <- data[[vars[1]]]
   exposure <- data[[vars[2]]]
-  orwald <- epitools::oddsratio(exposure, outcome, ...)
+  orwald <- epitools::oddsratio(exposure, outcome, method = method, ...)
   n <- nrow(orwald$measure)
   or.df <- data.frame(x = 1:n, round(orwald$measure, 2),
                       round_pval(orwald$p.value[, 3]),

@@ -133,11 +133,11 @@ model_norm %>%
 ```
 
 
-> **Note:** Compare results using naive standard errors.
+> **Note:** Compare results using robust standard errors.
 
 ```{r}
 model_norm %>%
-  glm_coef(se_rob = FALSE, labels = model_labels(model_norm))
+  glm_coef(se_rob = TRUE, labels = model_labels(model_norm))
 ```
 
 The function `glance` from the `broom` package allow us to have a quick look at statistics related with the model.
@@ -149,7 +149,8 @@ model_norm %>% glance
 To construct the effect plot, we can use `plot_model` from the `sjPlot` package. The advantage of `plot_model` is that recognises labelled data and uses that information for annotating the plots.
 
 ```{r}
-plot_model(model_norm, "pred", terms = ~race|smoke, dot.size = 2, title = "")
+model_norm %>%
+  plot_model("pred", terms = ~race|smoke, dot.size = 1.5, title = "")
 ```
 
 When the explanatory variables are categorical, another option is `emmip` from the `emmeans` package. We can include CIs in `emmip` but as estimates are *connected*, the resulting plots look more messy, so I recommend  `emmip` to look at the trace.
@@ -179,12 +180,12 @@ diet <- diet %>%
 We start with descriptive statistics:
 
 ```{r}
-diet %>% estat(fibre ~ chd)
+diet %>% estat(~ fibre|chd)
 ```
 
 It is standard to plot the dependent variable in the $y$-axis, so in this case, we can use horizontal box-plots.
 
-```{r}
+```{r warning=FALSE}
 diet %>%
   gf_boxploth(chd ~ fibre, fill = "indianred3", alpha = 0.7) %>%
   axis_labs()
@@ -194,6 +195,7 @@ We fit a linear logistic model:
 
 ```{r}
 model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
+
 model_binom %>%
   glm_coef(labels = model_labels(model_binom))
 ```
@@ -201,7 +203,8 @@ model_binom %>%
 Effect plot:
 
 ```{r}
-plot_model(model_binom, "pred", terms = "fibre [all]", title = "")
+model_binom %>%
+  plot_model("pred", terms = "fibre [all]", title = "")
 ```
 
 ## Matched Case-Control Studies: Conditional Logistic Regression
@@ -287,17 +290,15 @@ model_clm %>%
 Effect plots:
 
 ```{r}
-plot_model(model_clm, dot.size = 1, title = "")
-```
-
-```{r}
-plot_model(model_clm, type = "pred", terms = c("Infl", "Cont"), 
+model_clm %>%
+  plot_model(type = "pred", terms = c("Infl", "Cont"), 
            dot.size = 1, title = "") %>%
   gf_theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 ```{r}
-plot_model(model_clm, type = "pred", terms = c("Infl", "Type"), 
+model_clm %>%
+  plot_model(type = "pred", terms = c("Infl", "Type"), 
            dot.size = 1, title = "") %>%
   gf_theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
@@ -349,7 +350,7 @@ We start by fitting a standard Poisson linear regression model:
 model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
 
 model_pois %>%
-  glm_coef(labels = model_labels(model_pois))
+  glm_coef(labels = model_labels(model_pois), se_rob = TRUE)
 ```
 
 ```{r}
@@ -372,7 +373,7 @@ library(MASS)
 model_negbin <- glm.nb(Days ~ Eth + Sex + Age, data = quine)
 
 model_negbin %>%
-  glm_coef(labels = model_labels(model_negbin)) 
+  glm_coef(labels = model_labels(model_negbin), se_rob = TRUE) 
 ```
 
 ```{r}
@@ -390,8 +391,9 @@ Thus, we want to report confidence intervals and $p$-values adjusted for multipl
 Effect plot:
 
 ```{r}
-plot_model(model_negbin, type = "pred", terms = c("Age", "Eth"), 
-           dot.size = 1, title = "") 
+model_negbin %>%
+  plot_model(type = "pred", terms = c("Age", "Eth"), 
+           dot.size = 1.5, title = "") 
 ```
 
 ```{r}
@@ -436,20 +438,22 @@ bladder <- bladder %>%
 model_surv <- survreg(Surv(times, event) ~ rx, data = bladder)
 ```
 
-Using robust standard errors (default):
+Using robust standard errors:
 
 ```{r}
 model_surv %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo", "Scale"))
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo", "Scale"), se_rob = TRUE)
 ```
 
 In this example the scale parameter is not statistically different from one, meaning hazard is constant and thus, we can use the exponential distribution:
 
 ```{r}
 model_exp <- survreg(Surv(times, event) ~ rx, data = bladder, dist = "exponential")
+```
 
+```{r}
 model_exp %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo"))
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo"), se_rob = TRUE)
 ```
 
 > **Interpretation:** Patients receiving Thiotepa live on average 64% more than those in the Placebo group.
@@ -458,12 +462,13 @@ Using naive standard errors:
 
 ```{r}
 model_exp %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo"), se_rob = FALSE)
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo"))
 ```
 
 
 ```{r}
-plot_model(model_exp, type = "pred", terms = ~ rx, dot.size = 1, title = "") %>%
+model_exp %>%
+  plot_model(type = "pred", terms = ~ rx, dot.size = 1.5, title = "") %>%
   gf_labs(y = "Survival time", x = "Treatment", title = "")
 ```
 
@@ -483,7 +488,8 @@ model_cox %>%
 > **Interpretation:** Patients receiving Thiotepa are 64% less likely of dying than those in the Placebo group.
 
 ```{r}
-plot_model(model_cox, type = "pred", terms = ~ rx, dot.size = 1, 
+model_cox %>%
+  plot_model(type = "pred", terms = ~ rx, dot.size = 1.5, 
            title = "") %>%
   gf_labs(x = "Treatment", title = "")
 ```
@@ -527,8 +533,9 @@ model_lme %>%
 Effect plot:
 
 ```{r}
-plot_model(model_lme, type = "pred", terms = age ~ Sex, 
-           show.data = TRUE, jitter = 0.1) %>%
+model_lme %>%
+  plot_model("pred", terms = age ~ Sex, 
+           show.data = TRUE, jitter = 0.1, dot.size = 1.5) %>%
   gf_labs(y = get_label(Orthodont$distance), x = "Age (years)", title = "")
 ```
 

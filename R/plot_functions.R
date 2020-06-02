@@ -114,13 +114,14 @@ gf_star <- function(fig, x1, y1, x2, y2, y3, legend = "*", ...)
 #' @param formula A formula with shape: \code{~ y} or \code{~ y|x} (for interactions). Where \code{y} is the term of the model on which comparisons are made and \code{x} is a term interacting with \code{y}.
 #' @param adjust Method to adjust CIs and p-values (see details).
 #' @param type Type of prediction  (matching "linear.predictor", "link", or "response").
+#' @param reverse Logical argument. Determines the direction of comparisons.
 #' @param level Confidence interval significance level.
 #' @param digits Number of digits for rounding (default = 2).
 #' @param ... Further arguments passed to \code{\link[emmeans]{emmeans}}.
 #' @details
 #' The default adjusting method is "mvt" which uses the multivariate t distribution.
-#' Other options are: "bonferroni", "holm", "hochberg", "tukey" and "none".
-#' @return A list with objects: \code{df} A data frame with ajusted p-values, \code{fig_ci} a plot with estimates and adjusted confidence intervals and \code{fig_pval} a plot comparing adjusted p-values.
+#' Other options are: "bonferroni", "holm", "hochberg", "tukey" and "none". The default option for argument \code{reverse} is to make reverse comparisons, i.e., against the reference level matching comparisons from \code{lm} and \code{glm}.
+#' @return A list with objects: \code{df} A data frame with adjusted p-values, \code{fig_ci} a plot with estimates and adjusted confidence intervals and \code{fig_pval} a plot comparing adjusted p-values.
 #' @seealso \code{\link[emmeans]{emmeans}}, \code{\link[emmeans]{pwpp}}.
 #' @examples
 #' data(birthwt, package = "MASS")
@@ -134,12 +135,12 @@ gf_star <- function(fig, x1, y1, x2, y2, y3, legend = "*", ...)
 #'
 #' multiple(model_1, ~ race)$fig_pval %>%
 #'   gf_labs(y = 'Race')
-multiple <- function (model, formula, adjust = "mvt",
-                      type = "response", level = 0.95, digits = 2, ...)
+multiple <- function (model, formula, adjust = "mvt", type = "response",
+                      reverse = TRUE, level = 0.95, digits = 2, ...)
 {
   term_emm <- emmeans(model, formula, type = type, ...)
-  emm_df <- as.data.frame(pairs(term_emm, adjust = adjust))
-  emm_ci <- as.data.frame(confint(pairs(term_emm, adjust = adjust), level = level))
+  emm_df <- as.data.frame(pairs(term_emm, adjust = adjust, reverse = reverse))
+  emm_ci <- as.data.frame(confint(pairs(term_emm, adjust = adjust, reverse = reverse), level = level))
   log10_pval <- log10(emm_df[["p.value"]])
   emm_df$p.value <- round_pval(emm_df[["p.value"]])
   emm_df <- emm_df %>%

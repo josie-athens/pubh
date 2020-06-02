@@ -9,7 +9,7 @@ glm_coef(
   digits = 2,
   alpha = 0.05,
   labels = NULL,
-  se_rob = TRUE,
+  se_rob = FALSE,
   type = "cond",
   exp_norm = FALSE
 )
@@ -23,7 +23,7 @@ glm_coef(
 
 \item{labels}{An optional character vector with the names of the coefficients (including intercept).}
 
-\item{se_rob}{Logical, should robust errors be used to calculate confidence intervals? (default = TRUE).}
+\item{se_rob}{Logical, should robust errors be used to calculate confidence intervals? (default = FALSE).}
 
 \item{type}{Character, either "cond" (condensed) or "ext" (extended). See details.}
 

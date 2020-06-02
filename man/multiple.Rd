@@ -9,6 +9,7 @@ multiple(
   formula,
   adjust = "mvt",
   type = "response",
+  reverse = TRUE,
   level = 0.95,
   digits = 2,
   ...
@@ -23,6 +24,8 @@ multiple(
 
 \item{type}{Type of prediction  (matching "linear.predictor", "link", or "response").}
 
+\item{reverse}{Logical argument. Determines the direction of comparisons.}
+
 \item{level}{Confidence interval significance level.}
 
 \item{digits}{Number of digits for rounding (default = 2).}
@@ -30,14 +33,14 @@ multiple(
 \item{...}{Further arguments passed to \code{\link[emmeans]{emmeans}}.}
 }
 \value{
-A list with objects: \code{df} A data frame with ajusted p-values, \code{fig_ci} a plot with estimates and adjusted confidence intervals and \code{fig_pval} a plot comparing adjusted p-values.
+A list with objects: \code{df} A data frame with adjusted p-values, \code{fig_ci} a plot with estimates and adjusted confidence intervals and \code{fig_pval} a plot comparing adjusted p-values.
 }
 \description{
 \code{multiple} displays results from post-doc analysis and constructs corresponding plot.
 }
 \details{
 The default adjusting method is "mvt" which uses the multivariate t distribution.
-Other options are: "bonferroni", "holm", "hochberg", "tukey" and "none".
+Other options are: "bonferroni", "holm", "hochberg", "tukey" and "none". The default option for argument \code{reverse} is to make reverse comparisons, i.e., against the reference level matching comparisons from \code{lm} and \code{glm}.
 }
 \examples{
 data(birthwt, package = "MASS")

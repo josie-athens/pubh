@@ -15,16 +15,18 @@ cross_tab(object = NULL, formula = NULL, data = NULL, label = NULL, ...)
 
 \item{label}{A character, label used to name the first column of the data frame.}
 
-\item{...}{Aditional arguments passed to \code{\link[finalfit]{summary_factorlist}}.}
+\item{...}{Additional arguments passed to \code{\link[finalfit]{summary_factorlist}}.}
 }
 \value{
-A data frame with descriptive statistics stratifed by levels of the outcome.
+A data frame with descriptive statistics stratified by levels of the outcome.
 }
 \description{
-\code{cross_tab} is a wrapper to functions from package \code{finalfit} to construct tables of descriptive statistics stratifed by levels of a categorical outcome.
+\code{cross_tab} is a wrapper to functions from package \code{finalfit} to construct tables of descriptive statistics stratified by levels of a categorical outcome.
 }
 \details{
 Function \code{cross_tab} is a relatively simple wrapper to functions of package \code{finalfit}. Its main purpose is to construct contingency tables but it can also be used to report a table with descriptives for all variables as long as they are still stratified by the outcome. Please see examples to see how to list explanatory variables. For categorical explanatory variables, the function reports column percentages by default; row proportions can be obtained with additional argument: \code{column = FALSE}. If data is labelled with \code{sjlabelled}, the label of the outcome (dependent) variable is used to name the first column of the resulting data frame; this name can be changed with argument \code{label}.
+
+Relevant default arguments passed to \code{\link[finalfit]{summary_factorlist}} include: \code{cont = "mean"} (other option: \code{cont = "median"}); \code{column = TRUE}; \code{na_include = FALSE} and \code{p = FALSE}.
 }
 \examples{
 data(Oncho)
