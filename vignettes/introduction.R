@@ -28,8 +28,8 @@ options('huxtable.autoformat_number_format' = list(numeric = "%5.2f"))
 knitr::opts_chunk$set(collapse = TRUE, comment = NA)
 
 ## -----------------------------------------------------------------------------
-data("Oncho")
-head(Oncho)
+data(Oncho)
+Oncho %>% head
 
 ## -----------------------------------------------------------------------------
 Oncho %>%
@@ -37,7 +37,7 @@ Oncho %>%
 
 ## -----------------------------------------------------------------------------
 Oncho %>%
-  select(- id) %>%
+  select(- c(id, mfload)) %>%
   cross_tab(mf ~ .)
 
 ## -----------------------------------------------------------------------------
@@ -47,7 +47,8 @@ Hodgkin <- Hodgkin %>%
   var_labels(
     Ratio = "CD4+ / CD8+ T-cells ratio"
     )
-head(Hodgkin)
+
+Hodgkin %>% head
 
 ## -----------------------------------------------------------------------------
 Hodgkin %>%

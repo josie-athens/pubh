@@ -1,5 +1,5 @@
 ---
-title: "Introduction to the `pubh` package"
+title: "Introduction to the pubh package"
 author: "Josie Athens"
 date: "`r Sys.Date()`"
 output: 

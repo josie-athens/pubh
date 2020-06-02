@@ -70,13 +70,14 @@ model_norm %>%
 
 ## -----------------------------------------------------------------------------
 model_norm %>%
-  glm_coef(se_rob = FALSE, labels = model_labels(model_norm))
+  glm_coef(se_rob = TRUE, labels = model_labels(model_norm))
 
 ## -----------------------------------------------------------------------------
 model_norm %>% glance
 
 ## -----------------------------------------------------------------------------
-plot_model(model_norm, "pred", terms = ~race|smoke, dot.size = 2, title = "")
+model_norm %>%
+  plot_model("pred", terms = ~race|smoke, dot.size = 1.5, title = "")
 
 ## -----------------------------------------------------------------------------
 emmip(model_norm, smoke ~ race) %>%
@@ -94,20 +95,22 @@ diet <- diet %>%
     )
 
 ## -----------------------------------------------------------------------------
-diet %>% estat(fibre ~ chd)
+diet %>% estat(~ fibre|chd)
 
-## -----------------------------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 diet %>%
   gf_boxploth(chd ~ fibre, fill = "indianred3", alpha = 0.7) %>%
   axis_labs()
 
 ## -----------------------------------------------------------------------------
 model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
+
 model_binom %>%
   glm_coef(labels = model_labels(model_binom))
 
 ## -----------------------------------------------------------------------------
-plot_model(model_binom, "pred", terms = "fibre [all]", title = "")
+model_binom %>%
+  plot_model("pred", terms = "fibre [all]", title = "")
 
 ## -----------------------------------------------------------------------------
 data(bdendo, package = "Epi") 
@@ -163,15 +166,14 @@ model_clm %>%
   glm_coef(labels = model_labels(model_clm, intercept = FALSE))
 
 ## -----------------------------------------------------------------------------
-plot_model(model_clm, dot.size = 1, title = "")
-
-## -----------------------------------------------------------------------------
-plot_model(model_clm, type = "pred", terms = c("Infl", "Cont"), 
+model_clm %>%
+  plot_model(type = "pred", terms = c("Infl", "Cont"), 
            dot.size = 1, title = "") %>%
   gf_theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ## -----------------------------------------------------------------------------
-plot_model(model_clm, type = "pred", terms = c("Infl", "Type"), 
+model_clm %>%
+  plot_model(type = "pred", terms = c("Infl", "Type"), 
            dot.size = 1, title = "") %>%
   gf_theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
@@ -207,7 +209,7 @@ quine %>%
 model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
 
 model_pois %>%
-  glm_coef(labels = model_labels(model_pois))
+  glm_coef(labels = model_labels(model_pois), se_rob = TRUE)
 
 ## -----------------------------------------------------------------------------
 model_pois %>% glance
@@ -220,7 +222,7 @@ library(MASS)
 model_negbin <- glm.nb(Days ~ Eth + Sex + Age, data = quine)
 
 model_negbin %>%
-  glm_coef(labels = model_labels(model_negbin)) 
+  glm_coef(labels = model_labels(model_negbin), se_rob = TRUE) 
 
 ## -----------------------------------------------------------------------------
 model_negbin %>% glance
@@ -229,8 +231,9 @@ model_negbin %>% glance
 model_negbin %>% Anova
 
 ## -----------------------------------------------------------------------------
-plot_model(model_negbin, type = "pred", terms = c("Age", "Eth"), 
-           dot.size = 1, title = "") 
+model_negbin %>%
+  plot_model(type = "pred", terms = c("Age", "Eth"), 
+           dot.size = 1.5, title = "") 
 
 ## -----------------------------------------------------------------------------
 emmip(model_negbin, Eth ~ Age|Sex) %>%
@@ -257,20 +260,22 @@ model_surv <- survreg(Surv(times, event) ~ rx, data = bladder)
 
 ## -----------------------------------------------------------------------------
 model_surv %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo", "Scale"))
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo", "Scale"), se_rob = TRUE)
 
 ## -----------------------------------------------------------------------------
 model_exp <- survreg(Surv(times, event) ~ rx, data = bladder, dist = "exponential")
 
+## -----------------------------------------------------------------------------
+model_exp %>%
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo"), se_rob = TRUE)
+
+## -----------------------------------------------------------------------------
 model_exp %>%
   glm_coef(labels = c("Treatment: Thiotepa/Placebo"))
 
 ## -----------------------------------------------------------------------------
 model_exp %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo"), se_rob = FALSE)
-
-## -----------------------------------------------------------------------------
-plot_model(model_exp, type = "pred", terms = ~ rx, dot.size = 1, title = "") %>%
+  plot_model(type = "pred", terms = ~ rx, dot.size = 1.5, title = "") %>%
   gf_labs(y = "Survival time", x = "Treatment", title = "")
 
 ## -----------------------------------------------------------------------------
@@ -281,7 +286,8 @@ model_cox %>%
   glm_coef(labels = c("Treatment: Thiotepa/Placebo"))
 
 ## -----------------------------------------------------------------------------
-plot_model(model_cox, type = "pred", terms = ~ rx, dot.size = 1, 
+model_cox %>%
+  plot_model(type = "pred", terms = ~ rx, dot.size = 1.5, 
            title = "") %>%
   gf_labs(x = "Treatment", title = "")
 
@@ -310,7 +316,8 @@ model_lme %>%
     )) 
 
 ## -----------------------------------------------------------------------------
-plot_model(model_lme, type = "pred", terms = age ~ Sex, 
-           show.data = TRUE, jitter = 0.1) %>%
+model_lme %>%
+  plot_model("pred", terms = age ~ Sex, 
+           show.data = TRUE, jitter = 0.1, dot.size = 1.5) %>%
   gf_labs(y = get_label(Orthodont$distance), x = "Age (years)", title = "")
 
