@@ -60,8 +60,4 @@ birthwt \%>\%
   bar_error(bwt ~ smoke, fill = ~ Race) \%>\%
   axis_labs()
 
-birthwt \%>\%
-  bar_error(bwt ~ smoke, col = ~ Race, fill = 'white') \%>\%
-  gf_refine(ggsci::scale_color_jama()) \%>\%
-  axis_labs()
 }

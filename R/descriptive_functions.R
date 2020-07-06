@@ -164,7 +164,7 @@ stats_quotes <- function(x, data2, digits = 2)
 #' @param ... Additional arguments passed to \code{\link[moonBook]{mytable_sub}}.
 #' @details Function \code{cross_tab} is a relatively simple wrapper to function \code{mytable} of package \code{moonBook}. Its main purpose is to construct contingency tables but it can also be used to report a table with descriptives for all variables as long as they are still stratified by the outcome. Please see examples to see how to list explanatory variables. For categorical explanatory variables, the function reports column percentages. If data is labelled with \code{sjlabelled}, the label of the outcome (dependent) variable is used to name the outcome; this name can be changed with argument \code{label}.
 #' @return A huxtable with descriptive statistics stratified by levels of the outcome.
-#' @seealso \code{\link[moonBook]{mytable}}, \code{\link[huxtable]{hux}}
+#' @seealso \code{\link[moonBook]{mytable}}
 #' @examples
 #' data(Oncho)
 #'

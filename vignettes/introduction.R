@@ -8,7 +8,6 @@
 rm(list = ls())
 library(car)
 library(broom)
-library(kableExtra)
 library(tidyverse)
 library(ggfortify)
 library(mosaic)
@@ -29,16 +28,26 @@ knitr::opts_chunk$set(collapse = TRUE, comment = NA)
 
 ## -----------------------------------------------------------------------------
 data(Oncho)
-Oncho %>% head
+Oncho %>% head()
 
 ## -----------------------------------------------------------------------------
 Oncho %>%
-  cross_tab(mf ~ area)
+  mutate(
+    mf = relevel(mf, ref = "Infected")
+  ) %>%
+  copy_labels(Oncho) %>%
+  cross_tab(mf ~ area) %>%
+  theme_article()
 
 ## -----------------------------------------------------------------------------
 Oncho %>%
   select(- c(id, mfload)) %>%
-  cross_tab(mf ~ .)
+  mutate(
+    mf = relevel(mf, ref = "Infected")
+  ) %>%
+  copy_labels(Oncho) %>%
+  cross_tab(mf ~ area +.) %>%
+  theme_article()
 
 ## -----------------------------------------------------------------------------
 data(Hodgkin)
@@ -48,7 +57,7 @@ Hodgkin <- Hodgkin %>%
     Ratio = "CD4+ / CD8+ T-cells ratio"
     )
 
-Hodgkin %>% head
+Hodgkin %>% head()
 
 ## -----------------------------------------------------------------------------
 Hodgkin %>%
@@ -60,7 +69,13 @@ Hodgkin %>%
 
 ## -----------------------------------------------------------------------------
 Hodgkin %>%
-  cross_tab(Group ~ .)
+  mutate(
+    Group = relevel(Group, ref = "Hodgkin")
+  ) %>%
+  copy_labels(Hodgkin) %>%
+  cross_tab(Group ~ CD4 + ., method = 2) %>%
+  theme_article() %>%
+  add_footnote("Values are medians with interquartile range.")
 
 ## -----------------------------------------------------------------------------
 var.test(Ratio ~ Group, data = Hodgkin)
@@ -160,7 +175,13 @@ head(Bernard)
 
 ## -----------------------------------------------------------------------------
 Bernard %>%
-  cross_tab(treat ~ fate)
+  mutate(
+    fate = relevel(fate, ref = "Dead"),
+    treat = relevel(treat, ref = "Ibuprofen")
+  ) %>%
+  copy_labels(Bernard) %>%
+  cross_tab(fate ~ treat) %>%
+  theme_article()
 
 ## -----------------------------------------------------------------------------
 dat <- matrix(c(84, 140 , 92, 139), nrow = 2, byrow = TRUE)
@@ -190,7 +211,13 @@ oswego <- oswego %>%
 
 ## -----------------------------------------------------------------------------
 oswego %>%
-  cross_tab(ill ~ sex + chocolate.ice.cream, na_include = TRUE)
+  mutate(
+    ill = relevel(ill, ref = "Yes"),
+    chocolate.ice.cream = relevel(chocolate.ice.cream, ref = "Yes")
+  ) %>%
+  copy_labels(oswego) %>%
+  cross_tab(ill ~ sex + chocolate.ice.cream) %>%
+  theme_article()
 
 ## -----------------------------------------------------------------------------
 oswego %>%

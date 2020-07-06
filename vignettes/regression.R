@@ -2,7 +2,6 @@
 rm(list = ls())
 library(car)
 library(broom)
-library(kableExtra)
 library(tidyverse)
 library(ggfortify)
 library(mosaic)
@@ -59,10 +58,10 @@ birthwt %>%
 model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 
 ## -----------------------------------------------------------------------------
-model_norm %>% Anova %>% tidy
+model_norm %>% Anova() %>% tidy()
 
 ## -----------------------------------------------------------------------------
-model_norm %>% tidy
+model_norm %>% tidy()
 
 ## -----------------------------------------------------------------------------
 model_norm %>% 
@@ -73,7 +72,7 @@ model_norm %>%
   glm_coef(se_rob = TRUE, labels = model_labels(model_norm))
 
 ## -----------------------------------------------------------------------------
-model_norm %>% glance
+model_norm %>% glance()
 
 ## -----------------------------------------------------------------------------
 model_norm %>%
@@ -128,7 +127,14 @@ bdendo <- bdendo %>%
 
 ## -----------------------------------------------------------------------------
 bdendo %>%
-  cross_tab(cancer ~ est + gall) 
+  mutate(
+    cancer = relevel(cancer, ref = "Case"),
+    est = relevel(est, ref = "Oestrogen"),
+    gall = relevel(gall, ref = "GBD")
+  ) %>%
+  copy_labels(bdendo) %>%
+  cross_tab(cancer ~ est + gall) %>%
+  theme_article()
 
 ## -----------------------------------------------------------------------------
 library(survival)
@@ -212,7 +218,7 @@ model_pois %>%
   glm_coef(labels = model_labels(model_pois), se_rob = TRUE)
 
 ## -----------------------------------------------------------------------------
-model_pois %>% glance
+model_pois %>% glance()
 
 ## -----------------------------------------------------------------------------
 deviance(model_pois) / df.residual(model_pois)
@@ -225,10 +231,10 @@ model_negbin %>%
   glm_coef(labels = model_labels(model_negbin), se_rob = TRUE) 
 
 ## -----------------------------------------------------------------------------
-model_negbin %>% glance
+model_negbin %>% glance()
 
 ## -----------------------------------------------------------------------------
-model_negbin %>% Anova
+model_negbin %>% Anova()
 
 ## -----------------------------------------------------------------------------
 model_negbin %>%

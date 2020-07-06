@@ -60,5 +60,5 @@ Oncho \%>\%
   cross_tab(mf ~ .)
 }
 \seealso{
-\code{\link[moonBook]{mytable}}, \code{\link[huxtable]{hux}}
+\code{\link[moonBook]{mytable}}
 }

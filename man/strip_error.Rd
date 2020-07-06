@@ -9,7 +9,7 @@ strip_error(
   formula = NULL,
   data = NULL,
   pch = 20,
-  size = 0.6,
+  size = 1,
   alpha = 0.7,
   col = "indianred3",
   ...

@@ -481,7 +481,7 @@ hist_norm <- function(object = NULL, formula = NULL, data = NULL,
 #'   strip_error(bwt ~ smoke|Race) %>%
 #'   axis_labs()
 strip_error <- function(object = NULL, formula = NULL, data = NULL,
-                        pch = 20, size = 0.6, alpha = 0.7, col = 'indianred3', ...)
+                        pch = 20, size = 1, alpha = 0.7, col = 'indianred3', ...)
 {
   if (inherits(object, "formula")) {
     formula <- object
@@ -543,10 +543,6 @@ strip_error <- function(object = NULL, formula = NULL, data = NULL,
 #'   bar_error(bwt ~ smoke, fill = ~ Race) %>%
 #'   axis_labs()
 #'
-#' birthwt %>%
-#'   bar_error(bwt ~ smoke, col = ~ Race, fill = 'white') %>%
-#'   gf_refine(ggsci::scale_color_jama()) %>%
-#'   axis_labs()
 bar_error <- function(object = NULL, formula = NULL, data = NULL,
                       fill = 'indianred3', col = 'black', alpha = 0.7, ...)
 {
@@ -559,11 +555,11 @@ bar_error <- function(object = NULL, formula = NULL, data = NULL,
     object <- NULL
   }
   if(is.character(fill) & is.character(col)) {
-    gf_summary(formula, fun.y = "mean", data = data, geom = 'bar',
+    gf_summary(formula, fun = "mean", data = data, geom = 'bar',
                fill = fill, alpha = alpha, col = col, ...) %>%
       gf_summary(fun.data = "mean_cl_boot", geom = 'errorbar', width = 0.3)
   } else {
-    gf_summary(formula, data = data, fill = fill, fun.y = "mean", geom = 'bar',
+    gf_summary(formula, data = data, fill = fill, fun = "mean", geom = 'bar',
                alpha = alpha, col = col, position = ggplot2::position_dodge(), ...) %>%
       gf_summary(fun.data = "mean_cl_boot", geom = 'errorbar', width = 0.3,
                  position = ggplot2::position_dodge(width = 1))
