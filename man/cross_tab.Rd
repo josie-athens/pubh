@@ -4,7 +4,15 @@
 \alias{cross_tab}
 \title{Cross-tabulation.}
 \usage{
-cross_tab(object = NULL, formula = NULL, data = NULL, label = NULL, ...)
+cross_tab(
+  object = NULL,
+  formula = NULL,
+  data = NULL,
+  label = NULL,
+  show.total = TRUE,
+  p_val = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
@@ -13,20 +21,22 @@ cross_tab(object = NULL, formula = NULL, data = NULL, label = NULL, ...)
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
-\item{label}{A character, label used to name the first column of the data frame.}
+\item{label}{A character, label to be used for the outcome (for non-labelled data).}
 
-\item{...}{Additional arguments passed to \code{\link[finalfit]{summary_factorlist}}.}
+\item{show.total}{Logical, show column with totals?}
+
+\item{p_val}{Logical, show p-values?}
+
+\item{...}{Additional arguments passed to \code{\link[moonBook]{mytable_sub}}.}
 }
 \value{
-A data frame with descriptive statistics stratified by levels of the outcome.
+A huxtable with descriptive statistics stratified by levels of the outcome.
 }
 \description{
-\code{cross_tab} is a wrapper to functions from package \code{finalfit} to construct tables of descriptive statistics stratified by levels of a categorical outcome.
+\code{cross_tab} is a wrapper to functions from package \code{moonBook} to construct tables of descriptive statistics stratified by levels of a categorical outcome.
 }
 \details{
-Function \code{cross_tab} is a relatively simple wrapper to functions of package \code{finalfit}. Its main purpose is to construct contingency tables but it can also be used to report a table with descriptives for all variables as long as they are still stratified by the outcome. Please see examples to see how to list explanatory variables. For categorical explanatory variables, the function reports column percentages by default; row proportions can be obtained with additional argument: \code{column = FALSE}. If data is labelled with \code{sjlabelled}, the label of the outcome (dependent) variable is used to name the first column of the resulting data frame; this name can be changed with argument \code{label}.
-
-Relevant default arguments passed to \code{\link[finalfit]{summary_factorlist}} include: \code{cont = "mean"} (other option: \code{cont = "median"}); \code{column = TRUE}; \code{na_include = FALSE} and \code{p = FALSE}.
+Function \code{cross_tab} is a relatively simple wrapper to function \code{mytable} of package \code{moonBook}. Its main purpose is to construct contingency tables but it can also be used to report a table with descriptives for all variables as long as they are still stratified by the outcome. Please see examples to see how to list explanatory variables. For categorical explanatory variables, the function reports column percentages. If data is labelled with \code{sjlabelled}, the label of the outcome (dependent) variable is used to name the outcome; this name can be changed with argument \code{label}.
 }
 \examples{
 data(Oncho)
@@ -35,24 +45,20 @@ data(Oncho)
 Oncho \%>\%
   cross_tab(mf ~ area)
 
-## Reporting row proportions (risks) instead of column proportions:
+## Reporting prevalence:
 Oncho \%>\%
-  cross_tab(mf ~ area, column = FALSE)
-
-## Removing the name of the first column:
-Oncho \%>\%
-  cross_tab(mf ~ area, label = "")
+  cross_tab(area ~ mf)
 
 ## Contingency table for both sex and area of residence:
 Oncho \%>\%
-  cross_tab(mf ~ sex + area, p = TRUE)
+  cross_tab(mf ~ sex + area, p_val = TRUE)
 
 ## Descriptive statistics for all variables in the \code{Oncho} data set except \code{id}.
 require(dplyr)
 Oncho \%>\%
   select(- id) \%>\%
-  cross_tab(mf ~ ., label = "Parameter")
+  cross_tab(mf ~ .)
 }
 \seealso{
-\code{\link[finalfit]{summary_factorlist}}, \code{\link[moonBook]{mytable}}.
+\code{\link[moonBook]{mytable}}, \code{\link[huxtable]{hux}}
 }

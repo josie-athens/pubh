@@ -31,7 +31,6 @@ We start by loading relevant packages and setting the theme for the plots (as su
 rm(list = ls())
 library(car)
 library(broom)
-library(kableExtra)
 library(tidyverse)
 library(ggfortify)
 library(mosaic)
@@ -118,11 +117,11 @@ model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 Traditional output from the model:
 
 ```{r}
-model_norm %>% Anova %>% tidy
+model_norm %>% Anova() %>% tidy()
 ```
 
 ```{r}
-model_norm %>% tidy
+model_norm %>% tidy()
 ```
 
 Table of coefficients:
@@ -143,7 +142,7 @@ model_norm %>%
 The function `glance` from the `broom` package allow us to have a quick look at statistics related with the model.
 
 ```{r}
-model_norm %>% glance
+model_norm %>% glance()
 ```
 
 To construct the effect plot, we can use `plot_model` from the `sjPlot` package. The advantage of `plot_model` is that recognises labelled data and uses that information for annotating the plots.
@@ -230,7 +229,14 @@ We start with descriptive statistics:
 
 ```{r}
 bdendo %>%
-  cross_tab(cancer ~ est + gall) 
+  mutate(
+    cancer = relevel(cancer, ref = "Case"),
+    est = relevel(est, ref = "Oestrogen"),
+    gall = relevel(gall, ref = "GBD")
+  ) %>%
+  copy_labels(bdendo) %>%
+  cross_tab(cancer ~ est + gall) %>%
+  theme_article()
 ```
 
 We fit the conditional logistic model:
@@ -354,7 +360,7 @@ model_pois %>%
 ```
 
 ```{r}
-model_pois %>% glance
+model_pois %>% glance()
 ```
 
 
@@ -377,13 +383,13 @@ model_negbin %>%
 ```
 
 ```{r}
-model_negbin %>% glance
+model_negbin %>% glance()
 ```
 
 Notice that age group is a factor with more than two levels and is significant:
 
 ```{r}
-model_negbin %>% Anova
+model_negbin %>% Anova()
 ```
 
 Thus, we want to report confidence intervals and $p$-values adjusted for multiple comparisons.

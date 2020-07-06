@@ -30,7 +30,6 @@ always_allow_html: yes
 rm(list = ls())
 library(car)
 library(broom)
-library(kableExtra)
 library(tidyverse)
 library(ggfortify)
 library(mosaic)

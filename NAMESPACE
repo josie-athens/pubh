@@ -10,9 +10,12 @@ importFrom("ggformula", "gf_boxplot", "gf_dhistogram", "gf_fitdistr",
            "gf_pointrangeh", "gf_qq", "gf_qqline", "gf_segment", "gf_smooth",
            "gf_summary", "gf_theme", "gf_text",  "gf_vline")
 importFrom("emmeans", "emmeans" , "pwpp")
-importFrom("finalfit", "ff_column_totals", "summary_factorlist")
+importFrom("moonBook", "mytable", "mytable2df")
+importFrom("huxtable", "as_hux", "set_align", "insert_row", "merge_cells",
+           "set_header_rows", "set_bold", "everywhere")
 importFrom("sjmisc", "round_num")
 importFrom("magrittr", "%>%")
+importFrom("dplyr", "select")
 importFrom("sjlabelled", "get_label", "term_labels")
 importFrom("tidyselect",  "matches", "vars_select")
 importFrom("tibble",  "rownames_to_column")

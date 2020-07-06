@@ -27,6 +27,6 @@ respiratory failure. RCT compares active treatment against conventional manageme
 data(Roberts)
 
 Roberts \%>\%
-  cross_tab(survived ~ emo, column = FALSE)
+  cross_tab(survived ~ emo)
 }
 \keyword{datasets}

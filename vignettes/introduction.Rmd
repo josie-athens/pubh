@@ -92,7 +92,6 @@ Some examples. We start by loading packages.
 rm(list = ls())
 library(car)
 library(broom)
-library(kableExtra)
 library(tidyverse)
 library(ggfortify)
 library(mosaic)
@@ -116,14 +115,19 @@ We will use a data set about a study of onchocerciasis in Sierra Leone.
 
 ```{r}
 data(Oncho)
-Oncho %>% head
+Oncho %>% head()
 ```
 
 A two-by-two contingency table:
 
 ```{r}
 Oncho %>%
-  cross_tab(mf ~ area)
+  mutate(
+    mf = relevel(mf, ref = "Infected")
+  ) %>%
+  copy_labels(Oncho) %>%
+  cross_tab(mf ~ area) %>%
+  theme_article()
 ```
 
 Table with all descriptive statistics except `id` and `mfload`:
@@ -131,7 +135,12 @@ Table with all descriptive statistics except `id` and `mfload`:
 ```{r}
 Oncho %>%
   select(- c(id, mfload)) %>%
-  cross_tab(mf ~ .)
+  mutate(
+    mf = relevel(mf, ref = "Infected")
+  ) %>%
+  copy_labels(Oncho) %>%
+  cross_tab(mf ~ area +.) %>%
+  theme_article()
 ```
 
 Next, we use a data set about blood counts of T cells from patients in remission from Hodgkin's disease or in remission from disseminated malignancies. We generate the new variable `Ratio` and add labels to the variables.
@@ -144,7 +153,7 @@ Hodgkin <- Hodgkin %>%
     Ratio = "CD4+ / CD8+ T-cells ratio"
     )
 
-Hodgkin %>% head
+Hodgkin %>% head()
 ```
 
 Descriptive statistics for CD4+ T cells:
@@ -175,7 +184,13 @@ As before, we can report a table of descriptive statistics for all variables in 
 
 ```{r}
 Hodgkin %>%
-  cross_tab(Group ~ .)
+  mutate(
+    Group = relevel(Group, ref = "Hodgkin")
+  ) %>%
+  copy_labels(Hodgkin) %>%
+  cross_tab(Group ~ CD4 + ., method = 2) %>%
+  theme_article() %>%
+  add_footnote("Values are medians with interquartile range.")
 ```
 
 
@@ -387,7 +402,13 @@ Let's look at the table:
 
 ```{r}
 Bernard %>%
-  cross_tab(treat ~ fate)
+  mutate(
+    fate = relevel(fate, ref = "Dead"),
+    treat = relevel(treat, ref = "Ibuprofen")
+  ) %>%
+  copy_labels(Bernard) %>%
+  cross_tab(fate ~ treat) %>%
+  theme_article()
 ```
 
 For `epi.2by2` we need to provide the table of counts in the correct order, so we would type something like:
@@ -442,7 +463,13 @@ First we look at the cross-tabulation:
 
 ```{r}
 oswego %>%
-  cross_tab(ill ~ sex + chocolate.ice.cream, na_include = TRUE)
+  mutate(
+    ill = relevel(ill, ref = "Yes"),
+    chocolate.ice.cream = relevel(chocolate.ice.cream, ref = "Yes")
+  ) %>%
+  copy_labels(oswego) %>%
+  cross_tab(ill ~ sex + chocolate.ice.cream) %>%
+  theme_article()
 ```
 
 ```{r}

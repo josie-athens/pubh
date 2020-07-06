@@ -37,7 +37,7 @@
 #' data(Roberts)
 #'
 #' Roberts %>%
-#'   cross_tab(survived ~ emo, column = FALSE)
+#'   cross_tab(survived ~ emo)
 "Roberts"
 
 #' Breast cancer and age of childbirth.
