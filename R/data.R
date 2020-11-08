@@ -212,9 +212,8 @@
 #' with sepsis, N Engl J Med 336: 912–918.
 #' @examples
 #' data(Bernard)
-#' require(moonBook)
 #'
-#' mytable(fate ~ treat, data = Bernard, show.total = TRUE)
+#' cross_tab(fate ~ treat, data = Bernard)
 #'
 #' contingency(fate ~ treat, data = Bernard)
 "Bernard"

@@ -8,9 +8,9 @@
 rm(list = ls())
 library(car)
 library(broom)
+library(mosaic)
 library(tidyverse)
 library(ggfortify)
-library(mosaic)
 library(huxtable)
 library(jtools)
 library(latex2exp)
@@ -21,10 +21,8 @@ library(sjmisc)
 
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
-# options('huxtable.knit_print_df' = FALSE)
-options('huxtable.knit_print_df_theme' = theme_article)
-options('huxtable.autoformat_number_format' = list(numeric = "%5.2f"))
-knitr::opts_chunk$set(collapse = TRUE, comment = NA)
+options('huxtable.knit_print_df' = FALSE)
+knitr::opts_chunk$set(comment = NA)
 
 ## -----------------------------------------------------------------------------
 data(Oncho)
@@ -37,7 +35,7 @@ Oncho %>%
   ) %>%
   copy_labels(Oncho) %>%
   cross_tab(mf ~ area) %>%
-  theme_article()
+  theme_pubh()
 
 ## -----------------------------------------------------------------------------
 Oncho %>%
@@ -47,7 +45,7 @@ Oncho %>%
   ) %>%
   copy_labels(Oncho) %>%
   cross_tab(mf ~ area +.) %>%
-  theme_article()
+  theme_pubh()
 
 ## -----------------------------------------------------------------------------
 data(Hodgkin)
@@ -74,7 +72,7 @@ Hodgkin %>%
   ) %>%
   copy_labels(Hodgkin) %>%
   cross_tab(Group ~ CD4 + ., method = 2) %>%
-  theme_article() %>%
+  theme_pubh() %>%
   add_footnote("Values are medians with interquartile range.")
 
 ## -----------------------------------------------------------------------------
@@ -171,7 +169,7 @@ multiple(model_bwt, ~ race)$fig_pval %>%
 
 ## -----------------------------------------------------------------------------
 data(Bernard)
-head(Bernard)
+Bernard %>% head()
 
 ## -----------------------------------------------------------------------------
 Bernard %>%
@@ -181,7 +179,7 @@ Bernard %>%
   ) %>%
   copy_labels(Bernard) %>%
   cross_tab(fate ~ treat) %>%
-  theme_article()
+  theme_pubh()
 
 ## -----------------------------------------------------------------------------
 dat <- matrix(c(84, 140 , 92, 139), nrow = 2, byrow = TRUE)
@@ -217,7 +215,7 @@ oswego %>%
   ) %>%
   copy_labels(oswego) %>%
   cross_tab(ill ~ sex + chocolate.ice.cream) %>%
-  theme_article()
+  theme_pubh()
 
 ## -----------------------------------------------------------------------------
 oswego %>%

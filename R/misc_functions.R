@@ -353,3 +353,36 @@ pseudo_r2 <- function(model)
   res <- data.frame(Index, Estimate)
   res
 }
+
+#' A theme for huxtables
+#' This function quickly set a default style for a huxtable.
+#' @param ht A huxtable object.
+#' @param rw A numeric vector with the rows on which a bottom border is desired.
+#' @details \code{theme_pubh} is a variation of \code{theme_article} with the added flexibility
+#' of adding a bottom border line at desired row numbers. This theme is particular useful for
+#' function \code{cross_tab} as by default, \code{theme_pubh} adds the border after the third line
+#' (see examples).
+#' @examples
+#' require(huxtable)
+#' data(Oncho)
+#'
+#' Oncho %>%
+#'   cross_tab(area ~ mf) %>%
+#'   theme_pubh()
+#'
+#' data(Bernard)
+#'
+#' t1 <- estat(~ apache|fate, data = Bernard)
+#' t2 <- estat(~ o2del|fate, data = Bernard)
+#' rbind(t1, t2) %>%
+#'   as_hux() %>%
+#'   theme_pubh(c(1, 3))
+theme_pubh <- function(ht, rw = 3)
+{
+  ht <- huxtable::set_all_borders(ht, 0)
+  ht <- huxtable::set_top_border(ht, 1, huxtable::everywhere)
+  ht <- huxtable::set_bottom_border(ht, huxtable::final(1), huxtable::everywhere)
+  ht <- huxtable::set_bottom_border(ht, rw, huxtable::everywhere)
+  ht <- huxtable::style_header_rows(ht, bold = TRUE)
+  ht
+}

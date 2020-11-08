@@ -92,9 +92,9 @@ Some examples. We start by loading packages.
 rm(list = ls())
 library(car)
 library(broom)
+library(mosaic)
 library(tidyverse)
 library(ggfortify)
-library(mosaic)
 library(huxtable)
 library(jtools)
 library(latex2exp)
@@ -105,10 +105,8 @@ library(sjmisc)
 
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
-# options('huxtable.knit_print_df' = FALSE)
-options('huxtable.knit_print_df_theme' = theme_article)
-options('huxtable.autoformat_number_format' = list(numeric = "%5.2f"))
-knitr::opts_chunk$set(collapse = TRUE, comment = NA)
+options('huxtable.knit_print_df' = FALSE)
+knitr::opts_chunk$set(comment = NA)
 ```
 
 We will use a data set about a study of onchocerciasis in Sierra Leone.
@@ -127,7 +125,7 @@ Oncho %>%
   ) %>%
   copy_labels(Oncho) %>%
   cross_tab(mf ~ area) %>%
-  theme_article()
+  theme_pubh()
 ```
 
 Table with all descriptive statistics except `id` and `mfload`:
@@ -140,7 +138,7 @@ Oncho %>%
   ) %>%
   copy_labels(Oncho) %>%
   cross_tab(mf ~ area +.) %>%
-  theme_article()
+  theme_pubh()
 ```
 
 Next, we use a data set about blood counts of T cells from patients in remission from Hodgkin's disease or in remission from disseminated malignancies. We generate the new variable `Ratio` and add labels to the variables.
@@ -189,7 +187,7 @@ Hodgkin %>%
   ) %>%
   copy_labels(Hodgkin) %>%
   cross_tab(Group ~ CD4 + ., method = 2) %>%
-  theme_article() %>%
+  theme_pubh() %>%
   add_footnote("Values are medians with interquartile range.")
 ```
 
@@ -342,7 +340,8 @@ For simplicity, here we show the analysis of the linear model of smoking on birt
 model_bwt <- lm(bwt ~ smoke + race, data = birthwt)
 
 model_bwt %>%
-  glm_coef(labels = model_labels(model_bwt))
+  glm_coef(labels = model_labels(model_bwt)) %>%
+  as_hux() %>% set_align(everywhere, 2:3, "right")
 ```
 
 Similar results can be obtained with the function `tab_model` from the `sjPlot` package. 
@@ -395,7 +394,7 @@ Let's say we want to look at the effect of ibuprofen on preventing death in pati
 
 ```{r}
 data(Bernard)
-head(Bernard)
+Bernard %>% head()
 ```
 
 Let's look at the table:
@@ -408,7 +407,7 @@ Bernard %>%
   ) %>%
   copy_labels(Bernard) %>%
   cross_tab(fate ~ treat) %>%
-  theme_article()
+  theme_pubh()
 ```
 
 For `epi.2by2` we need to provide the table of counts in the correct order, so we would type something like:
@@ -469,7 +468,7 @@ oswego %>%
   ) %>%
   copy_labels(oswego) %>%
   cross_tab(ill ~ sex + chocolate.ice.cream) %>%
-  theme_article()
+  theme_pubh()
 ```
 
 ```{r}

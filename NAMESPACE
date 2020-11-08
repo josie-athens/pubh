@@ -12,7 +12,8 @@ importFrom("ggformula", "gf_boxplot", "gf_dhistogram", "gf_fitdistr",
 importFrom("emmeans", "emmeans" , "pwpp")
 importFrom("moonBook", "mytable", "mytable2df")
 importFrom("huxtable", "as_hux", "set_align", "insert_row", "merge_cells",
-           "set_header_rows", "set_bold", "everywhere")
+           "set_header_rows", "set_bold", "everywhere", "set_all_borders",
+           "set_top_border", "set_bottom_border", "final", "style_header_rows")
 importFrom("sjmisc", "round_num")
 importFrom("magrittr", "%>%")
 importFrom("dplyr", "select")
