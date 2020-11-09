@@ -151,7 +151,8 @@ birthwt %>%
 model_bwt <- lm(bwt ~ smoke + race, data = birthwt)
 
 model_bwt %>%
-  glm_coef(labels = model_labels(model_bwt))
+  glm_coef(labels = model_labels(model_bwt)) %>%
+  as_hux() %>% set_align(everywhere, 2:3, "right")
 
 ## -----------------------------------------------------------------------------
 tab_model(model_bwt,  collapse.ci = TRUE)
