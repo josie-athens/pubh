@@ -17,8 +17,8 @@ round_pval <- function(pval)
 #' @param model A generalised linear model.
 #' @param intercept Logical, should the intercept be added to the list of coefficients?
 #' @examples
-#' require(dplyr)
-#' require(sjlabelled)
+#' require(dplyr, quietly = TRUE)
+#' require(sjlabelled, quietly = TRUE)
 #'
 #' data(birthwt, package = "MASS")
 #' birthwt <- birthwt %>%
@@ -60,16 +60,15 @@ model_labels <- function(model, intercept = TRUE) {
 #' \code{glm_coef} displays estimates with confidence intervals and p-values from generalised linear models (see Details).
 #'
 #' @details \code{glm_coef} recognises objects (models) from the following classes: \code{clm}, \code{clogit},
-#' \code{coxph}, \code{gee}, \code{glm}, \code{glmerMod}, \code{lm}, \code{lme}, \code{multinom}, \code{negbin},
+#' \code{coxph}, \code{gee}, \code{glm}, \code{glmerMod}, \code{lm}, \code{lme}, \code{lmerMod}, \code{multinom}, \code{negbin},
 #' \code{polr} and \code{surveg}
 #' @details For models from logistic regression (including conditional logistic, ordinal and multinomial),
 #' Poisson or survival analysis, coefficient estimates and corresponding confidence intervals are
 #' automatically exponentiated (back-transformed).
-#' @details By default, \code{glm_coef} uses robust standard errors for calculating confidence intervals.
+#' @details By default, \code{glm_coef} uses naive standard errors for calculating confidence intervals but has the option of using robust standard errors instead.
 #' @details \code{glm_coef} can display two different data frames depending on the option of \code{type},
 #' for type \code{type = "cond"} (the default), \code{glm_coef} displays the standard table of coefficients
-#' with confidence intervals and p-values; for \code{type = "ext"}, \code{glm_coef} displays each number
-#' in a different column and includes standard errors.
+#' with confidence intervals and p-values; for \code{type = "ext"}, \code{glm_coef} displays additional statistics including standard errors.
 #' @details Please read the Vignette on Regression for more details.
 #' @param model A model from any of the classes listed in the details section.
 #' @param digits A scalar, number of digits for rounding the results (default = 2).
@@ -80,8 +79,8 @@ model_labels <- function(model, intercept = TRUE) {
 #' @param exp_norm Logical, should estimates and confidence intervals should be exponentiated? (for family == "gaussian").
 #' @return A data frame with estimates, confidence intervals and p-values from \code{glm} objects.
 #' @examples
-#' require(dplyr)
-#' require(sjlabelled)
+#' require(dplyr, quietly = TRUE)
+#' require(sjlabelled, quietly = TRUE)
 #'
 #' ## Continuous outcome.
 #' data(birthwt, package = "MASS")
@@ -111,7 +110,7 @@ model_labels <- function(model, intercept = TRUE) {
 #'
 #' ## For more examples, please read the Vignette on Regression.
 glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = FALSE,
-                      type = "cond", exp_norm = FALSE) {
+                     type = "cond", exp_norm = FALSE) {
   if (type != "cond" & type != "ext")
     stop("Option type not supported")
   mod <- summary(model)
@@ -213,6 +212,30 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = FA
       out.df <- round(data.frame(estim, low, up, stats), digits)
       out.df <- data.frame(out.df, round_pval(mod[, 5]))
       names(out.df) <- c("Coeff", "Lower CI", "Upper CI", "SE", "DF", "t value",
+                         "Pr(>|t|)")
+    }
+    if (is.null(labels)) {
+      rownames(out.df) <- rownames(out.df)
+    } else {
+      rownames(out.df) <- labels
+    }
+    tibble::rownames_to_column(out.df, var = "Parameter")
+  } else if (class(model)[1] == "lmerMod") {
+    mod <- jtools::summ(model, confint = TRUE)$coeftable
+    mod2 <- jtools::summ(model)$coeftable
+    estim <- mod[, 1]
+    low <- mod[, 2]
+    up <- mod[, 3]
+    stats <- mod2[, 2:4]
+    if (type == "cond") {
+      estim_ci <- paste0(round(estim, digits), " (", round(low, digits), ", ",
+                         round(up, digits), ")")
+      out.df <- data.frame(estim_ci, round_pval(mod[, 6]))
+      names(out.df) <- c("Coefficient", "Pr(>|t|)")
+    } else {
+      out.df <- round(data.frame(estim, low, up, stats), digits)
+      out.df <- data.frame(out.df, round_pval(mod[, 6]))
+      names(out.df) <- c("Coeff", "Lower CI", "Upper CI", "SE", "t value", "DF",
                          "Pr(>|t|)")
     }
     if (is.null(labels)) {
@@ -422,7 +445,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = FA
     tibble::rownames_to_column(out.df, var = "Parameter")
   } else {
     if (class(model)[1] != "glm" & class(model)[1] != "negbin" & class(model)[1] !=
-        "lm")
+        "lm" & class(model)[1] != "lmerMod")
       stop("Object's class or family error not supported.")
     if (class(model)[1] == "glm" | class(model)[1] == "negbin" |
         class(model)[1] == "lm") {
@@ -503,3 +526,63 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = FA
     tibble::rownames_to_column(out.df, var = "Parameter")
   }
 }
+
+#' Estimate R2 or Pseudo-R2 from regression models
+#'
+#' \code{get_r2} is a is a wrap function that calls \code{r2} from package \code{performance}.
+#' Calculates the R2 or pseudo-R2 value for different regression model objects, returning a character object for easy printing in tables of coefficients.
+#' @param model A statistical regression model.
+#' @param ... Additional arguments passed to \code{r2}.
+#' @details The main purpose of \code{get_r2} is to allow easy printing of R2 value in tables of coefficients (see examples).
+#' @seealso \code{\link[performance]{r2}}.
+#' @examples
+#' require(dplyr, quietly = TRUE)
+#' require(sjlabelled, quietly = TRUE)
+#' require(huxtable, quietly = TRUE)
+#'
+#' data(birthwt, package = "MASS")
+#' birthwt <- birthwt %>%
+#'   mutate(
+#'     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
+#'     race = factor(race, labels = c("White", "African American", "Other"))
+#'   ) %>%
+#'   var_labels(
+#'     bwt = 'Birth weight (g)',
+#'     smoke = 'Smoking status',
+#'     race = 'Race'
+#'   )
+#'
+#' model_norm <- lm(bwt ~ smoke + race, data = birthwt)
+#'
+#' model_norm %>%
+#'   glm_coef(labels = model_labels(model_norm)) %>%
+#'   as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+#'   theme_pubh(1) %>%
+#'   add_footnote(get_r2(model_norm), font_size = 9)
+get_r2 <- function(model, ...)
+{
+  r2 <- performance::r2
+  if(class(model)[1] == "lmerMod") {
+    res <- paste(
+      "Conditional R2 =",
+      r2(model, ...)[[1]] %>% round(3),
+      "\n",
+      "Marginal R2 =",
+      r2(model, ...)[[2]] %>% round(3)
+    )
+  } else if(class(model)[1] == "lme") {
+    res <- paste(
+      "Marginal R2 =",
+      r2(model, ...)[[2]] %>% round(3)
+    )
+  } else {
+    res <- paste(
+      names(r2(model, ...)[[1]]),
+      "=",
+      r2(model, ...)[[1]] %>% round(3)
+    )
+  }
+  res
+}
+
+#'

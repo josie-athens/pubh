@@ -35,8 +35,8 @@ numerical variable and both \code{x} and \code{z} are factors.}
 confidence intervals around mean values. High of bars represent mean values.
 }
 \examples{
-require(dplyr)
-require(sjlabelled)
+require(dplyr, quietly = TRUE)
+require(sjlabelled, quietly = TRUE)
 data(birthwt, package = "MASS")
 birthwt <- birthwt \%>\%
   mutate(

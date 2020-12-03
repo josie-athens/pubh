@@ -20,8 +20,8 @@ model_labels(model, intercept = TRUE)
 Please read the Vignette on Regression for more examples.
 }
 \examples{
-require(dplyr)
-require(sjlabelled)
+require(dplyr, quietly = TRUE)
+require(sjlabelled, quietly = TRUE)
 
 data(birthwt, package = "MASS")
 birthwt <- birthwt \%>\%

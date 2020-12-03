@@ -9,7 +9,7 @@
 #' @return A ggplot2 object.
 #' @examples
 #' data(kfm, package = "ISwR")
-#' require(sjlabelled)
+#' require(sjlabelled, quietly = TRUE)
 #' kfm = kfm %>%
 #'   var_labels(
 #'      dl.milk = 'Breast-milk intake (dl/day)',
@@ -64,7 +64,7 @@ axis_labs <- function(object)
 #' See examples.
 #' @examples
 #' data(kfm, package = "ISwR")
-#' require(sjlabelled)
+#' require(sjlabelled, quietly = TRUE)
 #' kfm = kfm %>%
 #'   var_labels(
 #'      dl.milk = 'Breast-milk intake (dl/day)',
@@ -273,7 +273,7 @@ bland_altman <- function(object = NULL, formula = NULL, data = NULL,
 #' @param ... Further arguments passed to \code{\link{gf_boxplot}}.
 #' @examples
 #' data(kfm, package = "ISwR")
-#' require(sjlabelled)
+#' require(sjlabelled, quietly = TRUE)
 #' kfm = kfm %>%
 #'   var_labels(
 #'      dl.milk = 'Breast-milk intake (dl/day)',
@@ -329,7 +329,7 @@ box_plot <- function(object = NULL, formula = NULL, data = NULL,
 #' @param ... Further arguments passed to \link{gf_qq}.
 #' @examples
 #' data(kfm, package = "ISwR")
-#' require(sjlabelled)
+#' require(sjlabelled, quietly = TRUE)
 #' kfm = kfm %>%
 #'   var_labels(
 #'      dl.milk = 'Breast-milk intake (dl/day)',
@@ -378,8 +378,8 @@ qq_plot <- function(object = NULL, formula = NULL, data = NULL, pch = 20,
 #' @param alpha Opacity (0 = invisible, 1 = opaque).
 #' @param ... Further arguments passed to \link{gf_dhistogram}.
 #' @examples
-#' require(dplyr)
-#' require(sjlabelled)
+#' require(dplyr, quietly = TRUE)
+#' require(sjlabelled, quietly = TRUE)
 #' data(birthwt, package = "MASS")
 #' birthwt <- birthwt %>%
 #'   mutate(
@@ -432,7 +432,7 @@ hist_norm <- function(object = NULL, formula = NULL, data = NULL,
 #' @param ... Additional information passed to \code{\link{gf_jitter}} or \code{\link{gf_point}}.
 #' @examples
 #' data(energy, package="ISwR")
-#' require(sjlabelled)
+#' require(sjlabelled, quietly = TRUE)
 #' energy = energy %>%
 #'   var_labels(
 #'     expend = 'Energy expenditure (MJ/day)',
@@ -452,7 +452,7 @@ hist_norm <- function(object = NULL, formula = NULL, data = NULL,
 #'   gf_star(1, 13, 2, 13.2, 13.4, "**")
 #'
 #' data(birthwt, package = "MASS")
-#' require(dplyr)
+#' require(dplyr, quietly = TRUE)
 #' birthwt <- birthwt %>%
 #'   mutate(
 #'     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
@@ -518,8 +518,8 @@ strip_error <- function(object = NULL, formula = NULL, data = NULL,
 #' @param alpha Opacity of the colour fill (0 = invisible, 1 = opaque).
 #' @param ... Additional information passed to \code{\link{gf_summary}}.
 #' @examples
-#' require(dplyr)
-#' require(sjlabelled)
+#' require(dplyr, quietly = TRUE)
+#' require(sjlabelled, quietly = TRUE)
 #' data(birthwt, package = "MASS")
 #' birthwt <- birthwt %>%
 #'   mutate(
@@ -579,7 +579,7 @@ bar_error <- function(object = NULL, formula = NULL, data = NULL,
 #' @return A data frame with the confidence intervals by level.
 #' @examples
 #' data(kfm, package = "ISwR")
-#' require(sjlabelled)
+#' require(sjlabelled, quietly = TRUE)
 #' kfm = kfm %>%
 #'   var_labels(
 #'      dl.milk = 'Breast-milk intake (dl/day)',
@@ -594,7 +594,7 @@ bar_error <- function(object = NULL, formula = NULL, data = NULL,
 #'   gen_bst_df(dl.milk ~ sex)
 #'
 #' data(birthwt, package = "MASS")
-#' require(dplyr)
+#' require(dplyr, quietly = TRUE)
 #' birthwt <- mutate(birthwt,
 #'   smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
 #'   Race = factor(race > 1, labels = c("White", "Non-white")))

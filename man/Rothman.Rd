@@ -47,7 +47,7 @@ Rothman$join[Rothman$oc == "User" & Rothman$ht == "Yes"] <- 3
 Rothman$join <- factor(Rothman$join, labels=c("Unexposed", "Hypertension", "OC user",
                        "OC and hypertension"))
 
-require(sjlabelled)
+require(sjlabelled, quietly = TRUE)
 Rothman$join <- set_label(Rothman$join, label = "Exposure")
 
 cross_tab(stroke ~ join, data = Rothman)

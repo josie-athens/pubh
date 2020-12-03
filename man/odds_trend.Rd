@@ -44,7 +44,7 @@ breast <- data.frame(Freq, Biopsy, Weight)
 breast
 
 breast <- expand_df(breast)
-require(sjlabelled)
+require(sjlabelled, quietly = TRUE)
 
 breast = var_labels(breast,
   Weight = 'Weight group'

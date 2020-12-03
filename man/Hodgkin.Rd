@@ -27,8 +27,8 @@ in remission from disseminated malignancies.
 }
 \examples{
 data(Hodgkin)
-require(dplyr)
-require(sjlabelled)
+require(dplyr, quietly = TRUE)
+require(sjlabelled, quietly = TRUE)
 
 Hodgkin <- Hodgkin \%>\%
   mutate(

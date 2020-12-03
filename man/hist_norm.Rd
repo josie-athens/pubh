@@ -36,8 +36,8 @@ hist_norm(
 \code{hist_norm} constructs histograms and adds corresponding Normal density curve.
 }
 \examples{
-require(dplyr)
-require(sjlabelled)
+require(dplyr, quietly = TRUE)
+require(sjlabelled, quietly = TRUE)
 data(birthwt, package = "MASS")
 birthwt <- birthwt \%>\%
   mutate(

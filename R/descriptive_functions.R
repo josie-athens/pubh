@@ -181,7 +181,7 @@ stats_quotes <- function(x, data2, digits = 2)
 #'   cross_tab(mf ~ sex + area, p_val = TRUE)
 #'
 #' ## Descriptive statistics for all variables in the \code{Oncho} data set except \code{id}.
-#' require(dplyr)
+#' require(dplyr, quietly = TRUE)
 #' Oncho %>%
 #'   select(- id) %>%
 #'   cross_tab(mf ~ .)
@@ -246,7 +246,7 @@ cross_tab <- function(object = NULL, formula = NULL, data = NULL,
 #' @seealso \code{\link{summary}}, \code{\link[moonBook]{mytable}}.
 #' @examples
 #' data(kfm, package = "ISwR")
-#' require(sjlabelled)
+#' require(sjlabelled, quietly = TRUE)
 #' kfm = kfm %>%
 #' var_labels(
 #'   dl.milk = 'Breast-milk intake (dl/day)',

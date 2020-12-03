@@ -1,0 +1,625 @@
+---
+title: "Regression Examples"
+author: "Josie Athens"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    number_sections: yes
+    fig_height: 4
+    fig_width: 5
+vignette: >
+  %\VignetteIndexEntry{Regression Examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+The aim of this vignette is to illustrate the use/functionality of the `glm_coef` function. `glm_coef` can be used to display model coefficients with confidence intervals and p-values. The advantages and limitations of `glm_coef` are:
+
+1. Recognises the main models used in epidemiology/public health.
+2. Automatically back-transforms estimates and confidence intervals, when the model requires it.
+3. Can use robust standard errors for the calculation of confidence intervals.
+    - Standard errors are used by default.
+    - The use of standard errors is restricted by the following classes of objects (models): `gee`, `glm` and `survreg`.
+4. Can display nice labels for the names of the parameters.
+5. Returns a data frame that can be modified and/or exported as tables for publications (with further editing).
+
+We start by loading relevant packages and setting the theme for the plots (as suggested in the Template of this package):
+
+```{r message=FALSE, results = 'hide'}
+rm(list = ls())
+library(car)
+library(broom)
+library(mosaic)
+library(tidyverse)
+library(ggfortify)
+library(huxtable)
+library(jtools)
+library(latex2exp)
+library(pubh)
+library(sjlabelled)
+library(sjPlot)
+library(sjmisc)
+
+theme_set(sjPlot::theme_sjplot2(base_size = 10))
+theme_update(legend.position = "top")
+options('huxtable.knit_print_df' = FALSE)
+options('huxtable.autoformat_number_format' = list(numeric = "%5.2f"))
+knitr::opts_chunk$set(comment = NA)
+```
+
+# Multiple Linear Regression
+
+For continuous outcomes there is no need of exponentiating the results unless the outcome was fitted in the log-scale. In our first example we want to estimate the effect of smoking and race on the birth weight of babies.
+
+We can generate factors and assign labels in the same `pipe` stream:
+
+```{r}
+data(birthwt, package = "MASS")
+birthwt <- birthwt %>%
+  mutate(
+    smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
+    race = factor(race, labels = c("White", "African American", "Other"))
+    ) %>%
+  var_labels(
+    bwt = 'Birth weight (g)',
+    smoke = 'Smoking status',
+    race = 'Race'
+    )
+```
+
+Is good to start with some basic descriptive statistics, so we can compare the birth weight between groups.
+
+
+```{r}
+birthwt %>%
+  group_by(race, smoke) %>%
+  summarise(
+    n = n(),
+    Mean = mean(bwt, na.rm = TRUE),
+    SD = sd(bwt, na.rm = TRUE),
+    Median = median(bwt, na.rm = TRUE),
+    CV = rel_dis(bwt)
+  ) %>%
+  as_hux() %>% theme_pubh(1)
+```
+
+Graphical analysis:
+
+```{r}
+birthwt %>%
+  box_plot(bwt ~ smoke, fill = ~ race) %>%
+  axis_labs()
+```
+
+Another way to compare the means between the groups is with `gen_bst_df` which estimates means with corresponding bootstrapped CIs.
+
+```{r}
+birthwt %>%
+  gen_bst_df(bwt ~ race|smoke) %>%
+  as_hux() %>% theme_pubh(1)
+```
+
+
+We fit a linear model.
+
+```{r}
+model_norm <- lm(bwt ~ smoke + race, data = birthwt)
+```
+
+> **Note:** Model diagnostics are not be discussed in this vignette.
+
+Traditional output from the model:
+
+```{r}
+model_norm %>% Anova()
+```
+
+```{r}
+model_norm %>% 
+  summ(confint = TRUE, model.info = FALSE)
+```
+
+Table of coefficients for publication:
+
+```{r}
+model_norm %>% 
+  glm_coef(labels = model_labels(model_norm)) %>%
+  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+  theme_pubh(1) %>%
+  add_footnote(get_r2(model_norm), font_size = 9)
+```
+
+Function `glm_coef` allows the use of robust standard errors.
+
+```{r}
+model_norm %>%
+  glm_coef(se_rob = TRUE, labels = model_labels(model_norm)) %>%
+  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+  theme_pubh(1) %>%
+  add_footnote(paste(
+    get_r2(model_norm), "\n",
+    "CIs and p-values estimated with robust standard errors."),
+    font_size = 9)
+```
+
+The function `glance` from the `broom` package allow us to have a quick look at statistics related with the model.
+
+```{r}
+model_norm %>% glance()
+```
+
+To construct the effect plot, we can use `plot_model` from the `sjPlot` package. The advantage of `plot_model` is that recognises labelled data and uses that information for annotating the plots.
+
+```{r}
+model_norm %>%
+  plot_model("pred", terms = ~race|smoke, dot.size = 1.5, title = "")
+```
+
+When the explanatory variables are categorical, another option is `emmip` from the `emmeans` package. We can include CIs in `emmip` but as estimates are *connected*, the resulting plots look more messy, so I recommend  `emmip` to look at the trace.
+
+```{r}
+emmip(model_norm, smoke ~ race) %>%
+  gf_labs(y = get_label(birthwt$bwt), x = "", col = "Smoking status")
+```
+
+
+# Logistic Regression
+
+For logistic regression we are interested in the odds ratios. We will look at the effect of amount of fibre intake on the development of coronary heart disease.
+
+```{r}
+data(diet, package = "Epi")
+diet <- diet %>%
+  mutate(
+    chd = factor(chd, labels = c("No CHD", "CHD"))
+  ) %>%
+  var_labels(
+    chd = "Coronary Heart Disease",
+    fibre = "Fibre intake (10 g/day)"
+    )
+```
+
+We start with descriptive statistics:
+
+```{r}
+diet %>% estat(~ fibre|chd) %>%
+  as_hux() %>% theme_pubh(1)
+```
+
+```{r}
+diet %>% na.omit() %>%
+  copy_labels(diet) %>%
+  box_plot(fibre ~ chd) %>%
+  axis_labs()
+```
+
+We fit a linear logistic model:
+
+```{r}
+model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
+```
+
+Summary:
+
+```{r}
+model_binom %>% 
+  summ(confint = TRUE, model.info = FALSE, exp = TRUE)
+```
+
+Table of coefficients for publication:
+
+```{r}
+model_binom %>%
+  glm_coef(labels = model_labels(model_binom)) %>%
+  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+  theme_pubh(1) %>%
+  add_footnote(get_r2(model_binom), font_size = 9)
+```
+
+Effect plot:
+
+```{r}
+model_binom %>%
+  plot_model("pred", terms = "fibre [all]", title = "")
+```
+
+## Matched Case-Control Studies: Conditional Logistic Regression
+
+We will look at a matched case-control study on the effect of oestrogen use and history of gall bladder disease on the development of endometrial cancer.
+
+```{r}
+data(bdendo, package = "Epi") 
+bdendo <- bdendo %>%
+  mutate(
+    cancer = factor(d, labels = c('Control', 'Case')),
+    gall = factor(gall, labels = c("No GBD", "GBD")),
+    est = factor(est, labels = c("No oestrogen", "Oestrogen"))
+  ) %>%
+  var_labels(
+    cancer = 'Endometrial cancer',
+    gall = 'Gall bladder disease',
+    est = 'Oestrogen'
+  )
+```
+
+We start with descriptive statistics:
+
+```{r}
+t1 = bdendo %>%
+  filter(est == "Oestrogen") %>%
+  mutate(
+    cancer = relevel(cancer, ref = "Case"),
+    gall = relevel(gall, ref = "GBD")
+  ) %>%
+  copy_labels(bdendo) %>%
+  cross_tab(cancer ~ gall,
+            label = "Oestrogen users")
+
+t2 = bdendo %>%
+  filter(est == "No oestrogen") %>%
+  mutate(
+    cancer = relevel(cancer, ref = "Case"),
+    gall = relevel(gall, ref = "GBD")
+  ) %>%
+  copy_labels(bdendo) %>%
+  cross_tab(cancer ~ gall,
+            label = "Non-oestrogen users")
+
+rbind(t1, t2) %>%
+  theme_pubh(c(3, 6, 9))
+```
+
+```{r}
+bdendo %>%
+  gf_percents(~ cancer|gall, fill = ~ est, position = "dodge", alpha = 0.6) %>%
+  gf_labs(
+    y = "Percent",
+    x = "",
+    fill = ""
+  )
+```
+
+We fit the conditional logistic model:
+
+```{r}
+require(survival, quietly = TRUE)
+model_clogit <- clogit(cancer == 'Case' ~ est * gall + strata(set), data = bdendo)
+
+model_clogit %>%
+  glm_coef(labels = c("Oestrogen/No oestrogen", "GBD/No GBD",
+                      "Oestrogen:GBD Interaction")) %>%
+  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+  theme_pubh(1) %>%
+  add_footnote(get_r2(model_clogit), font_size = 9)
+```
+
+
+Creating data frame needed to construct the effect plot:
+
+```{r}
+require(ggeffects, quietly = TRUE)
+bdendo_pred <- ggemmeans(model_clogit, terms = c('gall', 'est'))
+```
+
+Effect plot:
+
+```{r}
+bdendo_pred %>%
+  gf_pointrange(predicted + conf.low + conf.high ~ x|group, col = ~ x) %>%
+  gf_labs(y = "P(cancer)", x = "", col = get_label(bdendo$gall))
+```
+
+## Ordinal Logistic Regression
+
+We use data about house satisfaction.
+
+```{r message=FALSE}
+require(MASS, quietly = TRUE)
+data(housing)
+housing <- housing %>%
+  var_labels(
+    Sat = "Satisfaction",
+    Infl = "Perceived influence",
+    Type = "Type of rental",
+    Cont = "Contact"
+    )
+```
+
+We fit the ordinal logistic model:
+
+```{r}
+model_ord <- polr(Sat ~ Infl + Type + Cont, weights = Freq, data = housing, Hess = TRUE)
+```
+
+```{r}
+model_ord %>%
+  glm_coef(labels = model_labels(model_ord, intercept = FALSE)) %>%
+  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+  theme_pubh(1) %>%
+  add_footnote(get_r2(model_ord), font_size = 9)
+```
+
+Effect plots:
+
+```{r}
+model_ord %>%
+  plot_model(type = "pred", terms = c("Infl", "Cont"), 
+           dot.size = 1, title = "") %>%
+  gf_theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+model_ord %>%
+  plot_model(type = "pred", terms = c("Infl", "Type"), 
+           dot.size = 1, title = "") %>%
+  gf_theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+emmip(model_ord, Infl ~ Type |Cont) %>%
+  gf_labs(x = "Type of rental", col = "Perceived influence")
+```
+
+> **Note:** In the previous table parameter estimates and confidence intervals for *Perceived influence* and *Accommodation* were not adjusted for multiple comparisons. 
+
+# Poisson Regression
+
+For Poisson regression we are interested in incidence rate ratios. We will look at the effect of sex, ethnicity and age group on number of absent days from school in a year.
+
+```{r}
+data(quine)
+levels(quine$Eth) <- c("Aboriginal", "White")
+levels(quine$Sex) <- c("Female", "Male")
+```
+
+```{r}
+quine <- quine %>%
+  var_labels(
+    Days = "Number of absent days",
+    Eth = "Ethnicity",
+    Age = "Age group"
+    )
+```
+
+Descriptive statistics:
+
+```{r message=FALSE}
+quine %>%
+  group_by(Eth, Sex, Age) %>%
+  summarise(
+    n = n(),
+    Mean = mean(Days, na.rm = TRUE),
+    SD = sd(Days, na.rm = TRUE),
+    Median = median(Days, na.rm = TRUE),
+    CV = rel_dis(Days)
+  ) %>%
+  as_hux() %>% theme_pubh(1)
+```
+
+```{r}
+quine %>%
+  box_plot(Days ~ Age|Sex, fill = ~ Eth) %>%
+  axis_labs() %>% gf_labs(fill = "")
+```
+
+We start by fitting a standard Poisson linear regression model:
+
+```{r}
+model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
+
+model_pois %>%
+  glm_coef(labels = model_labels(model_pois), se_rob = TRUE) %>%
+  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+  theme_pubh(1) %>%
+  add_footnote(get_r2(model_pois), font_size = 9)
+```
+
+```{r}
+model_pois %>% glance()
+```
+
+
+## Negative-binomial
+
+The assumption is that the mean is equal than the variance. If that is the case, deviance should be close to the degrees of freedom of the residuals (look at the above output from `glance`). In other words, the following calculation should be close to 1:
+
+```{r}
+deviance(model_pois) / df.residual(model_pois)
+```
+
+Thus, we have over-dispersion. One option is to use a negative binomial distribution.
+
+```{r message=FALSE}
+model_negbin <- glm.nb(Days ~ Eth + Sex + Age, data = quine)
+
+model_negbin %>%
+  glm_coef(labels = model_labels(model_negbin), se_rob = TRUE)  %>%
+  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+  theme_pubh(1) %>%
+  add_footnote(get_r2(model_negbin), font_size = 9)
+```
+
+```{r}
+model_negbin %>% glance()
+```
+
+Notice that age group is a factor with more than two levels and is significant:
+
+```{r}
+model_negbin %>% Anova()
+```
+
+Thus, we want to report confidence intervals and $p$-values adjusted for multiple comparisons.
+
+Effect plot:
+
+```{r}
+model_negbin %>%
+  plot_model(type = "pred", terms = c("Age", "Eth"), 
+           dot.size = 1.5, title = "") 
+```
+
+```{r}
+emmip(model_negbin, Eth ~ Age|Sex) %>%
+  gf_labs(y = "Number of absent days", x = "Age group", col = "Ethnicity")
+```
+
+
+## Adjusting CIs and p-values for multiple comparisons
+
+We adjust for multiple comparisons:
+
+```{r}
+multiple(model_negbin, ~ Age|Eth)$df %>%
+  as_hux() %>% theme_pubh(1)
+```
+
+We can see the comparison graphically with:
+
+```{r}
+multiple(model_negbin, ~ Age|Eth)$fig_ci %>%
+  gf_labs(x = "IRR")
+```
+
+
+# Survival Analysis
+
+We will use an example on the effect of thiotepa versus placebo on the development of bladder cancer.
+
+```{r}
+data(bladder)
+bladder <- bladder %>%
+  mutate(times = stop,
+         rx = factor(rx, labels=c("Placebo", "Thiotepa"))
+         ) %>%
+  var_labels(times = "Survival time",
+             rx = "Treatment")
+```
+
+## Parametric method
+
+```{r}
+model_surv <- survreg(Surv(times, event) ~ rx, data = bladder)
+```
+
+Using robust standard errors:
+
+```{r}
+model_surv %>%
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo", "Scale"), se_rob = TRUE) %>%
+  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+  theme_pubh(1) %>%
+  add_footnote(get_r2(model_surv), font_size = 9)
+```
+
+In this example the scale parameter is not statistically different from one, meaning hazard is constant and thus, we can use the exponential distribution:
+
+```{r}
+model_exp <- survreg(Surv(times, event) ~ rx, data = bladder, dist = "exponential")
+```
+
+```{r}
+model_exp %>%
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo"), se_rob = TRUE) %>%
+  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+  theme_pubh(1) %>%
+  add_footnote(get_r2(model_exp), font_size = 9)
+```
+
+> **Interpretation:** Patients receiving Thiotepa live on average 64% more than those in the Placebo group.
+
+Using naive standard errors:
+
+```{r}
+model_exp %>%
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo")) %>%
+  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+  theme_pubh(1) %>%
+  add_footnote(get_r2(model_exp), font_size = 9)
+```
+
+
+```{r}
+model_exp %>%
+  plot_model(type = "pred", terms = ~ rx, dot.size = 1.5, title = "") %>%
+  gf_labs(y = "Survival time", x = "Treatment", title = "")
+```
+
+
+## Cox proportional hazards regression
+
+```{r}
+model_cox <-  coxph(Surv(times, event) ~ rx, data = bladder)
+```
+
+```{r}
+model_cox %>%
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo")) %>%
+  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+  theme_pubh(1) %>%
+  add_footnote(get_r2(model_cox), font_size = 9)
+```
+
+
+> **Interpretation:** Patients receiving Thiotepa are 64% less likely of dying than those in the Placebo group.
+
+```{r}
+model_cox %>%
+  plot_model(type = "pred", terms = ~ rx, dot.size = 1.5, 
+           title = "") %>%
+  gf_labs(x = "Treatment", title = "")
+```
+
+# Mixed Linear Regression Models
+
+## Continuous outcomes
+
+We look at the relationship between sex and age on the distance from the pituitary to the pterygomaxillary fissure (mm).
+
+```{r, message=FALSE}
+require(lme4, quietly = TRUE)
+data(Orthodont, package = "nlme")
+```
+
+```{r}
+Orthodont <- Orthodont %>%
+  var_labels(
+    distance = "Pituitary distance (mm)",
+    age = "Age (years)"
+    )
+```
+
+We fit the model:
+
+```{r}
+model_mix <- lmer(distance ~ Sex * age + (1|Subject), data = Orthodont)
+```
+
+```{r}
+model_mix %>%
+  summ(center = TRUE, confint = TRUE, model.info = FALSE)
+```
+
+```{r}
+model_mix %>%
+  center_mod() %>%
+  glm_coef(labels = c(
+    model_labels(model_mix),
+    "Sex:Age interaction"
+    )) %>%
+  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+  theme_pubh(1) %>%
+  add_footnote(get_r2(model_mix), font_size = 9)
+```
+
+Effect plot:
+
+```{r}
+model_mix %>%
+  plot_model("eff", terms = age ~ Sex, 
+           show.data = TRUE, jitter = 0.1, dot.size = 1.5) %>%
+  gf_labs(y = get_label(Orthodont$distance), x = "Age (years)", title = "")
+```
+

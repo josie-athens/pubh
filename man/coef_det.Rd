@@ -28,7 +28,7 @@ summary(model1)
 coef_det(titration$OD, fitted(model1))
 
 ## Non-linear regression:
-library(nlme)
+library(nlme, quietly = TRUE)
 data(Puromycin)
 mm.tx <- gnls(rate ~ SSmicmen(conc, Vm, K), data = Puromycin,
   subset = state == "treated")

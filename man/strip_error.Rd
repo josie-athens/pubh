@@ -39,7 +39,7 @@ confidence intervals around mean values.
 }
 \examples{
 data(energy, package="ISwR")
-require(sjlabelled)
+require(sjlabelled, quietly = TRUE)
 energy = energy \%>\%
   var_labels(
     expend = 'Energy expenditure (MJ/day)',
@@ -59,7 +59,7 @@ energy \%>\%
   gf_star(1, 13, 2, 13.2, 13.4, "**")
 
 data(birthwt, package = "MASS")
-require(dplyr)
+require(dplyr, quietly = TRUE)
 birthwt <- birthwt \%>\%
   mutate(
     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),

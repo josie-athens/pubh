@@ -25,7 +25,7 @@ Riboflavin <- seq(0, 80, 10)
 OD <- 0.0125 * Riboflavin + rnorm(9, 0.6, 0.03)
 titration <- data.frame(Riboflavin, OD)
 
-require(sjlabelled)
+require(sjlabelled, quietly = TRUE)
 titration <- titration \%>\%
   var_labels(
     Riboflavin = "Riboflavin (nmol/ml)",

@@ -23,7 +23,7 @@ function \code{cross_tab} as by default, \code{theme_pubh} adds the border after
 (see examples).
 }
 \examples{
-require(huxtable)
+require(huxtable, quietly = TRUE)
 data(Oncho)
 
 Oncho \%>\%

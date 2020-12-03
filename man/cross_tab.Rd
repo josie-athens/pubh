@@ -54,7 +54,7 @@ Oncho \%>\%
   cross_tab(mf ~ sex + area, p_val = TRUE)
 
 ## Descriptive statistics for all variables in the \code{Oncho} data set except \code{id}.
-require(dplyr)
+require(dplyr, quietly = TRUE)
 Oncho \%>\%
   select(- id) \%>\%
   cross_tab(mf ~ .)

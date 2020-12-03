@@ -35,7 +35,7 @@ qq_plot(
 }
 \examples{
 data(kfm, package = "ISwR")
-require(sjlabelled)
+require(sjlabelled, quietly = TRUE)
 kfm = kfm \%>\%
   var_labels(
      dl.milk = 'Breast-milk intake (dl/day)',

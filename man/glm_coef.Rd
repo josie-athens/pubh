@@ -37,25 +37,24 @@ A data frame with estimates, confidence intervals and p-values from \code{glm} o
 }
 \details{
 \code{glm_coef} recognises objects (models) from the following classes: \code{clm}, \code{clogit},
-\code{coxph}, \code{gee}, \code{glm}, \code{glmerMod}, \code{lm}, \code{lme}, \code{multinom}, \code{negbin},
+\code{coxph}, \code{gee}, \code{glm}, \code{glmerMod}, \code{lm}, \code{lme}, \code{lmerMod}, \code{multinom}, \code{negbin},
 \code{polr} and \code{surveg}
 
 For models from logistic regression (including conditional logistic, ordinal and multinomial),
 Poisson or survival analysis, coefficient estimates and corresponding confidence intervals are
 automatically exponentiated (back-transformed).
 
-By default, \code{glm_coef} uses robust standard errors for calculating confidence intervals.
+By default, \code{glm_coef} uses naive standard errors for calculating confidence intervals but has the option of using robust standard errors instead.
 
 \code{glm_coef} can display two different data frames depending on the option of \code{type},
 for type \code{type = "cond"} (the default), \code{glm_coef} displays the standard table of coefficients
-with confidence intervals and p-values; for \code{type = "ext"}, \code{glm_coef} displays each number
-in a different column and includes standard errors.
+with confidence intervals and p-values; for \code{type = "ext"}, \code{glm_coef} displays additional statistics including standard errors.
 
 Please read the Vignette on Regression for more details.
 }
 \examples{
-require(dplyr)
-require(sjlabelled)
+require(dplyr, quietly = TRUE)
+require(sjlabelled, quietly = TRUE)
 
 ## Continuous outcome.
 data(birthwt, package = "MASS")

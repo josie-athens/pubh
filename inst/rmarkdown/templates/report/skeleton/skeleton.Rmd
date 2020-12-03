@@ -38,5 +38,6 @@ library(sjmisc)
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
 options('huxtable.knit_print_df' = FALSE)
+options('huxtable.autoformat_number_format' = list(numeric = "%5.2f"))
 knitr::opts_chunk$set(comment = NA, dpi = 300, fig.width = 6, fig.height = 4)
 ```

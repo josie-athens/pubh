@@ -51,8 +51,8 @@ expand_df <- function(aggregate.data, index.var = "Freq", retain.freq = FALSE)
 #'   for effect modification is also reported.
 #' @examples
 #' data(oswego, package = "epitools")
-#' require(dplyr)
-#' require(sjlabelled)
+#' require(dplyr, quietly = TRUE)
+#' require(sjlabelled, quietly = TRUE)
 #' oswego <- oswego %>%
 #'   mutate(
 #'     ill = factor(ill, labels = c("No", "Yes")),
@@ -65,7 +65,7 @@ expand_df <- function(aggregate.data, index.var = "Freq", retain.freq = FALSE)
 #'     chocolate.ice.cream = "Consumed chocolate ice cream"
 #'   )
 #'
-#' require(moonBook)
+#' require(moonBook, quietly = TRUE)
 #' mytable(ill ~ sex + chocolate.ice.cream, data = oswego, show.total = TRUE)
 #'
 #' oswego %>%
@@ -166,7 +166,7 @@ prop_or <- function(p2, or)
 #' breast
 #'
 #' breast <- expand_df(breast)
-#' require(sjlabelled)
+#' require(sjlabelled, quietly = TRUE)
 #'
 #' breast = var_labels(breast,
 #'   Weight = 'Weight group'
@@ -289,7 +289,7 @@ diag_test2 <- function(aa, bb, cc, dd)
 #' contingency(status ~ alcohol, data = cancer, method = "case.control")
 #'
 #' data(Oncho)
-#' require(moonBook)
+#' require(moonBook, quietly = TRUE)
 #'
 #' mytable(mf ~ area, data = Oncho, show.total = TRUE)
 #'

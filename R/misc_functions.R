@@ -118,7 +118,7 @@ rank_leverage <- function(x)
 #' OD <- 0.0125 * Riboflavin + rnorm(9, 0.6, 0.03)
 #' titration <- data.frame(Riboflavin, OD)
 #'
-#' require(sjlabelled)
+#' require(sjlabelled, quietly = TRUE)
 #' titration <- titration %>%
 #'   var_labels(
 #'     Riboflavin = "Riboflavin (nmol/ml)",
@@ -258,7 +258,7 @@ logistic_gof <- function(model)
 #' coef_det(titration$OD, fitted(model1))
 #'
 #' ## Non-linear regression:
-#' library(nlme)
+#' library(nlme, quietly = TRUE)
 #' data(Puromycin)
 #' mm.tx <- gnls(rate ~ SSmicmen(conc, Vm, K), data = Puromycin,
 #'   subset = state == "treated")
@@ -363,7 +363,7 @@ pseudo_r2 <- function(model)
 #' function \code{cross_tab} as by default, \code{theme_pubh} adds the border after the third line
 #' (see examples).
 #' @examples
-#' require(huxtable)
+#' require(huxtable, quietly = TRUE)
 #' data(Oncho)
 #'
 #' Oncho %>%

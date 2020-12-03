@@ -45,7 +45,7 @@ cancer <- expand_df(cancer)
 contingency(status ~ alcohol, data = cancer, method = "case.control")
 
 data(Oncho)
-require(moonBook)
+require(moonBook, quietly = TRUE)
 
 mytable(mf ~ area, data = Oncho, show.total = TRUE)
 

@@ -24,8 +24,8 @@ pooled odds ratio. The test for effect modification (test for interaction) is al
 }
 \examples{
 data(oswego, package = "epitools")
-require(dplyr)
-require(sjlabelled)
+require(dplyr, quietly = TRUE)
+require(sjlabelled, quietly = TRUE)
 oswego <- oswego \%>\%
   mutate(
     ill = factor(ill, labels = c("No", "Yes")),
@@ -38,7 +38,7 @@ oswego <- oswego \%>\%
     chocolate.ice.cream = "Consumed chocolate ice cream"
   )
 
-require(moonBook)
+require(moonBook, quietly = TRUE)
 mytable(ill ~ sex + chocolate.ice.cream, data = oswego, show.total = TRUE)
 
 oswego \%>\%

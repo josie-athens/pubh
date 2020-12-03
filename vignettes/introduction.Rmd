@@ -56,7 +56,7 @@ Using epidemiology friendly terms:
 
 Is worth to mention that `Stata` requires for variables to be given in the same order as in formulas: outcome first, predictors next.
 
-The `pubh` package integrates well with other packages of the `tidyverse` wich use formulas and the pipe operator `%>%` to add layers over functions. In particular, `pubh` uses `ggformula` as a graphical interface for plotting and takes advantage of variable labels from `sjlabelled`. This versatility allows it to interact also with tables from `moonBook` and effect plots from `sjPlot`.
+The `pubh` package integrates well with other packages of the `tidyverse` which use formulas and the pipe operator `%>%` to add layers over functions. In particular, `pubh` uses `ggformula` as a graphical interface for plotting and takes advantage of variable labels from `sjlabelled`. This versatility allows it to interact also with tables from `moonBook` and effect plots from `sjPlot`.
 
 ### Stratification
 
@@ -81,7 +81,7 @@ The main contributions of the `pubh` package to students and professionals from 
 
 Many options currently exists for displaying descriptive statistics. I recommend the function `mytable` from the `moonBook` package for constructing tables of descriptive statistics where results don't need to be stratified. 
 
-In Public Health and Epidemiology it is common to have a categorical outcome and thus, report descriptive statistics stratified by the outcome. Package `pubh` introduces the function `cross_tab` as a wrapper to functions from `finalfit`. The idea is to construct these tables, using formulas, in a simple way.
+In Public Health and Epidemiology it is common to have a categorical outcome and thus, report descriptive statistics stratified by the outcome. Package `pubh` introduces the function `cross_tab` as a wrapper to functions from `mytable`. The idea is to construct these tables, using formulas, in a simple way.
 
 
 The `estat` function from the `pubh` package displays descriptive statistics of continuous outcomes and like `mytable`, it can use *labels* to display nice tables. `estat`. As a way to aid in the understanding of the variability, `estat` displays also the relative dispersion (coefficient of variation) which is of particular interest for comparing variances between groups (factors).
@@ -106,6 +106,7 @@ library(sjmisc)
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
 options('huxtable.knit_print_df' = FALSE)
+options('huxtable.autoformat_number_format' = list(numeric = "%5.2f"))
 knitr::opts_chunk$set(comment = NA)
 ```
 
@@ -158,7 +159,8 @@ Descriptive statistics for CD4+ T cells:
 
 ```{r}
 Hodgkin %>%
-  estat(~ CD4)
+  estat(~ CD4) %>%
+  as_hux() %>% theme_pubh(1)
 ```
 
 In the previous code, the left-hand side of the formula is empty as it's the case when working with only one variable.
@@ -175,7 +177,8 @@ For example:
 
 ```{r}
 Hodgkin %>%
-  estat(~ Ratio|Group)
+  estat(~ Ratio|Group) %>%
+  as_hux() %>% theme_pubh(1)
 ```
 
 As before, we can report a table of descriptive statistics for all variables in the data set:
@@ -341,7 +344,8 @@ model_bwt <- lm(bwt ~ smoke + race, data = birthwt)
 
 model_bwt %>%
   glm_coef(labels = model_labels(model_bwt)) %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right")
+  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+  add_footnote(get_r2(model_bwt), font_size = 9)
 ```
 
 Similar results can be obtained with the function `tab_model` from the `sjPlot` package. 

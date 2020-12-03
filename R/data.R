@@ -142,7 +142,7 @@
 #' Rothman$join <- factor(Rothman$join, labels=c("Unexposed", "Hypertension", "OC user",
 #'                        "OC and hypertension"))
 #'
-#' require(sjlabelled)
+#' require(sjlabelled, quietly = TRUE)
 #' Rothman$join <- set_label(Rothman$join, label = "Exposure")
 #'
 #' cross_tab(stroke ~ join, data = Rothman)
@@ -168,8 +168,8 @@
 #' @source Altman, DA (1991) Practical statistics for medical research. Chapman & Hall/CRC.
 #' @examples
 #' data(Hodgkin)
-#' require(dplyr)
-#' require(sjlabelled)
+#' require(dplyr, quietly = TRUE)
+#' require(sjlabelled, quietly = TRUE)
 #'
 #' Hodgkin <- Hodgkin %>%
 #'   mutate(
@@ -354,7 +354,7 @@
 #' c4 <- cbind(Thall[, c(1:4, 8)], count = Thall$y3)[, c(1:4, 6)]
 #' epilepsy <- rbind(c1, c2, c3, c4)
 #'
-#' require(lme4)
+#' require(lme4, quietly = TRUE)
 #' model_glmer <- glmer(count ~ treat + base + I(age - mean(age, na.rm = TRUE)) +
 #'                  (1|id), data = epilepsy, family = poisson)
 #' glm_coef(model_glmer, labels = c("Treatment (Prograbide/Control)",
