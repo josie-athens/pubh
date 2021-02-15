@@ -22,6 +22,7 @@ library(sjmisc)
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
 options('huxtable.knit_print_df' = FALSE)
+options('huxtable.autoformat_number_format' = list(numeric = "%5.2f"))
 knitr::opts_chunk$set(comment = NA)
 
 ## -----------------------------------------------------------------------------
@@ -59,11 +60,13 @@ Hodgkin %>% head()
 
 ## -----------------------------------------------------------------------------
 Hodgkin %>%
-  estat(~ CD4)
+  estat(~ CD4) %>%
+  as_hux() %>% theme_pubh(1)
 
 ## -----------------------------------------------------------------------------
 Hodgkin %>%
-  estat(~ Ratio|Group)
+  estat(~ Ratio|Group) %>%
+  as_hux() %>% theme_pubh(1)
 
 ## -----------------------------------------------------------------------------
 Hodgkin %>%
@@ -152,7 +155,8 @@ model_bwt <- lm(bwt ~ smoke + race, data = birthwt)
 
 model_bwt %>%
   glm_coef(labels = model_labels(model_bwt)) %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right")
+  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+  add_footnote(get_r2(model_bwt), font_size = 9)
 
 ## -----------------------------------------------------------------------------
 tab_model(model_bwt,  collapse.ci = TRUE)
