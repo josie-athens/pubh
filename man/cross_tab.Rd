@@ -11,6 +11,9 @@ cross_tab(
   label = NULL,
   show.total = TRUE,
   p_val = FALSE,
+  pad = 3,
+  width = 0.8,
+  method = 1,
   ...
 )
 }
@@ -26,6 +29,14 @@ cross_tab(
 \item{show.total}{Logical, show column with totals?}
 
 \item{p_val}{Logical, show p-values?}
+
+\item{pad}{Numerical, padding above and bellow rows.}
+
+\item{width}{Numerical, proportional width of the table.}
+
+\item{method}{An integer indicating methods for continuous variables.
+1 Reports means and standard deviations.
+2 Reports medians and interquartile ranges.}
 
 \item{...}{Additional arguments passed to \code{\link[moonBook]{mytable_sub}}.}
 }

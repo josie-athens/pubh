@@ -29,6 +29,7 @@
 #'   box_plot(dl.milk ~ sex, fill='thistle', alpha = 0.8) %>%
 #'   axis_labs() %>%
 #'   gf_star(x1 = 1, y1 = 10.9, x2 = 2, y2 = 11, y3 = 11.2)
+#' @export
 axis_labs <- function(object)
 {
   dt <- object$data
@@ -96,6 +97,7 @@ axis_labs <- function(object)
 #'   strip_error(expend ~ stature, col = 'red') %>%
 #'   axis_labs() %>%
 #'   gf_star(1, 13, 2, 13.2, 13.4, "**")
+#' @export
 gf_star <- function(fig, x1, y1, x2, y2, y3, legend = "*", ...)
 {
   dt <- data.frame(x1, y1, x2, y2, mid = mean(c(x1, x2)), y3)
@@ -135,6 +137,7 @@ gf_star <- function(fig, x1, y1, x2, y2, y3, legend = "*", ...)
 #'
 #' multiple(model_1, ~ race)$fig_pval %>%
 #'   gf_labs(y = 'Race')
+#' @export
 multiple <- function (model, formula, adjust = "mvt", type = "response",
                       reverse = TRUE, level = 0.95, digits = 2, ...)
 {
@@ -218,6 +221,7 @@ multiple <- function (model, formula, adjust = "mvt", type = "response",
 #'   bland_altman(srweight ~ weight, transform = TRUE) %>%
 #'   gf_labs(x = "Mean of weights (kg)", y = "Measured weight / Self-reported weight") %>%
 #'   gf_theme(theme = sjPlot::theme_sjplot2(base_size = 9))
+#' @export
 bland_altman <- function(object = NULL, formula = NULL, data = NULL,
                          pch = 20, size = 1, col = 'black', transform = FALSE, ...)
 {
@@ -294,6 +298,7 @@ bland_altman <- function(object = NULL, formula = NULL, data = NULL,
 #'   box_plot(dl.milk ~ sex, fill = 'thistle', alpha = 0.8) %>%
 #'   axis_labs() %>%
 #'   gf_star(1, 10.9, 2, 11, 11.4, legend = 'p = 0.035', size = 2.5)
+#' @export
 box_plot <- function(object = NULL, formula = NULL, data = NULL,
                      fill = "indianred3", alpha = 0.7,
                      outlier.shape = 20, outlier.size = 1, ...)
@@ -346,6 +351,7 @@ box_plot <- function(object = NULL, formula = NULL, data = NULL,
 #'
 #' qq_plot(~ dl.milk|sex, data = kfm) %>%
 #'   axis_labs()
+#' @export
 qq_plot <- function(object = NULL, formula = NULL, data = NULL, pch = 20,
                     col = "indianred3", ylab = NULL, ...)
 {
@@ -398,6 +404,7 @@ qq_plot <- function(object = NULL, formula = NULL, data = NULL, pch = 20,
 #' birthwt %>%
 #'   hist_norm(~ bwt|smoke, alpha = 0.7, bins = 20, fill = 'cadetblue') %>%
 #'   axis_labs()
+#' @export
 hist_norm <- function(object = NULL, formula = NULL, data = NULL,
                       bins = 20, fill = 'indianred3',
                       color = 'black', alpha = 0.4, ...)
@@ -480,6 +487,7 @@ hist_norm <- function(object = NULL, formula = NULL, data = NULL,
 #' birthwt %>%
 #'   strip_error(bwt ~ smoke|Race) %>%
 #'   axis_labs()
+#' @export
 strip_error <- function(object = NULL, formula = NULL, data = NULL,
                         pch = 20, size = 1, alpha = 0.7, col = 'indianred3', ...)
 {
@@ -542,7 +550,7 @@ strip_error <- function(object = NULL, formula = NULL, data = NULL,
 #' birthwt %>%
 #'   bar_error(bwt ~ smoke, fill = ~ Race) %>%
 #'   axis_labs()
-#'
+#' @export
 bar_error <- function(object = NULL, formula = NULL, data = NULL,
                       fill = 'indianred3', col = 'black', alpha = 0.7, ...)
 {
@@ -606,6 +614,7 @@ bar_error <- function(object = NULL, formula = NULL, data = NULL,
 #'   )
 #'
 #' gen_bst_df(bwt ~ smoke|Race, data = birthwt)
+#' @export
 gen_bst_df <- function (object = NULL, formula = NULL, data = NULL, stat = "mean", ...)
 {
   if (inherits(object, "formula")) {

@@ -59,5 +59,4 @@ birthwt \%>\%
 birthwt \%>\%
   bar_error(bwt ~ smoke, fill = ~ Race) \%>\%
   axis_labs()
-
 }

@@ -20,6 +20,7 @@
 #' anyca
 #' anyca.exp <- expand_df(anyca)
 #' with(anyca.exp, table(Calcium, Mortality))
+#' @export
 expand_df <- function(aggregate.data, index.var = "Freq", retain.freq = FALSE)
 {
   output <- NULL
@@ -70,6 +71,7 @@ expand_df <- function(aggregate.data, index.var = "Freq", retain.freq = FALSE)
 #'
 #' oswego %>%
 #'   mhor(ill ~ sex/chocolate.ice.cream)
+#' @export
 mhor <- function(object = NULL, formula = NULL, data = NULL)
 {
   if (inherits(object, "formula")) {
@@ -131,6 +133,7 @@ mhor <- function(object = NULL, formula = NULL, data = NULL)
 #' p2 <- 80 / 220
 #' prop_or(p2 = p2, or = or)
 #' 20 / 240
+#' @export
 prop_or <- function(p2, or)
 {
 	p1 <- 1-p2
@@ -175,6 +178,7 @@ prop_or <- function(p2, or)
 #' odds_trend(Biopsy ~ Weight, data = breast)$df
 #'
 #' odds_trend(Biopsy ~ Weight, data = breast)$fig
+#' @export
 odds_trend <- function(formula, data, angle = 45,
                        hjust = 1, method = "wald", ...)
 {
@@ -222,6 +226,7 @@ odds_trend <- function(formula, data, angle = 45,
 #'
 #' tb %>%
 #'   diag_test(BCG ~ Xray)
+#' @export
 diag_test <- function(object = NULL, formula = NULL, data = NULL, ...)
 {
   if (inherits(object, "formula")) {
@@ -255,6 +260,7 @@ diag_test <- function(object = NULL, formula = NULL, data = NULL, ...)
 #' @examples
 #' ## We compare the use of lung’s X-rays on the screening of TB against the gold standard test.
 #' diag_test2(22, 51, 8, 1739)
+#' @export
 diag_test2 <- function(aa, bb, cc, dd)
 {
 	cat("\n")
@@ -295,6 +301,7 @@ diag_test2 <- function(aa, bb, cc, dd)
 #'
 #' Oncho %>%
 #'   contingency(mf ~ area)
+#' @export
 contingency <- function(object = NULL, formula = NULL, data = NULL, method="cohort.count", ...)
 {
   if (inherits(object, "formula")) {
@@ -338,6 +345,7 @@ contingency <- function(object = NULL, formula = NULL, data = NULL, method="coho
 #' cancer <- expand_df(cancer)
 #'
 #' contingency2(171, 389, 29, 386, method = "case.control")
+#' @export
 contingency2 <- function(aa, bb, cc, dd, ...)
 {
 	dat  <- as.table(matrix(c(aa, bb, cc, dd), nrow = 2, byrow = TRUE))

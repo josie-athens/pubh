@@ -4,6 +4,7 @@
 #'
 #' \code{round_pval} is an internal function called by \code{glm_coef} to round p-values from model coefficients.
 #' @param pval vector of p-values, numeric.
+#' @export
 round_pval <- function(pval)
 {
 	res <- ifelse(pval < 0.001, "< 0.001", round(pval, 3))
@@ -44,6 +45,7 @@ round_pval <- function(pval)
 #'     "Smoker: African American",
 #'     "Smoker: Other"
 #'  ))
+#' @export
 model_labels <- function(model, intercept = TRUE) {
   tl <- sjlabelled::term_labels(model, prefix = "label")
   rn <- glm_coef(model)$Parameter
@@ -109,6 +111,7 @@ model_labels <- function(model, intercept = TRUE) {
 #'   glm_coef(labels = c("Constant", "Fibre intake (g/day)"), type = "ext")
 #'
 #' ## For more examples, please read the Vignette on Regression.
+#' @export
 glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = FALSE,
                      type = "cond", exp_norm = FALSE) {
   if (type != "cond" & type != "ext")
@@ -559,6 +562,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = FA
 #'   as_hux() %>% set_align(everywhere, 2:3, "right") %>%
 #'   theme_pubh(1) %>%
 #'   add_footnote(get_r2(model_norm), font_size = 9)
+#' @export
 get_r2 <- function(model, ...)
 {
   r2 <- performance::r2
