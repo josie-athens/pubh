@@ -81,27 +81,20 @@ The main contributions of the `pubh` package to students and professionals from 
 
 Many options currently exists for displaying descriptive statistics. I recommend the function `mytable` from the `moonBook` package for constructing tables of descriptive statistics where results don't need to be stratified. 
 
-In Public Health and Epidemiology it is common to have a categorical outcome and thus, report descriptive statistics stratified by the outcome. Package `pubh` introduces the function `cross_tab` as a wrapper to functions from `mytable`. The idea is to construct these tables, using formulas, in a simple way.
+In Public Health and Epidemiology it is common to have a categorical outcome and thus, report descriptive statistics stratified by the outcome. Package `pubh` introduces the function `cross_tbl` as a wrapper to `tbl_summary` from `gtsummary`. The idea is to construct these tables, in a simple way and convert them to huxtables. Huxtables have the flexibility to be exported to Word, PDF and HTML.
 
-
-The `estat` function from the `pubh` package displays descriptive statistics of continuous outcomes and like `mytable`, it can use *labels* to display nice tables. `estat`. As a way to aid in the understanding of the variability, `estat` displays also the relative dispersion (coefficient of variation) which is of particular interest for comparing variances between groups (factors).
+The `estat` function from the `pubh` package displays descriptive statistics of continuous outcomes; it can use *labels* to display nice tables. As a way to aid in the understanding of the variability, `estat` displays also the relative dispersion (coefficient of variation) which is of particular interest for comparing variances between groups (factors).
 
 Some examples. We start by loading packages.
 
 ```{r message=FALSE, results='hide'}
 rm(list = ls())
-library(car)
-library(broom)
-library(mosaic)
 library(tidyverse)
-library(ggfortify)
-library(huxtable)
+library(rstatix)
 library(jtools)
-library(latex2exp)
 library(pubh)
 library(sjlabelled)
 library(sjPlot)
-library(sjmisc)
 
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
@@ -125,7 +118,8 @@ Oncho %>%
     mf = relevel(mf, ref = "Infected")
   ) %>%
   copy_labels(Oncho) %>%
-  cross_tab(mf ~ area) %>%
+  select(mf, area) %>% 
+  cross_tbl(by = "mf") %>%
   theme_pubh()
 ```
 
@@ -138,7 +132,7 @@ Oncho %>%
     mf = relevel(mf, ref = "Infected")
   ) %>%
   copy_labels(Oncho) %>%
-  cross_tab(mf ~ area +.) %>%
+  cross_tbl(by = "mf") %>%
   theme_pubh()
 ```
 
@@ -189,9 +183,9 @@ Hodgkin %>%
     Group = relevel(Group, ref = "Hodgkin")
   ) %>%
   copy_labels(Hodgkin) %>%
-  cross_tab(Group ~ CD4 + ., method = 2) %>%
+  cross_tbl(by = "Group", bold = FALSE) %>%
   theme_pubh() %>%
-  add_footnote("Values are medians with interquartile range.")
+  add_footnote("Median (IQR)", font_size = 9)
 ```
 
 
@@ -209,8 +203,7 @@ What about normality? We can look at the QQ-plots against the standard Normal di
 
 ```{r}
 Hodgkin %>%
-  qq_plot(~ Ratio|Group) %>%
-  axis_labs()
+  qq_plot(~ Ratio|Group) 
 ```
 
 Let's say we choose a non-parametric test to compare the groups:
@@ -230,11 +223,8 @@ For our current example:
 
 ```{r}
 Hodgkin %>%
-  strip_error(Ratio ~ Group) %>%
-  axis_labs()
+  strip_error(Ratio ~ Group)
 ```
-
-In the previous code, `axis_labs` applies labels from labelled data to the axis.
 
 The error bars represent 95% confidence intervals around mean values.
 
@@ -256,7 +246,6 @@ In our current example:
 ```{r}
 Hodgkin %>%
   strip_error(Ratio ~ Group) %>%
-  axis_labs() %>%
   gf_star(x1 = 1, y1 = 4, x2 = 2, y2 = 4.05, y3 = 4.1, "**")
 ```
 
@@ -280,22 +269,22 @@ birthwt <- birthwt %>%
 
 ```{r}
 birthwt %>%
-  bar_error(bwt ~ smoke) %>%
-  axis_labs()
+  bar_error(bwt ~ smoke)
 ```
 
 Quick normality check:
 
 ```{r}
 birthwt %>%
-  qq_plot(~ bwt|smoke) %>%
-  axis_labs()
+  qq_plot(~ bwt|smoke)
 ```
 
 The (unadjusted) $t$-test:
 
 ```{r}
-t.test(bwt ~ smoke, data = birthwt)
+birthwt %>% 
+  t_test(bwt ~ smoke, detailed = TRUE) %>% 
+  as.data.frame()
 ```
 
 The final plot with annotation to highlight statistical difference (unadjusted):
@@ -303,7 +292,6 @@ The final plot with annotation to highlight statistical difference (unadjusted):
 ```{r}
 birthwt %>%
   bar_error(bwt ~ smoke) %>%
-  axis_labs() %>%
   gf_star(x1 = 1, x2 = 2, y1 = 3400, y2 = 3500, y3 = 3550, "**")
 ```
 
@@ -313,22 +301,19 @@ Both `strip_error` and `bar_error` can generate plots stratified by a third vari
 ```{r}
 birthwt %>%
   bar_error(bwt ~ smoke, fill = ~ Race) %>%
-  gf_refine(ggsci::scale_fill_jama()) %>%
-  axis_labs()
+  gf_refine(ggsci::scale_fill_jama()) 
 ```
 
 ```{r}
 birthwt %>%
-  bar_error(bwt ~ smoke|Race) %>%
-  axis_labs()
+  bar_error(bwt ~ smoke|Race)
 ```
 
 
 ```{r}
 birthwt %>%
   strip_error(bwt ~ smoke, pch = ~ Race, col = ~ Race) %>%
-  gf_refine(ggsci::scale_color_jama()) %>%
-  axis_labs()
+  gf_refine(ggsci::scale_color_jama())
 ```
 
 # Regression models
@@ -341,34 +326,26 @@ For simplicity, here we show the analysis of the linear model of smoking on birt
 
 ```{r}
 model_bwt <- lm(bwt ~ smoke + race, data = birthwt)
+```
 
-model_bwt %>%
-  glm_coef(labels = model_labels(model_bwt)) %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+```{r}
+model_bwt %>% 
+  tbl_regression() %>% 
+  cosm_reg() %>% theme_pubh(1) %>% 
   add_footnote(get_r2(model_bwt), font_size = 9)
 ```
 
-Similar results can be obtained with the function `tab_model` from the `sjPlot` package. 
+Similar results can be obtained with the function `glm_coef`. 
 
 ```{r}
-tab_model(model_bwt,  collapse.ci = TRUE)
+model_bwt %>%
+  glm_coef(labels = model_labels(model_bwt)) %>%
+  as_hux() %>% theme_pubh(1) %>% 
+  set_align(everywhere, 2:3, "right") %>%
+  add_footnote(get_r2(model_bwt), font_size = 9)
 ```
 
-
-Some advantages of `glm_coef` over `tab_model` are:
-
-- Script documents can be knitted to Word and $\LaTeX$ (besides HTML).
-- Uses robust standard errors by default. The option to not use robust standard errors is part of the arguments.
-- Recognises some type of models that `tab_model` does not recognise.
-
-Some advantages of `tab_model` over `glm_coef` are:
-
-- Recognises labels from variables and use those labels to display the table.
-- Includes some statistics about the model.
-- It can display more than one model on the same output.
-- Tables are more aesthetically appealing.
-
-In the previous table of coefficients confidence intervals and p-values for race had not been adjusted for multiple comparisons. We use functions from the `emmeans` package to make the corrections.
+In the last table of coefficients confidence intervals and p-values for levels of race are not adjusted for multiple comparisons. We can use functions from the `emmeans` package to make the corrections.
 
 ```{r}
 multiple(model_bwt, ~ race)$df
@@ -410,7 +387,8 @@ Bernard %>%
     treat = relevel(treat, ref = "Ibuprofen")
   ) %>%
   copy_labels(Bernard) %>%
-  cross_tab(fate ~ treat) %>%
+  select(fate, treat) %>% 
+  cross_tbl(by = "fate") %>%
   theme_pubh()
 ```
 
@@ -471,7 +449,8 @@ oswego %>%
     chocolate.ice.cream = relevel(chocolate.ice.cream, ref = "Yes")
   ) %>%
   copy_labels(oswego) %>%
-  cross_tab(ill ~ sex + chocolate.ice.cream) %>%
+  select(ill, sex, chocolate.ice.cream) %>% 
+  cross_tbl(by = "ill", missing_text = "(Missing)") %>%
   theme_pubh()
 ```
 
@@ -480,16 +459,6 @@ oswego %>%
   mhor(ill ~ sex/chocolate.ice.cream)
 ```
 
-
-### Odds trend
-
-Example: An international case-control study to test the hypothesis that breast cancer is related to the age that a woman gives childbirth.
-
-```{r}
-data(Oncho)
-
-odds_trend(mf ~ agegrp, data = Oncho, angle = 0, hjust = 0.5)$fig
-```
 
 ## Diagnostic tests
 

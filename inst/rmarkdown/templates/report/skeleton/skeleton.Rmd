@@ -22,12 +22,13 @@ always_allow_html: yes
 
 ```{r message = FALSE, results = 'hide'}
 rm(list = ls())
-library(car)
-library(broom)
-library(mosaic)
+
 library(tidyverse)
+library(rstatix)
+library(parameters)
+library(performance)
+library(see)
 library(ggfortify)
-library(huxtable)
 library(jtools)
 library(latex2exp)
 library(pubh)

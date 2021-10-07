@@ -41,13 +41,11 @@ Hodgkin <- Hodgkin \%>\%
 estat(~ Ratio|Group, data = Hodgkin)
 
 Hodgkin \%>\%
-  qq_plot(~ Ratio|Group) \%>\%
-  axis_labs()
+  qq_plot(~ Ratio|Group)
 
 Hodgkin$Ratio <- Hodgkin$CD4/Hodgkin$CD8
 estat(~ Ratio|Group, data = Hodgkin)
 
-qq_plot(~ Ratio|Group, data = Hodgkin) \%>\%
-axis_labs()
+qq_plot(~ Ratio|Group, data = Hodgkin)
 }
 \keyword{datasets}

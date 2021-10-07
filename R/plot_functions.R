@@ -78,12 +78,10 @@ axis_labs <- function(object)
 #'
 #' kfm %>%
 #'   box_plot(dl.milk ~ sex, fill='thistle', alpha = 0.8) %>%
-#'   axis_labs() %>%
 #'   gf_star(x1 = 1, y1 = 10.9, x2 = 2, y2 = 11, y3 = 11.2)
 #'
 #' kfm %>%
 #'   box_plot(dl.milk ~ sex, fill='thistle', alpha = 0.8) %>%
-#'   axis_labs() %>%
 #'   gf_star(1, 10.9, 2, 11, 11.4, legend = 'p = 0.035', size = 2.5)
 #'
 #' data(energy, package = "ISwR")
@@ -95,7 +93,6 @@ axis_labs <- function(object)
 #'
 #' energy %>%
 #'   strip_error(expend ~ stature, col = 'red') %>%
-#'   axis_labs() %>%
 #'   gf_star(1, 13, 2, 13.2, 13.4, "**")
 #' @export
 gf_star <- function(fig, x1, y1, x2, y2, y3, legend = "*", ...)
@@ -289,14 +286,12 @@ bland_altman <- function(object = NULL, formula = NULL, data = NULL,
 #'      )
 #'
 #' kfm %>%
-#'   box_plot(dl.milk ~ sex, fill = 'thistle', alpha = 0.8) %>%
-#'   axis_labs()
+#'   box_plot(dl.milk ~ sex, fill = 'thistle', alpha = 0.8)
 #'
 #' t.test(dl.milk ~ sex, data = kfm)
 #'
 #' kfm %>%
 #'   box_plot(dl.milk ~ sex, fill = 'thistle', alpha = 0.8) %>%
-#'   axis_labs() %>%
 #'   gf_star(1, 10.9, 2, 11, 11.4, legend = 'p = 0.035', size = 2.5)
 #' @export
 box_plot <- function(object = NULL, formula = NULL, data = NULL,
@@ -346,11 +341,9 @@ box_plot <- function(object = NULL, formula = NULL, data = NULL,
 #'      )
 #'
 #' kfm %>%
-#'   qq_plot(~ dl.milk) %>%
-#'   axis_labs()
+#'   qq_plot(~ dl.milk)
 #'
-#' qq_plot(~ dl.milk|sex, data = kfm) %>%
-#'   axis_labs()
+#' qq_plot(~ dl.milk|sex, data = kfm)
 #' @export
 qq_plot <- function(object = NULL, formula = NULL, data = NULL, pch = 20,
                     col = "indianred3", ylab = NULL, ...)
@@ -398,12 +391,10 @@ qq_plot <- function(object = NULL, formula = NULL, data = NULL, pch = 20,
 #'  )
 #'
 #' birthwt %>%
-#'   hist_norm(~ bwt, alpha = 0.7, bins = 20, fill = 'cadetblue') %>%
-#'   axis_labs()
+#'   hist_norm(~ bwt, alpha = 0.7, bins = 20, fill = 'cadetblue')
 #'
 #' birthwt %>%
-#'   hist_norm(~ bwt|smoke, alpha = 0.7, bins = 20, fill = 'cadetblue') %>%
-#'   axis_labs()
+#'   hist_norm(~ bwt|smoke, alpha = 0.7, bins = 20, fill = 'cadetblue')
 #' @export
 hist_norm <- function(object = NULL, formula = NULL, data = NULL,
                       bins = 20, fill = 'indianred3',
@@ -447,15 +438,13 @@ hist_norm <- function(object = NULL, formula = NULL, data = NULL,
 #'   )
 #'
 #' energy %>%
-#'   strip_error(expend ~ stature, col = 'red') %>%
-#'   axis_labs()
+#'   strip_error(expend ~ stature, col = 'red')
 #'
 #' t.test(expend ~ stature, data = energy)
 #'
 #' ## Adding an horizontal line to show significant difference:
 #' energy %>%
 #'   strip_error(expend ~ stature, col = 'red') %>%
-#'   axis_labs() %>%
 #'   gf_star(1, 13, 2, 13.2, 13.4, "**")
 #'
 #' data(birthwt, package = "MASS")
@@ -471,22 +460,18 @@ hist_norm <- function(object = NULL, formula = NULL, data = NULL,
 #'  )
 #'
 #' birthwt %>%
-#'   strip_error(bwt ~ smoke|Race, col = 'darksalmon') %>%
-#'   axis_labs()
+#'   strip_error(bwt ~ smoke|Race, col = 'darksalmon')
 #'
 #' birthwt %>%
 #'   strip_error(bwt ~ smoke, col = ~ Race) %>%
-#'   gf_refine(ggsci::scale_color_jama()) %>%
-#'   axis_labs()
+#'   gf_refine(ggsci::scale_color_jama())
 #'
 #' birthwt %>%
 #'   strip_error(bwt ~ smoke, pch = ~ Race, col = ~ Race) %>%
-#'   gf_refine(ggsci::scale_color_jama()) %>%
-#'   axis_labs()
+#'   gf_refine(ggsci::scale_color_jama())
 #'
 #' birthwt %>%
-#'   strip_error(bwt ~ smoke|Race) %>%
-#'   axis_labs()
+#'   strip_error(bwt ~ smoke|Race)
 #' @export
 strip_error <- function(object = NULL, formula = NULL, data = NULL,
                         pch = 20, size = 1, alpha = 0.7, col = 'indianred3', ...)
@@ -529,6 +514,7 @@ strip_error <- function(object = NULL, formula = NULL, data = NULL,
 #' require(dplyr, quietly = TRUE)
 #' require(sjlabelled, quietly = TRUE)
 #' data(birthwt, package = "MASS")
+#'
 #' birthwt <- birthwt %>%
 #'   mutate(
 #'     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
@@ -540,16 +526,13 @@ strip_error <- function(object = NULL, formula = NULL, data = NULL,
 #'  )
 #'
 #' birthwt %>%
-#'   bar_error(bwt ~ smoke, fill = 'plum3') %>%
-#'   axis_labs()
+#'   bar_error(bwt ~ smoke, fill = 'plum3')
 #'
 #' birthwt %>%
-#'   bar_error(bwt ~ smoke|Race, fill = 'plum3') %>%
-#'   axis_labs()
+#'   bar_error(bwt ~ smoke|Race, fill = 'plum3')
 #'
 #' birthwt %>%
-#'   bar_error(bwt ~ smoke, fill = ~ Race) %>%
-#'   axis_labs()
+#'   bar_error(bwt ~ smoke, fill = ~ Race)
 #' @export
 bar_error <- function(object = NULL, formula = NULL, data = NULL,
                       fill = 'indianred3', col = 'black', alpha = 0.7, ...)

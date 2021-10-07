@@ -8,7 +8,7 @@ cross_tbl(
   data,
   by,
   head_label = " ",
-  bold = FALSE,
+  bold = TRUE,
   show_total = TRUE,
   p_val = FALSE,
   pad = 3,
@@ -41,7 +41,7 @@ cross_tbl(
 A huxtable with descriptive statistics stratified by levels of the outcome.
 }
 \description{
-\code{cross_tbl} is a wrapper to functions from package \code{moonBook} to construct tables of descriptive statistics stratified by levels of a categorical outcome.
+\code{cross_tbl} is a wrapper to function  from package \code{\link[gtsummary]{tbl_summary}} that constructs tables of descriptive statistics stratified by levels of a categorical outcome.
 }
 \details{
 Function \code{cross_tbl} is a relatively simple wrapper to function \code{\link[gtsummary]{tbl_summary}}. It constructs contingency tables and can also be used to report a table with descriptives for all variables stratified by one of the variables. Please see examples to see how to list variables. If data is labelled, the label of the stratifying variable is used as part of the header.
@@ -66,7 +66,7 @@ Oncho \%>\%
 ## Descriptive statistics for all variables in the \code{Oncho} data set except \code{id}.
 Oncho \%>\%
   select(- id) \%>\%
-  cross_tbl(by = "mf", bold = TRUE)
+  cross_tbl(by = "mf", bold = TRUE) \%>\%
   theme_pubh(2)
 }
 \seealso{

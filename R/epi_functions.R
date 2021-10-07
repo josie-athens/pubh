@@ -66,8 +66,10 @@ expand_df <- function(aggregate.data, index.var = "Freq", retain.freq = FALSE)
 #'     chocolate.ice.cream = "Consumed chocolate ice cream"
 #'   )
 #'
-#' require(moonBook, quietly = TRUE)
-#' mytable(ill ~ sex + chocolate.ice.cream, data = oswego, show.total = TRUE)
+#' oswego %>%
+#'   select(ill, sex, chocolate.ice.cream) %>%
+#'   tbl_summary() %>%
+#'   cosm_sum() %>% theme_pubh()
 #'
 #' oswego %>%
 #'   mhor(ill ~ sex/chocolate.ice.cream)
@@ -176,8 +178,6 @@ prop_or <- function(p2, or)
 #'   )
 #'
 #' odds_trend(Biopsy ~ Weight, data = breast)$df
-#'
-#' odds_trend(Biopsy ~ Weight, data = breast)$fig
 #' @export
 odds_trend <- function(formula, data, angle = 45,
                        hjust = 1, method = "wald", ...)
@@ -295,9 +295,12 @@ diag_test2 <- function(aa, bb, cc, dd)
 #' contingency(status ~ alcohol, data = cancer, method = "case.control")
 #'
 #' data(Oncho)
-#' require(moonBook, quietly = TRUE)
+#' require(dplyr, quietly = TRUE)
 #'
-#' mytable(mf ~ area, data = Oncho, show.total = TRUE)
+#' Oncho %>%
+#'   select(mf, area) %>%
+#'   cross_tbl(by = "mf") %>%
+#'   theme_pubh(2)
 #'
 #' Oncho %>%
 #'   contingency(mf ~ area)

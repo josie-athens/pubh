@@ -24,9 +24,11 @@ A clinical trial on the value of extracorporeal membrane oxygenation for term ne
 respiratory failure. RCT compares active treatment against conventional management.
 }
 \examples{
+require(dplyr, quietly = TRUE)
 data(Roberts)
 
 Roberts \%>\%
-  cross_tab(survived ~ emo)
+  select(survived, emo) \%>\%
+  cross_tbl(by = "survived")
 }
 \keyword{datasets}

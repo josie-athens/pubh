@@ -50,10 +50,8 @@ birthwt <- birthwt \%>\%
  )
 
 birthwt \%>\%
-  hist_norm(~ bwt, alpha = 0.7, bins = 20, fill = 'cadetblue') \%>\%
-  axis_labs()
+  hist_norm(~ bwt, alpha = 0.7, bins = 20, fill = 'cadetblue')
 
 birthwt \%>\%
-  hist_norm(~ bwt|smoke, alpha = 0.7, bins = 20, fill = 'cadetblue') \%>\%
-  axis_labs()
+  hist_norm(~ bwt|smoke, alpha = 0.7, bins = 20, fill = 'cadetblue')
 }

@@ -47,15 +47,13 @@ energy = energy \%>\%
   )
 
 energy \%>\%
-  strip_error(expend ~ stature, col = 'red') \%>\%
-  axis_labs()
+  strip_error(expend ~ stature, col = 'red')
 
 t.test(expend ~ stature, data = energy)
 
 ## Adding an horizontal line to show significant difference:
 energy \%>\%
   strip_error(expend ~ stature, col = 'red') \%>\%
-  axis_labs() \%>\%
   gf_star(1, 13, 2, 13.2, 13.4, "**")
 
 data(birthwt, package = "MASS")
@@ -71,20 +69,16 @@ birthwt <- birthwt \%>\%
  )
 
 birthwt \%>\%
-  strip_error(bwt ~ smoke|Race, col = 'darksalmon') \%>\%
-  axis_labs()
+  strip_error(bwt ~ smoke|Race, col = 'darksalmon')
 
 birthwt \%>\%
   strip_error(bwt ~ smoke, col = ~ Race) \%>\%
-  gf_refine(ggsci::scale_color_jama()) \%>\%
-  axis_labs()
+  gf_refine(ggsci::scale_color_jama())
 
 birthwt \%>\%
   strip_error(bwt ~ smoke, pch = ~ Race, col = ~ Race) \%>\%
-  gf_refine(ggsci::scale_color_jama()) \%>\%
-  axis_labs()
+  gf_refine(ggsci::scale_color_jama())
 
 birthwt \%>\%
-  strip_error(bwt ~ smoke|Race) \%>\%
-  axis_labs()
+  strip_error(bwt ~ smoke|Race)
 }

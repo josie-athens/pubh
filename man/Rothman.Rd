@@ -29,9 +29,13 @@ includes moderate hypertension (160-179/95-109 mm Hg) and severe hypertension (1
 been used as an example of join exposure by Rothman for measuring interactions (see examples).
 }
 \examples{
+require(dplyr, quietly = TRUE)
 data(Rothman)
 
-cross_tab(stroke ~ oc + ht, data = Rothman)
+Rothman \%>\%
+  select(stroke, oc, ht) \%>\%
+  tbl_summary() \%>\%
+  cosm_sum()
 
 mhor(stroke ~ ht/oc, data = Rothman)
 
@@ -50,11 +54,11 @@ Rothman$join <- factor(Rothman$join, labels=c("Unexposed", "Hypertension", "OC u
 require(sjlabelled, quietly = TRUE)
 Rothman$join <- set_label(Rothman$join, label = "Exposure")
 
-cross_tab(stroke ~ join, data = Rothman)
+Rothman \%>\%
+  select(stroke, join) \%>\%
+  cross_tbl(by = "stroke")
 
 model2 <- glm(stroke ~ join, data = Rothman, family = binomial)
 glm_coef(model2)
-odds_trend(stroke ~ join, data = Rothman)$df
-odds_trend(stroke ~ join, data = Rothman)$fig
 }
 \keyword{datasets}

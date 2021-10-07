@@ -175,27 +175,6 @@ stats_quotes <- function(x, data2, digits = 2)
 #' @details Function \code{cross_tab} is a relatively simple wrapper to function \code{mytable} of package \code{moonBook}. Its main purpose is to construct contingency tables but it can also be used to report a table with descriptives for all variables as long as they are still stratified by the outcome. Please see examples to see how to list explanatory variables. For categorical explanatory variables, the function reports column percentages. If data is labelled with \code{sjlabelled}, the label of the outcome (dependent) variable is used to name the outcome; this name can be changed with argument \code{label}.
 #' @return A huxtable with descriptive statistics stratified by levels of the outcome.
 #' @seealso \code{\link[moonBook]{mytable}}
-#' @examples
-#' data(Oncho)
-#'
-#' ## A two by two contingency table:
-#' Oncho %>%
-#'   cross_tab(mf ~ area)
-#'
-#' ## Reporting prevalence:
-#' Oncho %>%
-#'   cross_tab(area ~ mf)
-#'
-#' ## Contingency table for both sex and area of residence:
-#' Oncho %>%
-#'   cross_tab(mf ~ sex + area, p_val = TRUE)
-#'
-#' ## Descriptive statistics for all variables in the \code{Oncho} data set except \code{id}.
-#' require(dplyr, quietly = TRUE)
-#' Oncho %>%
-#'   select(- id) %>%
-#'   cross_tab(mf ~ .)
-#' @export
 cross_tab <- function (object = NULL, formula = NULL, data = NULL, label = NULL,
                        show.total = TRUE, p_val = FALSE, pad = 3, width = 0.8, method = 1, ...)
 {
@@ -248,7 +227,7 @@ cross_tab <- function (object = NULL, formula = NULL, data = NULL, label = NULL,
 
 #' Table of descriptive statistics by categorical variable.
 #'
-#' \code{cross_tbl} is a wrapper to functions from package \code{moonBook} to construct tables of descriptive statistics stratified by levels of a categorical outcome.
+#' \code{cross_tbl} is a wrapper to function  from package \code{\link[gtsummary]{tbl_summary}} that constructs tables of descriptive statistics stratified by levels of a categorical outcome.
 #' @param data A data frame where the variables in the \code{formula} can be found.
 #' @param by The quoted name of the  categorical variable (factor) used for the stratification.
 #' @param head_label Character, label to be used as head for the variable's column.
@@ -283,11 +262,11 @@ cross_tab <- function (object = NULL, formula = NULL, data = NULL, label = NULL,
 #' ## Descriptive statistics for all variables in the \code{Oncho} data set except \code{id}.
 #' Oncho %>%
 #'   select(- id) %>%
-#'   cross_tbl(by = "mf", bold = TRUE)
+#'   cross_tbl(by = "mf", bold = TRUE) %>%
 #'   theme_pubh(2)
 #' @export
 cross_tbl <- function(data, by, head_label = " ",
-                      bold = FALSE, show_total = TRUE, p_val = FALSE,
+                      bold = TRUE, show_total = TRUE, p_val = FALSE,
                       pad = 3, method = 2, ...)
 {
   if (method == 1) {
@@ -323,7 +302,7 @@ cross_tbl <- function(data, by, head_label = " ",
   }
 
   tbl <- tbl %>%
-    gtsummary::modify_header(label ~ tbl_label) %>%
+    gtsummary::modify_header(label ~ head_label) %>%
     gtsummary::modify_footnote(everything() ~ NA)
 
   if (bold == FALSE) tbl <- tbl

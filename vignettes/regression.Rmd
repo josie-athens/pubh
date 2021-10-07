@@ -29,18 +29,14 @@ We start by loading relevant packages and setting the theme for the plots (as su
 
 ```{r message=FALSE, results = 'hide'}
 rm(list = ls())
-library(car)
-library(broom)
-library(mosaic)
 library(tidyverse)
-library(ggfortify)
-library(huxtable)
+library(rstatix)
+library(parameters)
+library(performance)
 library(jtools)
-library(latex2exp)
 library(pubh)
 library(sjlabelled)
 library(sjPlot)
-library(sjmisc)
 
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
@@ -71,26 +67,11 @@ birthwt <- birthwt %>%
 
 Is good to start with some basic descriptive statistics, so we can compare the birth weight between groups.
 
-
-```{r}
-birthwt %>%
-  group_by(race, smoke) %>%
-  summarise(
-    n = n(),
-    Mean = mean(bwt, na.rm = TRUE),
-    SD = sd(bwt, na.rm = TRUE),
-    Median = median(bwt, na.rm = TRUE),
-    CV = rel_dis(bwt)
-  ) %>%
-  as_hux() %>% theme_pubh(1)
-```
-
 Graphical analysis:
 
 ```{r}
 birthwt %>%
-  box_plot(bwt ~ smoke, fill = ~ race) %>%
-  axis_labs()
+  box_plot(bwt ~ smoke, fill = ~ race)
 ```
 
 Another way to compare the means between the groups is with `gen_bst_df` which estimates means with corresponding bootstrapped CIs.
@@ -100,7 +81,6 @@ birthwt %>%
   gen_bst_df(bwt ~ race|smoke) %>%
   as_hux() %>% theme_pubh(1)
 ```
-
 
 We fit a linear model.
 
@@ -117,11 +97,22 @@ model_norm %>% Anova()
 ```
 
 ```{r}
-model_norm %>% 
-  summ(confint = TRUE, model.info = FALSE)
+model_norm %>% parameters()
+```
+
+```{r}
+model_norm %>% performance()
 ```
 
 Table of coefficients for publication:
+
+```{r}
+model_norm %>%
+  tbl_regression() %>% 
+  cosm_reg() %>% theme_pubh(1) %>% 
+  add_footnote(get_r2(model_norm), font_size = 9)
+```
+
 
 ```{r}
 model_norm %>% 
@@ -144,12 +135,6 @@ model_norm %>%
     font_size = 9)
 ```
 
-The function `glance` from the `broom` package allow us to have a quick look at statistics related with the model.
-
-```{r}
-model_norm %>% glance()
-```
-
 To construct the effect plot, we can use `plot_model` from the `sjPlot` package. The advantage of `plot_model` is that recognises labelled data and uses that information for annotating the plots.
 
 ```{r}
@@ -163,7 +148,6 @@ When the explanatory variables are categorical, another option is `emmip` from t
 emmip(model_norm, smoke ~ race) %>%
   gf_labs(y = get_label(birthwt$bwt), x = "", col = "Smoking status")
 ```
-
 
 # Logistic Regression
 
@@ -191,8 +175,7 @@ diet %>% estat(~ fibre|chd) %>%
 ```{r}
 diet %>% na.omit() %>%
   copy_labels(diet) %>%
-  box_plot(fibre ~ chd) %>%
-  axis_labs()
+  box_plot(fibre ~ chd)
 ```
 
 We fit a linear logistic model:
@@ -204,17 +187,19 @@ model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
 Summary:
 
 ```{r}
-model_binom %>% 
-  summ(confint = TRUE, model.info = FALSE, exp = TRUE)
+model_binom %>% parameters(exponentiate = TRUE)
+```
+
+```{r}
+model_binom %>% performance()
 ```
 
 Table of coefficients for publication:
 
 ```{r}
-model_binom %>%
-  glm_coef(labels = model_labels(model_binom)) %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh(1) %>%
+model_binom %>% 
+  tbl_regression(exponentiate = TRUE) %>% 
+  cosm_reg() %>% theme_pubh(1) %>% 
   add_footnote(get_r2(model_binom), font_size = 9)
 ```
 
@@ -247,28 +232,21 @@ bdendo <- bdendo %>%
 We start with descriptive statistics:
 
 ```{r}
-t1 = bdendo %>%
-  filter(est == "Oestrogen") %>%
+bdendo %>% 
   mutate(
     cancer = relevel(cancer, ref = "Case"),
     gall = relevel(gall, ref = "GBD")
   ) %>%
   copy_labels(bdendo) %>%
-  cross_tab(cancer ~ gall,
-            label = "Oestrogen users")
-
-t2 = bdendo %>%
-  filter(est == "No oestrogen") %>%
-  mutate(
-    cancer = relevel(cancer, ref = "Case"),
-    gall = relevel(gall, ref = "GBD")
-  ) %>%
-  copy_labels(bdendo) %>%
-  cross_tab(cancer ~ gall,
-            label = "Non-oestrogen users")
-
-rbind(t1, t2) %>%
-  theme_pubh(c(3, 6, 9))
+  select(cancer, gall, est) %>% 
+  tbl_strata(
+    strata = est,
+    .tbl_fun = ~ .x %>%
+      tbl_summary(by = cancer)
+  ) %>% 
+  cosm_sum(bold = TRUE, head_label = " ") %>% 
+  theme_pubh() %>% 
+  set_align(1, everywhere, "center")
 ```
 
 ```{r}
@@ -286,7 +264,9 @@ We fit the conditional logistic model:
 ```{r}
 require(survival, quietly = TRUE)
 model_clogit <- clogit(cancer == 'Case' ~ est * gall + strata(set), data = bdendo)
+```
 
+```{r}
 model_clogit %>%
   glm_coef(labels = c("Oestrogen/No oestrogen", "GBD/No GBD",
                       "Oestrogen:GBD Interaction")) %>%
@@ -334,10 +314,9 @@ model_ord <- polr(Sat ~ Infl + Type + Cont, weights = Freq, data = housing, Hess
 ```
 
 ```{r}
-model_ord %>%
-  glm_coef(labels = model_labels(model_ord, intercept = FALSE)) %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh(1) %>%
+model_ord %>% 
+  tbl_regression(exponentiate = TRUE) %>% 
+  cosm_reg() %>% theme_pubh(1) %>% 
   add_footnote(get_r2(model_ord), font_size = 9)
 ```
 
@@ -362,8 +341,6 @@ emmip(model_ord, Infl ~ Type |Cont) %>%
   gf_labs(x = "Type of rental", col = "Perceived influence")
 ```
 
-> **Note:** In the previous table parameter estimates and confidence intervals for *Perceived influence* and *Accommodation* were not adjusted for multiple comparisons. 
-
 # Poisson Regression
 
 For Poisson regression we are interested in incidence rate ratios. We will look at the effect of sex, ethnicity and age group on number of absent days from school in a year.
@@ -385,73 +362,60 @@ quine <- quine %>%
 
 Descriptive statistics:
 
-```{r message=FALSE}
-quine %>%
-  group_by(Eth, Sex, Age) %>%
-  summarise(
-    n = n(),
-    Mean = mean(Days, na.rm = TRUE),
-    SD = sd(Days, na.rm = TRUE),
-    Median = median(Days, na.rm = TRUE),
-    CV = rel_dis(Days)
-  ) %>%
-  as_hux() %>% theme_pubh(1)
+```{r}
+quine %>% 
+  cross_tbl(by = "Eth") %>% 
+  theme_pubh() %>% 
+  add_footnote("n (%); Median (IQR)", font_size = 9)
 ```
+
 
 ```{r}
 quine %>%
-  box_plot(Days ~ Age|Sex, fill = ~ Eth) %>%
-  axis_labs() %>% gf_labs(fill = "")
+  box_plot(Days ~ Age|Sex, fill = ~ Eth)
 ```
 
 We start by fitting a standard Poisson linear regression model:
 
 ```{r}
 model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
+```
 
-model_pois %>%
-  glm_coef(labels = model_labels(model_pois), se_rob = TRUE) %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh(1) %>%
+```{r}
+model_pois %>% 
+  tbl_regression(exponentiate = TRUE) %>% 
+  cosm_reg() %>% theme_pubh(1) %>% 
   add_footnote(get_r2(model_pois), font_size = 9)
 ```
 
 ```{r}
-model_pois %>% glance()
+model_pois %>% performance()
 ```
-
 
 ## Negative-binomial
 
-The assumption is that the mean is equal than the variance. If that is the case, deviance should be close to the degrees of freedom of the residuals (look at the above output from `glance`). In other words, the following calculation should be close to 1:
+The assumption is that the mean is equal than the variance. If that is the case, deviance should be close to the degrees of freedom of the residuals. We can check for overdispersion:
 
 ```{r}
-deviance(model_pois) / df.residual(model_pois)
+model_pois %>% check_overdispersion()
 ```
 
 Thus, we have over-dispersion. One option is to use a negative binomial distribution.
 
-```{r message=FALSE}
+```{r}
 model_negbin <- glm.nb(Days ~ Eth + Sex + Age, data = quine)
+```
 
-model_negbin %>%
-  glm_coef(labels = model_labels(model_negbin), se_rob = TRUE)  %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh(1) %>%
+```{r}
+model_negbin %>% 
+  tbl_regression(exponentiate = TRUE) %>% 
+  cosm_reg() %>% theme_pubh(1) %>% 
   add_footnote(get_r2(model_negbin), font_size = 9)
 ```
 
 ```{r}
-model_negbin %>% glance()
+model_negbin %>% performance()
 ```
-
-Notice that age group is a factor with more than two levels and is significant:
-
-```{r}
-model_negbin %>% Anova()
-```
-
-Thus, we want to report confidence intervals and $p$-values adjusted for multiple comparisons.
 
 Effect plot:
 
@@ -466,14 +430,12 @@ emmip(model_negbin, Eth ~ Age|Sex) %>%
   gf_labs(y = "Number of absent days", x = "Age group", col = "Ethnicity")
 ```
 
-
 ## Adjusting CIs and p-values for multiple comparisons
 
 We adjust for multiple comparisons:
 
 ```{r}
-multiple(model_negbin, ~ Age|Eth)$df %>%
-  as_hux() %>% theme_pubh(1)
+multiple(model_negbin, ~ Age|Eth)$df
 ```
 
 We can see the comparison graphically with:
@@ -555,22 +517,13 @@ model_cox <-  coxph(Surv(times, event) ~ rx, data = bladder)
 ```
 
 ```{r}
-model_cox %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo")) %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh(1) %>%
+model_cox %>% 
+  tbl_regression(exponentiate = TRUE) %>% 
+  cosm_reg() %>% theme_pubh(1) %>% 
   add_footnote(get_r2(model_cox), font_size = 9)
 ```
 
-
 > **Interpretation:** Patients receiving Thiotepa are 64% less likely of dying than those in the Placebo group.
-
-```{r}
-model_cox %>%
-  plot_model(type = "pred", terms = ~ rx, dot.size = 1.5, 
-           title = "") %>%
-  gf_labs(x = "Treatment", title = "")
-```
 
 # Mixed Linear Regression Models
 
@@ -598,19 +551,14 @@ model_mix <- lmer(distance ~ Sex * age + (1|Subject), data = Orthodont)
 ```
 
 ```{r}
-model_mix %>%
-  summ(center = TRUE, confint = TRUE, model.info = FALSE)
+model_mix %>% center_mod() %>% parameters()
 ```
 
 ```{r}
 model_mix %>%
   center_mod() %>%
-  glm_coef(labels = c(
-    model_labels(model_mix),
-    "Sex:Age interaction"
-    )) %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh(1) %>%
+  tbl_regression() %>% 
+  cosm_reg(bold = FALSE) %>% theme_pubh(1) %>% 
   add_footnote(get_r2(model_mix), font_size = 9)
 ```
 

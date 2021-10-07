@@ -38,6 +38,7 @@ confidence intervals around mean values. High of bars represent mean values.
 require(dplyr, quietly = TRUE)
 require(sjlabelled, quietly = TRUE)
 data(birthwt, package = "MASS")
+
 birthwt <- birthwt \%>\%
   mutate(
     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
@@ -49,14 +50,11 @@ birthwt <- birthwt \%>\%
  )
 
 birthwt \%>\%
-  bar_error(bwt ~ smoke, fill = 'plum3') \%>\%
-  axis_labs()
+  bar_error(bwt ~ smoke, fill = 'plum3')
 
 birthwt \%>\%
-  bar_error(bwt ~ smoke|Race, fill = 'plum3') \%>\%
-  axis_labs()
+  bar_error(bwt ~ smoke|Race, fill = 'plum3')
 
 birthwt \%>\%
-  bar_error(bwt ~ smoke, fill = ~ Race) \%>\%
-  axis_labs()
+  bar_error(bwt ~ smoke, fill = ~ Race)
 }

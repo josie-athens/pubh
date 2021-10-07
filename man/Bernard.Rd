@@ -30,9 +30,12 @@ A randomised, double-blind, placebo-controlled trial of intravenous ibuprofen in
 had sepsis, defined as fever, tachycardia, tachypnea, and acute failure of at least one organ system.
 }
 \examples{
+require(dplyr, quietly = TRUE)
 data(Bernard)
 
-cross_tab(fate ~ treat, data = Bernard)
+Bernard \%>\%
+  select(fate, treat) \%>\%
+  cross_tbl(by = "fate")
 
 contingency(fate ~ treat, data = Bernard)
 }

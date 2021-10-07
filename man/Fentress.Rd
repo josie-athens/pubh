@@ -29,7 +29,6 @@ untreated children. The active treatments were either relaxation alone or relaxa
 data(Fentress)
 
 Fentress \%>\%
-  strip_error(pain ~ group) \%>\%
-  axis_labs()
+  strip_error(pain ~ group)
 }
 \keyword{datasets}

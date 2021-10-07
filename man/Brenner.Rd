@@ -24,10 +24,12 @@ A data set containing the prevalence of Helicobacter pylori infection in prescho
 according to parental history of duodenal or gastric ulcer.
 }
 \examples{
+require(dplyr, quietly = TRUE)
 data(Brenner)
 
 Brenner \%>\%
-  cross_tab(infected ~ ulcer)
+  select(infected, ulcer) \%>\%
+  cross_tbl(by = "infected")
 
 contingency(infected ~ ulcer, data = Brenner, method = "cross.sectional")
 }

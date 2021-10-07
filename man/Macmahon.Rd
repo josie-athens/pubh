@@ -23,12 +23,11 @@ An international case-control study to test the hypothesis that breast
 cancer is related to the age that a woman gives childbirth.
 }
 \examples{
+require(dplyr, quietly = TRUE)
 data(Macmahon)
 
 Macmahon \%>\%
-  cross_tab(cancer ~ age)
-
-odds_trend(cancer ~ age, data = Macmahon)$df
-odds_trend(cancer ~ age, data = Macmahon)$fig
+  select(cancer, age) \%>\%
+  cross_tbl(by = "cancer")
 }
 \keyword{datasets}

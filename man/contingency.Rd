@@ -45,9 +45,12 @@ cancer <- expand_df(cancer)
 contingency(status ~ alcohol, data = cancer, method = "case.control")
 
 data(Oncho)
-require(moonBook, quietly = TRUE)
+require(dplyr, quietly = TRUE)
 
-mytable(mf ~ area, data = Oncho, show.total = TRUE)
+Oncho \%>\%
+  select(mf, area) \%>\%
+  cross_tbl(by = "mf") \%>\%
+  theme_pubh(2)
 
 Oncho \%>\%
   contingency(mf ~ area)

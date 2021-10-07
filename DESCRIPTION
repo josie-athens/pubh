@@ -1,6 +1,6 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 1.2.20
+Version: 1.2.1
 Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@gmail.com", role = c("aut", "cre")),
     person("Frank", "Harell", email = "f.harrell@vanderbilt.edu", role = "ctb"),
@@ -19,6 +19,8 @@ Depends:
     R (>= 4.0.0),
     emmeans,
     ggformula,
+    gtsummary,
+    huxtable,
     magrittr,
     stats
 Imports:
@@ -28,9 +30,7 @@ Imports:
     epiR, 
     epitools,
     ggplot2,
-    gtsummary,
     Hmisc,
-    huxtable,
     lmtest,
     moonBook,
     sandwich, 
@@ -42,6 +42,7 @@ Imports:
     tidyselect
 Suggests:
     broom,
+    effectsize,
     ggeffects,
     ggfortify,
     ggsci,
@@ -51,12 +52,15 @@ Suggests:
     latex2exp,
     lme4, 
     MASS, 
-    mosaic,
     nlme, 
-    nnet, 
+    nnet,
+    parameters,
     performance,
+    report,
     rmarkdown,
     rms,
+    rstatix,
+    see,
     tidyverse
 License: GPL-2
 Encoding: UTF-8

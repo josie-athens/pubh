@@ -49,27 +49,6 @@ A huxtable with descriptive statistics stratified by levels of the outcome.
 \details{
 Function \code{cross_tab} is a relatively simple wrapper to function \code{mytable} of package \code{moonBook}. Its main purpose is to construct contingency tables but it can also be used to report a table with descriptives for all variables as long as they are still stratified by the outcome. Please see examples to see how to list explanatory variables. For categorical explanatory variables, the function reports column percentages. If data is labelled with \code{sjlabelled}, the label of the outcome (dependent) variable is used to name the outcome; this name can be changed with argument \code{label}.
 }
-\examples{
-data(Oncho)
-
-## A two by two contingency table:
-Oncho \%>\%
-  cross_tab(mf ~ area)
-
-## Reporting prevalence:
-Oncho \%>\%
-  cross_tab(area ~ mf)
-
-## Contingency table for both sex and area of residence:
-Oncho \%>\%
-  cross_tab(mf ~ sex + area, p_val = TRUE)
-
-## Descriptive statistics for all variables in the \code{Oncho} data set except \code{id}.
-require(dplyr, quietly = TRUE)
-Oncho \%>\%
-  select(- id) \%>\%
-  cross_tab(mf ~ .)
-}
 \seealso{
 \code{\link[moonBook]{mytable}}
 }

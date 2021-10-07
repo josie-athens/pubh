@@ -5,7 +5,7 @@
 \title{A theme for huxtables
 This function quickly set a default style for a huxtable.}
 \usage{
-theme_pubh(ht, rw = 3)
+theme_pubh(ht, rw = 1)
 }
 \arguments{
 \item{ht}{A huxtable object.}
@@ -18,17 +18,16 @@ This function quickly set a default style for a huxtable.
 }
 \details{
 \code{theme_pubh} is a variation of \code{theme_article} with the added flexibility
-of adding a bottom border line at desired row numbers. This theme is particular useful for
-function \code{cross_tab} as by default, \code{theme_pubh} adds the border after the third line
-(see examples).
+of adding a bottom border line at desired row numbers.
 }
 \examples{
-require(huxtable, quietly = TRUE)
+require(dplyr, quietly = TRUE)
 data(Oncho)
 
 Oncho \%>\%
-  cross_tab(area ~ mf) \%>\%
-  theme_pubh()
+  select(area, mf) \%>\%
+  cross_tbl(by = "area") \%>\%
+  theme_pubh(2)
 
 data(Bernard)
 

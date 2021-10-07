@@ -47,9 +47,7 @@ kfm = kfm \%>\%
      )
 
 kfm \%>\%
-  qq_plot(~ dl.milk) \%>\%
-  axis_labs()
+  qq_plot(~ dl.milk)
 
-qq_plot(~ dl.milk|sex, data = kfm) \%>\%
-  axis_labs()
+qq_plot(~ dl.milk|sex, data = kfm)
 }

@@ -6,18 +6,12 @@
 
 ## ----message=FALSE, results='hide'--------------------------------------------
 rm(list = ls())
-library(car)
-library(broom)
-library(mosaic)
 library(tidyverse)
-library(ggfortify)
-library(huxtable)
+library(rstatix)
 library(jtools)
-library(latex2exp)
 library(pubh)
 library(sjlabelled)
 library(sjPlot)
-library(sjmisc)
 
 theme_set(sjPlot::theme_sjplot2(base_size = 10))
 theme_update(legend.position = "top")
@@ -35,7 +29,8 @@ Oncho %>%
     mf = relevel(mf, ref = "Infected")
   ) %>%
   copy_labels(Oncho) %>%
-  cross_tab(mf ~ area) %>%
+  select(mf, area) %>% 
+  cross_tbl(by = "mf") %>%
   theme_pubh()
 
 ## -----------------------------------------------------------------------------
@@ -45,7 +40,7 @@ Oncho %>%
     mf = relevel(mf, ref = "Infected")
   ) %>%
   copy_labels(Oncho) %>%
-  cross_tab(mf ~ area +.) %>%
+  cross_tbl(by = "mf") %>%
   theme_pubh()
 
 ## -----------------------------------------------------------------------------
@@ -74,30 +69,27 @@ Hodgkin %>%
     Group = relevel(Group, ref = "Hodgkin")
   ) %>%
   copy_labels(Hodgkin) %>%
-  cross_tab(Group ~ CD4 + ., method = 2) %>%
+  cross_tbl(by = "Group", bold = FALSE) %>%
   theme_pubh() %>%
-  add_footnote("Values are medians with interquartile range.")
+  add_footnote("Median (IQR)", font_size = 9)
 
 ## -----------------------------------------------------------------------------
 var.test(Ratio ~ Group, data = Hodgkin)
 
 ## -----------------------------------------------------------------------------
 Hodgkin %>%
-  qq_plot(~ Ratio|Group) %>%
-  axis_labs()
+  qq_plot(~ Ratio|Group) 
 
 ## -----------------------------------------------------------------------------
 wilcox.test(Ratio ~ Group, data = Hodgkin)
 
 ## -----------------------------------------------------------------------------
 Hodgkin %>%
-  strip_error(Ratio ~ Group) %>%
-  axis_labs()
+  strip_error(Ratio ~ Group)
 
 ## -----------------------------------------------------------------------------
 Hodgkin %>%
   strip_error(Ratio ~ Group) %>%
-  axis_labs() %>%
   gf_star(x1 = 1, y1 = 4, x2 = 2, y2 = 4.05, y3 = 4.1, "**")
 
 ## -----------------------------------------------------------------------------
@@ -116,50 +108,51 @@ birthwt <- birthwt %>%
 
 ## -----------------------------------------------------------------------------
 birthwt %>%
-  bar_error(bwt ~ smoke) %>%
-  axis_labs()
+  bar_error(bwt ~ smoke)
 
 ## -----------------------------------------------------------------------------
 birthwt %>%
-  qq_plot(~ bwt|smoke) %>%
-  axis_labs()
+  qq_plot(~ bwt|smoke)
 
 ## -----------------------------------------------------------------------------
-t.test(bwt ~ smoke, data = birthwt)
+birthwt %>% 
+  t_test(bwt ~ smoke, detailed = TRUE) %>% 
+  as.data.frame()
 
 ## -----------------------------------------------------------------------------
 birthwt %>%
   bar_error(bwt ~ smoke) %>%
-  axis_labs() %>%
   gf_star(x1 = 1, x2 = 2, y1 = 3400, y2 = 3500, y3 = 3550, "**")
 
 ## -----------------------------------------------------------------------------
 birthwt %>%
   bar_error(bwt ~ smoke, fill = ~ Race) %>%
-  gf_refine(ggsci::scale_fill_jama()) %>%
-  axis_labs()
+  gf_refine(ggsci::scale_fill_jama()) 
 
 ## -----------------------------------------------------------------------------
 birthwt %>%
-  bar_error(bwt ~ smoke|Race) %>%
-  axis_labs()
+  bar_error(bwt ~ smoke|Race)
 
 ## -----------------------------------------------------------------------------
 birthwt %>%
   strip_error(bwt ~ smoke, pch = ~ Race, col = ~ Race) %>%
-  gf_refine(ggsci::scale_color_jama()) %>%
-  axis_labs()
+  gf_refine(ggsci::scale_color_jama())
 
 ## -----------------------------------------------------------------------------
 model_bwt <- lm(bwt ~ smoke + race, data = birthwt)
 
-model_bwt %>%
-  glm_coef(labels = model_labels(model_bwt)) %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
+## -----------------------------------------------------------------------------
+model_bwt %>% 
+  tbl_regression() %>% 
+  cosm_reg() %>% theme_pubh(1) %>% 
   add_footnote(get_r2(model_bwt), font_size = 9)
 
 ## -----------------------------------------------------------------------------
-tab_model(model_bwt,  collapse.ci = TRUE)
+model_bwt %>%
+  glm_coef(labels = model_labels(model_bwt)) %>%
+  as_hux() %>% theme_pubh(1) %>% 
+  set_align(everywhere, 2:3, "right") %>%
+  add_footnote(get_r2(model_bwt), font_size = 9)
 
 ## -----------------------------------------------------------------------------
 multiple(model_bwt, ~ race)$df
@@ -183,7 +176,8 @@ Bernard %>%
     treat = relevel(treat, ref = "Ibuprofen")
   ) %>%
   copy_labels(Bernard) %>%
-  cross_tab(fate ~ treat) %>%
+  select(fate, treat) %>% 
+  cross_tbl(by = "fate") %>%
   theme_pubh()
 
 ## -----------------------------------------------------------------------------
@@ -219,17 +213,13 @@ oswego %>%
     chocolate.ice.cream = relevel(chocolate.ice.cream, ref = "Yes")
   ) %>%
   copy_labels(oswego) %>%
-  cross_tab(ill ~ sex + chocolate.ice.cream) %>%
+  select(ill, sex, chocolate.ice.cream) %>% 
+  cross_tbl(by = "ill", missing_text = "(Missing)") %>%
   theme_pubh()
 
 ## -----------------------------------------------------------------------------
 oswego %>%
   mhor(ill ~ sex/chocolate.ice.cream)
-
-## -----------------------------------------------------------------------------
-data(Oncho)
-
-odds_trend(mf ~ agegrp, data = Oncho, angle = 0, hjust = 0.5)$fig
 
 ## -----------------------------------------------------------------------------
 Freq <- c(1739, 8, 51, 22)

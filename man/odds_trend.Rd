@@ -51,8 +51,6 @@ breast = var_labels(breast,
   )
 
 odds_trend(Biopsy ~ Weight, data = breast)$df
-
-odds_trend(Biopsy ~ Weight, data = breast)$fig
 }
 \seealso{
 \code{\link[epitools]{oddsratio}}.

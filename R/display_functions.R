@@ -109,8 +109,6 @@ model_labels <- function(model, intercept = TRUE) {
 #'
 #' model_binom %>%
 #'   glm_coef(labels = c("Constant", "Fibre intake (g/day)"), type = "ext")
-#'
-#' ## For more examples, please read the Vignette on Regression.
 #' @export
 glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = FALSE,
                      type = "cond", exp_norm = FALSE) {
@@ -541,7 +539,6 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = FA
 #' @examples
 #' require(dplyr, quietly = TRUE)
 #' require(sjlabelled, quietly = TRUE)
-#' require(huxtable, quietly = TRUE)
 #'
 #' data(birthwt, package = "MASS")
 #' birthwt <- birthwt %>%
@@ -560,7 +557,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = FA
 #' model_norm %>%
 #'   glm_coef(labels = model_labels(model_norm)) %>%
 #'   as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-#'   theme_pubh(1) %>%
+#'   theme_pubh() %>%
 #'   add_footnote(get_r2(model_norm), font_size = 9)
 #' @export
 get_r2 <- function(model, ...)
@@ -589,4 +586,3 @@ get_r2 <- function(model, ...)
   res
 }
 
-#'

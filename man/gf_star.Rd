@@ -49,12 +49,10 @@ kfm = kfm \%>\%
 
 kfm \%>\%
   box_plot(dl.milk ~ sex, fill='thistle', alpha = 0.8) \%>\%
-  axis_labs() \%>\%
   gf_star(x1 = 1, y1 = 10.9, x2 = 2, y2 = 11, y3 = 11.2)
 
 kfm \%>\%
   box_plot(dl.milk ~ sex, fill='thistle', alpha = 0.8) \%>\%
-  axis_labs() \%>\%
   gf_star(1, 10.9, 2, 11, 11.4, legend = 'p = 0.035', size = 2.5)
 
 data(energy, package = "ISwR")
@@ -66,6 +64,5 @@ energy = energy \%>\%
 
 energy \%>\%
   strip_error(expend ~ stature, col = 'red') \%>\%
-  axis_labs() \%>\%
   gf_star(1, 13, 2, 13.2, 13.4, "**")
 }

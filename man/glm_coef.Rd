@@ -81,6 +81,4 @@ model_binom \%>\%
 
 model_binom \%>\%
   glm_coef(labels = c("Constant", "Fibre intake (g/day)"), type = "ext")
-
-## For more examples, please read the Vignette on Regression.
 }

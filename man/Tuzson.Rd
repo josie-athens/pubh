@@ -26,8 +26,7 @@ in cerebral palsy.
 data(Tuzson)
 
 Tuzson \%>\%
-  gf_point(flexion ~ extension) \%>\%
-  axis_labs()
+  gf_point(flexion ~ extension)
 
 cor.test(~ flexion + extension, data = Tuzson)
 }
