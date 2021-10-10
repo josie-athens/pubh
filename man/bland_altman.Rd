@@ -46,12 +46,16 @@ outcomes (difference in the log scale) by using option \code{transform = TRUE}.
 data(wright, package = "ISwR")
 
 wright \%>\%
-  bland_altman(mini.wright ~ std.wright, pch = 16,
-               ylab = "Large-mini expiratory flow rate (l/min)",
-               xlab = "Mean expiratory flow rate (l/min)") \%>\%
- gf_labs(y = "Large-mini expiratory flow rate (l/min)",
-         x = "Mean expiratory flow rate (l/min)") \%>\%
- gf_theme(theme = sjPlot::theme_sjplot2(base_size = 9))
+  bland_altman(mini.wright ~ std.wright,
+    pch = 16,
+    ylab = "Large-mini expiratory flow rate (l/min)",
+    xlab = "Mean expiratory flow rate (l/min)"
+  ) \%>\%
+  gf_labs(
+    y = "Large-mini expiratory flow rate (l/min)",
+    x = "Mean expiratory flow rate (l/min)"
+  ) \%>\%
+  gf_theme(theme = sjPlot::theme_sjplot2(base_size = 9))
 
 data(Sharples)
 

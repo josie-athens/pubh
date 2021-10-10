@@ -1,12 +1,12 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 1.2.1
+Version: 1.2.5
 Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@gmail.com", role = c("aut", "cre")),
     person("Frank", "Harell", email = "f.harrell@vanderbilt.edu", role = "ctb"),
     person("John", "Fox", email = "jfox@mcmaster.ca", role = "ctb"),
     person("R-Core", role="ctb"))
-Maintainer: Josie Athens <josie.athens@otago.ac.nz>
+Maintainer: Josie Athens <josie.athens@gmail.com>
 Description: A toolbox for making R functions and capabilities more
     accessible to students and professionals from Epidemiology and
     Public Health related disciplines. Includes a function to report 
@@ -67,5 +67,4 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
 VignetteBuilder: knitr
-URL: https://github.com/josie-athens/pubh
 BugReports: https://github.com/josie-athens/pubh/issues

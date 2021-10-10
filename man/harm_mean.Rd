@@ -18,6 +18,6 @@ Harmonic mean.
 \examples{
 data(IgM, package = "ISwR")
 Ab <- data.frame(IgM)
-estat(~ IgM, data = Ab)
+estat(~IgM, data = Ab)
 harm_mean(IgM)
 }

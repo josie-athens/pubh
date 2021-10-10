@@ -68,6 +68,25 @@ y ~ x|z, data = my_data
 
 Where `y` is the outcome or response variable, `x` is the exposure or predictor of interest, `z` is the stratification variable (a factor) and `my_data` specifies the name of the data frame where `x`, `y` and `z` can be found.
 
+## Pipes and the `tidyverse`
+
+The `tidyverse` has become now the standard in data manipulation in `R`. The use of the pipe function `%>%` from `magrittr` allows for cleaner code. The principle of pipes is to change the paradigm in coding. In standard codding, when many functions are used, one goes from inner parenthesis to outer ones.
+
+For example if we have three functions, a common syntax would look like:
+
+`f3(f2(f1(..., data), ...), ...)`
+
+With pipes, however, the code reads top to bottom and left to right:
+
+```{r eval=FALSE}
+data %>%
+  f1(...) %>% 
+  f2(...) %>% 
+  f3(...)
+```
+
+Most of the functions from `pubh` are compatible with pipes and the `tidyverse`.
+
 ## Contributions of the `pubh` package
 
 The main contributions of the `pubh` package to students and professionals from the disciplines of Epidemiology and Public Health are:
@@ -76,12 +95,13 @@ The main contributions of the `pubh` package to students and professionals from 
 2. A function, `glm_coef` that displays coefficients from most common regression analysis in a way that can be easy interpreted and used for publications.
 3. Integration with the `ggformula` package, introducing plotting functions with a relatively simple syntax.
 4. Integration with the most common epidemiological analysis, using the standard formula syntax explained in the previous section.
+5. Integration with the `gtsummary` and `huxtable` packages. The `pubh` use huxtables as standard as they can be easily exported to *html*, *pdf* and *doc* files when *knitting*. Tables of descriptive statistics and of regression coefficients are generated through functions from `gtsummary` and then converted to `huxtable` objects with convenient cosmetics.
 
 # Descriptive statistics
 
-Many options currently exists for displaying descriptive statistics. I recommend the function `mytable` from the `moonBook` package for constructing tables of descriptive statistics where results don't need to be stratified. 
+Many options currently exists for displaying descriptive statistics. I recommend the function `tbl_summary` from the `gtsummary` package for constructing tables of descriptive statistics where results don't need to be stratified. 
 
-In Public Health and Epidemiology it is common to have a categorical outcome and thus, report descriptive statistics stratified by the outcome. Package `pubh` introduces the function `cross_tbl` as a wrapper to `tbl_summary` from `gtsummary`. The idea is to construct these tables, in a simple way and convert them to huxtables. Huxtables have the flexibility to be exported to Word, PDF and HTML.
+In Public Health and Epidemiology it is common to be interested on comparing cohorts, categorical variables considered as exposure of interest. The most classic example are randomised control trials where we want to compare treatment versus control cohorts. Package `pubh` introduces the function `cross_tbl` as a wrapper to `tbl_summary` from `gtsummary`. The idea is to construct these tables, in a simple way and convert them to huxtables.
 
 The `estat` function from the `pubh` package displays descriptive statistics of continuous outcomes; it can use *labels* to display nice tables. As a way to aid in the understanding of the variability, `estat` displays also the relative dispersion (coefficient of variation) which is of particular interest for comparing variances between groups (factors).
 
@@ -119,8 +139,8 @@ Oncho %>%
   ) %>%
   copy_labels(Oncho) %>%
   select(mf, area) %>% 
-  cross_tbl(by = "mf") %>%
-  theme_pubh()
+  cross_tbl(by = "area") %>%
+  theme_pubh(2)
 ```
 
 Table with all descriptive statistics except `id` and `mfload`:
@@ -132,8 +152,8 @@ Oncho %>%
     mf = relevel(mf, ref = "Infected")
   ) %>%
   copy_labels(Oncho) %>%
-  cross_tbl(by = "mf") %>%
-  theme_pubh()
+  cross_tbl(by = "area") %>%
+  theme_pubh(2)
 ```
 
 Next, we use a data set about blood counts of T cells from patients in remission from Hodgkin's disease or in remission from disseminated malignancies. We generate the new variable `Ratio` and add labels to the variables.
@@ -154,7 +174,7 @@ Descriptive statistics for CD4+ T cells:
 ```{r}
 Hodgkin %>%
   estat(~ CD4) %>%
-  as_hux() %>% theme_pubh(1)
+  as_hux() %>% theme_pubh()
 ```
 
 In the previous code, the left-hand side of the formula is empty as it's the case when working with only one variable.
@@ -172,7 +192,7 @@ For example:
 ```{r}
 Hodgkin %>%
   estat(~ Ratio|Group) %>%
-  as_hux() %>% theme_pubh(1)
+  as_hux() %>% theme_pubh()
 ```
 
 As before, we can report a table of descriptive statistics for all variables in the data set:
@@ -184,7 +204,7 @@ Hodgkin %>%
   ) %>%
   copy_labels(Hodgkin) %>%
   cross_tbl(by = "Group", bold = FALSE) %>%
-  theme_pubh() %>%
+  theme_pubh(2) %>%
   add_footnote("Median (IQR)", font_size = 9)
 ```
 
@@ -295,7 +315,6 @@ birthwt %>%
   gf_star(x1 = 1, x2 = 2, y1 = 3400, y2 = 3500, y3 = 3550, "**")
 ```
 
-
 Both `strip_error` and `bar_error` can generate plots stratified by a third variable, for example:
 
 ```{r}
@@ -318,9 +337,7 @@ birthwt %>%
 
 # Regression models
 
-The `pubh` package includes the function `glm_coef` for displaying coefficients from regression models and the function `multiple` to help in the visualisation of multiple comparisons. 
-
-> **Note:** Please read the vignette on **Regression Examples** for a more comprehensive use of `glm_coef`.
+The `pubh` package includes the function `cosm_reg`, which adds some cosmetics to objects generated by `tbl_regression` and `huxtable`. The function `multiple` helps in the analysis and visualisation of multiple comparisons. 
 
 For simplicity, here we show the analysis of the linear model of smoking on birth weight, adjusting by race (and not by other potential confounders).
 
@@ -331,7 +348,7 @@ model_bwt <- lm(bwt ~ smoke + race, data = birthwt)
 ```{r}
 model_bwt %>% 
   tbl_regression() %>% 
-  cosm_reg() %>% theme_pubh(1) %>% 
+  cosm_reg() %>% theme_pubh() %>% 
   add_footnote(get_r2(model_bwt), font_size = 9)
 ```
 
@@ -340,7 +357,7 @@ Similar results can be obtained with the function `glm_coef`.
 ```{r}
 model_bwt %>%
   glm_coef(labels = model_labels(model_bwt)) %>%
-  as_hux() %>% theme_pubh(1) %>% 
+  as_hux() %>% theme_pubh() %>% 
   set_align(everywhere, 2:3, "right") %>%
   add_footnote(get_r2(model_bwt), font_size = 9)
 ```
@@ -388,8 +405,8 @@ Bernard %>%
   ) %>%
   copy_labels(Bernard) %>%
   select(fate, treat) %>% 
-  cross_tbl(by = "fate") %>%
-  theme_pubh()
+  cross_tbl(by = "treat") %>%
+  theme_pubh(2)
 ```
 
 For `epi.2by2` we need to provide the table of counts in the correct order, so we would type something like:
@@ -440,25 +457,10 @@ oswego <- oswego %>%
   )
 ```
 
-First we look at the cross-tabulation:
-
-```{r}
-oswego %>%
-  mutate(
-    ill = relevel(ill, ref = "Yes"),
-    chocolate.ice.cream = relevel(chocolate.ice.cream, ref = "Yes")
-  ) %>%
-  copy_labels(oswego) %>%
-  select(ill, sex, chocolate.ice.cream) %>% 
-  cross_tbl(by = "ill", missing_text = "(Missing)") %>%
-  theme_pubh()
-```
-
 ```{r}
 oswego %>%
   mhor(ill ~ sex/chocolate.ice.cream)
 ```
-
 
 ## Diagnostic tests
 

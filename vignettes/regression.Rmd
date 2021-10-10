@@ -15,7 +15,15 @@ vignette: >
 
 # Introduction
 
-The aim of this vignette is to illustrate the use/functionality of the `glm_coef` function. `glm_coef` can be used to display model coefficients with confidence intervals and p-values. The advantages and limitations of `glm_coef` are:
+The aim of this vignette is to illustrate the use of `pubh` functions for common regression analysis in Public Health. In particular, the vignette shows the use of the following functions from `pubh`:
+
+1. `cosm_reg` for reporting tables of coefficients.
+2. `cross_tbl` for reporting tables of descriptive statistics by exposure of interest.
+3. `multiple` for adjusting confidence intervals and p-values for post-hoc analysis.
+4. `get_r2` for accessing $R^2$ or pseudo-$R^2$ from regression models.
+5. `glm_coef` for some special cases of regression models.
+
+The advantages and limitations of `glm_coef` are:
 
 1. Recognises the main models used in epidemiology/public health.
 2. Automatically back-transforms estimates and confidence intervals, when the model requires it.
@@ -79,7 +87,7 @@ Another way to compare the means between the groups is with `gen_bst_df` which e
 ```{r}
 birthwt %>%
   gen_bst_df(bwt ~ race|smoke) %>%
-  as_hux() %>% theme_pubh(1)
+  as_hux() %>% theme_pubh()
 ```
 
 We fit a linear model.
@@ -109,16 +117,15 @@ Table of coefficients for publication:
 ```{r}
 model_norm %>%
   tbl_regression() %>% 
-  cosm_reg() %>% theme_pubh(1) %>% 
+  cosm_reg() %>% theme_pubh() %>% 
   add_footnote(get_r2(model_norm), font_size = 9)
 ```
-
 
 ```{r}
 model_norm %>% 
   glm_coef(labels = model_labels(model_norm)) %>%
   as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh(1) %>%
+  theme_pubh() %>%
   add_footnote(get_r2(model_norm), font_size = 9)
 ```
 
@@ -128,7 +135,7 @@ Function `glm_coef` allows the use of robust standard errors.
 model_norm %>%
   glm_coef(se_rob = TRUE, labels = model_labels(model_norm)) %>%
   as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh(1) %>%
+  theme_pubh() %>%
   add_footnote(paste(
     get_r2(model_norm), "\n",
     "CIs and p-values estimated with robust standard errors."),
@@ -169,7 +176,7 @@ We start with descriptive statistics:
 
 ```{r}
 diet %>% estat(~ fibre|chd) %>%
-  as_hux() %>% theme_pubh(1)
+  as_hux() %>% theme_pubh()
 ```
 
 ```{r}
@@ -199,7 +206,7 @@ Table of coefficients for publication:
 ```{r}
 model_binom %>% 
   tbl_regression(exponentiate = TRUE) %>% 
-  cosm_reg() %>% theme_pubh(1) %>% 
+  cosm_reg() %>% theme_pubh() %>% 
   add_footnote(get_r2(model_binom), font_size = 9)
 ```
 
@@ -235,17 +242,18 @@ We start with descriptive statistics:
 bdendo %>% 
   mutate(
     cancer = relevel(cancer, ref = "Case"),
-    gall = relevel(gall, ref = "GBD")
+    gall = relevel(gall, ref = "GBD"),
+    est = relevel(est, ref = "Oestrogen")
   ) %>%
   copy_labels(bdendo) %>%
   select(cancer, gall, est) %>% 
   tbl_strata(
     strata = est,
     .tbl_fun = ~ .x %>%
-      tbl_summary(by = cancer)
+      tbl_summary(by = gall)
   ) %>% 
   cosm_sum(bold = TRUE, head_label = " ") %>% 
-  theme_pubh() %>% 
+  theme_pubh(2) %>% 
   set_align(1, everywhere, "center")
 ```
 
@@ -271,7 +279,7 @@ model_clogit %>%
   glm_coef(labels = c("Oestrogen/No oestrogen", "GBD/No GBD",
                       "Oestrogen:GBD Interaction")) %>%
   as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh(1) %>%
+  theme_pubh() %>%
   add_footnote(get_r2(model_clogit), font_size = 9)
 ```
 
@@ -296,8 +304,8 @@ bdendo_pred %>%
 We use data about house satisfaction.
 
 ```{r message=FALSE}
-require(MASS, quietly = TRUE)
-data(housing)
+#require(MASS, quietly = TRUE)
+data(housing, package = "MASS")
 housing <- housing %>%
   var_labels(
     Sat = "Satisfaction",
@@ -310,13 +318,13 @@ housing <- housing %>%
 We fit the ordinal logistic model:
 
 ```{r}
-model_ord <- polr(Sat ~ Infl + Type + Cont, weights = Freq, data = housing, Hess = TRUE)
+model_ord <- MASS::polr(Sat ~ Infl + Type + Cont, weights = Freq, data = housing, Hess = TRUE)
 ```
 
 ```{r}
 model_ord %>% 
   tbl_regression(exponentiate = TRUE) %>% 
-  cosm_reg() %>% theme_pubh(1) %>% 
+  cosm_reg() %>% theme_pubh() %>% 
   add_footnote(get_r2(model_ord), font_size = 9)
 ```
 
@@ -346,7 +354,7 @@ emmip(model_ord, Infl ~ Type |Cont) %>%
 For Poisson regression we are interested in incidence rate ratios. We will look at the effect of sex, ethnicity and age group on number of absent days from school in a year.
 
 ```{r}
-data(quine)
+data(quine, package = "MASS")
 levels(quine$Eth) <- c("Aboriginal", "White")
 levels(quine$Sex) <- c("Female", "Male")
 ```
@@ -365,7 +373,7 @@ Descriptive statistics:
 ```{r}
 quine %>% 
   cross_tbl(by = "Eth") %>% 
-  theme_pubh() %>% 
+  theme_pubh(2) %>% 
   add_footnote("n (%); Median (IQR)", font_size = 9)
 ```
 
@@ -384,7 +392,7 @@ model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
 ```{r}
 model_pois %>% 
   tbl_regression(exponentiate = TRUE) %>% 
-  cosm_reg() %>% theme_pubh(1) %>% 
+  cosm_reg() %>% theme_pubh() %>% 
   add_footnote(get_r2(model_pois), font_size = 9)
 ```
 
@@ -403,13 +411,13 @@ model_pois %>% check_overdispersion()
 Thus, we have over-dispersion. One option is to use a negative binomial distribution.
 
 ```{r}
-model_negbin <- glm.nb(Days ~ Eth + Sex + Age, data = quine)
+model_negbin <- MASS::glm.nb(Days ~ Eth + Sex + Age, data = quine)
 ```
 
 ```{r}
 model_negbin %>% 
   tbl_regression(exponentiate = TRUE) %>% 
-  cosm_reg() %>% theme_pubh(1) %>% 
+  cosm_reg() %>% theme_pubh() %>% 
   add_footnote(get_r2(model_negbin), font_size = 9)
 ```
 
@@ -486,7 +494,7 @@ model_exp <- survreg(Surv(times, event) ~ rx, data = bladder, dist = "exponentia
 model_exp %>%
   glm_coef(labels = c("Treatment: Thiotepa/Placebo"), se_rob = TRUE) %>%
   as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh(1) %>%
+  theme_pubh() %>%
   add_footnote(get_r2(model_exp), font_size = 9)
 ```
 
@@ -498,7 +506,7 @@ Using naive standard errors:
 model_exp %>%
   glm_coef(labels = c("Treatment: Thiotepa/Placebo")) %>%
   as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh(1) %>%
+  theme_pubh() %>%
   add_footnote(get_r2(model_exp), font_size = 9)
 ```
 
@@ -519,55 +527,8 @@ model_cox <-  coxph(Surv(times, event) ~ rx, data = bladder)
 ```{r}
 model_cox %>% 
   tbl_regression(exponentiate = TRUE) %>% 
-  cosm_reg() %>% theme_pubh(1) %>% 
+  cosm_reg() %>% theme_pubh() %>% 
   add_footnote(get_r2(model_cox), font_size = 9)
 ```
 
 > **Interpretation:** Patients receiving Thiotepa are 64% less likely of dying than those in the Placebo group.
-
-# Mixed Linear Regression Models
-
-## Continuous outcomes
-
-We look at the relationship between sex and age on the distance from the pituitary to the pterygomaxillary fissure (mm).
-
-```{r, message=FALSE}
-require(lme4, quietly = TRUE)
-data(Orthodont, package = "nlme")
-```
-
-```{r}
-Orthodont <- Orthodont %>%
-  var_labels(
-    distance = "Pituitary distance (mm)",
-    age = "Age (years)"
-    )
-```
-
-We fit the model:
-
-```{r}
-model_mix <- lmer(distance ~ Sex * age + (1|Subject), data = Orthodont)
-```
-
-```{r}
-model_mix %>% center_mod() %>% parameters()
-```
-
-```{r}
-model_mix %>%
-  center_mod() %>%
-  tbl_regression() %>% 
-  cosm_reg(bold = FALSE) %>% theme_pubh(1) %>% 
-  add_footnote(get_r2(model_mix), font_size = 9)
-```
-
-Effect plot:
-
-```{r}
-model_mix %>%
-  plot_model("eff", terms = age ~ Sex, 
-           show.data = TRUE, jitter = 0.1, dot.size = 1.5) %>%
-  gf_labs(y = get_label(Orthodont$distance), x = "Age (years)", title = "")
-```
-

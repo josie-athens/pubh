@@ -84,7 +84,7 @@
 #'   select(cancer, passive) %>%
 #'   cross_tbl(by = "cancer")
 #'
-#' mhor(cancer ~ smoke/passive, data = Sandler)
+#' mhor(cancer ~ smoke / passive, data = Sandler)
 "Sandler"
 
 #' Smoking and mortality in Whickham, England.
@@ -110,11 +110,11 @@
 #'   tbl_strata(
 #'     strata = smoker,
 #'     .tbl_fun = ~ .x %>%
-#'     tbl_summary(by = agegrp)
-#'  ) %>%
-#'  cosm_sum(bold = TRUE, head_label = " ")
+#'       tbl_summary(by = agegrp)
+#'   ) %>%
+#'   cosm_sum(bold = TRUE, head_label = " ")
 #'
-#' mhor(vstatus ~ agegrp/smoker, data = Vanderpump)
+#' mhor(vstatus ~ agegrp / smoker, data = Vanderpump)
 "Vanderpump"
 
 #' Oral contraceptives and stroke.
@@ -142,10 +142,10 @@
 #'   tbl_summary() %>%
 #'   cosm_sum()
 #'
-#' mhor(stroke ~ ht/oc, data = Rothman)
+#' mhor(stroke ~ ht / oc, data = Rothman)
 #'
 #' ## Model with standard interaction term:
-#' model1 <- glm(stroke ~ ht*oc, data = Rothman, family = binomial)
+#' model1 <- glm(stroke ~ ht * oc, data = Rothman, family = binomial)
 #' glm_coef(model1)
 #'
 #' ## Model considering join exposure:
@@ -153,8 +153,10 @@
 #' Rothman$join[Rothman$oc == "Non-user" & Rothman$ht == "Yes"] <- 1
 #' Rothman$join[Rothman$oc == "User" & Rothman$ht == "No"] <- 2
 #' Rothman$join[Rothman$oc == "User" & Rothman$ht == "Yes"] <- 3
-#' Rothman$join <- factor(Rothman$join, labels=c("Unexposed", "Hypertension", "OC user",
-#'                        "OC and hypertension"))
+#' Rothman$join <- factor(Rothman$join, labels = c(
+#'   "Unexposed", "Hypertension", "OC user",
+#'   "OC and hypertension"
+#' ))
 #'
 #' require(sjlabelled, quietly = TRUE)
 #' Rothman$join <- set_label(Rothman$join, label = "Exposure")
@@ -187,21 +189,21 @@
 #'
 #' Hodgkin <- Hodgkin %>%
 #'   mutate(
-#'     Ratio = CD4/CD8
+#'     Ratio = CD4 / CD8
 #'   ) %>%
 #'   var_labels(
 #'     Ratio = "CD4+ / CD8+ T-cells"
 #'   )
 #'
-#' estat(~ Ratio|Group, data = Hodgkin)
+#' estat(~ Ratio | Group, data = Hodgkin)
 #'
 #' Hodgkin %>%
-#'   qq_plot(~ Ratio|Group)
+#'   qq_plot(~ Ratio | Group)
 #'
-#' Hodgkin$Ratio <- Hodgkin$CD4/Hodgkin$CD8
-#' estat(~ Ratio|Group, data = Hodgkin)
+#' Hodgkin$Ratio <- Hodgkin$CD4 / Hodgkin$CD8
+#' estat(~ Ratio | Group, data = Hodgkin)
 #'
-#' qq_plot(~ Ratio|Group, data = Hodgkin)
+#' qq_plot(~ Ratio | Group, data = Hodgkin)
 "Hodgkin"
 
 #' Survival of patients with sepsis.
@@ -370,7 +372,9 @@
 #'
 #' require(lme4, quietly = TRUE)
 #' model_glmer <- glmer(count ~ treat + base + I(age - mean(age, na.rm = TRUE)) +
-#'                  (1|id), data = epilepsy, family = poisson)
-#' glm_coef(model_glmer, labels = c("Treatment (Prograbide/Control)",
-#'                                "Baseline count", "Age (years)"))
+#'   (1 | id), data = epilepsy, family = poisson)
+#' glm_coef(model_glmer, labels = c(
+#'   "Treatment (Prograbide/Control)",
+#'   "Baseline count", "Age (years)"
+#' ))
 "Thall"

@@ -26,23 +26,23 @@ A data frame with descriptive statistics.
 \examples{
 data(kfm, package = "ISwR")
 require(sjlabelled, quietly = TRUE)
-kfm = kfm \%>\%
-var_labels(
-  dl.milk = 'Breast-milk intake (dl/day)',
-  sex = 'Sex',
-  weight = 'Child weight (kg)',
-  ml.suppl = 'Milk substitute (ml/day)',
-  mat.weight = 'Maternal weight (kg)',
-  mat.height = 'Maternal height (cm)'
- )
+kfm <- kfm \%>\%
+  var_labels(
+    dl.milk = "Breast-milk intake (dl/day)",
+    sex = "Sex",
+    weight = "Child weight (kg)",
+    ml.suppl = "Milk substitute (ml/day)",
+    mat.weight = "Maternal weight (kg)",
+    mat.height = "Maternal height (cm)"
+  )
 
 kfm \%>\%
-  estat(~ dl.milk)
+  estat(~dl.milk)
 
-estat(~ dl.milk|sex, data = kfm)
+estat(~ dl.milk | sex, data = kfm)
 
 kfm \%>\%
-  estat(~ weight|sex)
+  estat(~ weight | sex)
 }
 \seealso{
 \code{\link{summary}}, \code{\link[moonBook]{mytable}}.

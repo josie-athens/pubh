@@ -31,8 +31,8 @@ Oncho \%>\%
 
 data(Bernard)
 
-t1 <- estat(~ apache|fate, data = Bernard)
-t2 <- estat(~ o2del|fate, data = Bernard)
+t1 <- estat(~ apache | fate, data = Bernard)
+t2 <- estat(~ o2del | fate, data = Bernard)
 rbind(t1, t2) \%>\%
   as_hux() \%>\%
   theme_pubh(c(1, 3))

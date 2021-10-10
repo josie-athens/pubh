@@ -45,8 +45,10 @@ epilepsy <- rbind(c1, c2, c3, c4)
 
 require(lme4, quietly = TRUE)
 model_glmer <- glmer(count ~ treat + base + I(age - mean(age, na.rm = TRUE)) +
-                 (1|id), data = epilepsy, family = poisson)
-glm_coef(model_glmer, labels = c("Treatment (Prograbide/Control)",
-                               "Baseline count", "Age (years)"))
+  (1 | id), data = epilepsy, family = poisson)
+glm_coef(model_glmer, labels = c(
+  "Treatment (Prograbide/Control)",
+  "Baseline count", "Age (years)"
+))
 }
 \keyword{datasets}

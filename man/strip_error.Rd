@@ -38,22 +38,22 @@ numerical variable and both \code{x} and \code{z} are factors.}
 confidence intervals around mean values.
 }
 \examples{
-data(energy, package="ISwR")
+data(energy, package = "ISwR")
 require(sjlabelled, quietly = TRUE)
-energy = energy \%>\%
+energy <- energy \%>\%
   var_labels(
-    expend = 'Energy expenditure (MJ/day)',
-    stature = 'Stature'
+    expend = "Energy expenditure (MJ/day)",
+    stature = "Stature"
   )
 
 energy \%>\%
-  strip_error(expend ~ stature, col = 'red')
+  strip_error(expend ~ stature, col = "red")
 
 t.test(expend ~ stature, data = energy)
 
 ## Adding an horizontal line to show significant difference:
 energy \%>\%
-  strip_error(expend ~ stature, col = 'red') \%>\%
+  strip_error(expend ~ stature, col = "red") \%>\%
   gf_star(1, 13, 2, 13.2, 13.4, "**")
 
 data(birthwt, package = "MASS")
@@ -64,21 +64,21 @@ birthwt <- birthwt \%>\%
     Race = factor(race > 1, labels = c("White", "Non-white"))
   ) \%>\%
   var_labels(
-    bwt = 'Birth weight (g)',
-    smoke = 'Smoking status'
- )
+    bwt = "Birth weight (g)",
+    smoke = "Smoking status"
+  )
 
 birthwt \%>\%
-  strip_error(bwt ~ smoke|Race, col = 'darksalmon')
+  strip_error(bwt ~ smoke | Race, col = "darksalmon")
 
 birthwt \%>\%
-  strip_error(bwt ~ smoke, col = ~ Race) \%>\%
+  strip_error(bwt ~ smoke, col = ~Race) \%>\%
   gf_refine(ggsci::scale_color_jama())
 
 birthwt \%>\%
-  strip_error(bwt ~ smoke, pch = ~ Race, col = ~ Race) \%>\%
+  strip_error(bwt ~ smoke, pch = ~Race, col = ~Race) \%>\%
   gf_refine(ggsci::scale_color_jama())
 
 birthwt \%>\%
-  strip_error(bwt ~ smoke|Race)
+  strip_error(bwt ~ smoke | Race)
 }

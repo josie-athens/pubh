@@ -45,16 +45,16 @@ birthwt <- birthwt \%>\%
     Race = factor(race > 1, labels = c("White", "Non-white"))
   ) \%>\%
   var_labels(
-    bwt = 'Birth weight (g)',
-    smoke = 'Smoking status'
- )
+    bwt = "Birth weight (g)",
+    smoke = "Smoking status"
+  )
 
 birthwt \%>\%
-  bar_error(bwt ~ smoke, fill = 'plum3')
+  bar_error(bwt ~ smoke, fill = "plum3")
 
 birthwt \%>\%
-  bar_error(bwt ~ smoke|Race, fill = 'plum3')
+  bar_error(bwt ~ smoke | Race, fill = "plum3")
 
 birthwt \%>\%
-  bar_error(bwt ~ smoke, fill = ~ Race)
+  bar_error(bwt ~ smoke, fill = ~Race)
 }

@@ -32,20 +32,20 @@ require(sjlabelled, quietly = TRUE)
 
 Hodgkin <- Hodgkin \%>\%
   mutate(
-    Ratio = CD4/CD8
+    Ratio = CD4 / CD8
   ) \%>\%
   var_labels(
     Ratio = "CD4+ / CD8+ T-cells"
   )
 
-estat(~ Ratio|Group, data = Hodgkin)
+estat(~ Ratio | Group, data = Hodgkin)
 
 Hodgkin \%>\%
-  qq_plot(~ Ratio|Group)
+  qq_plot(~ Ratio | Group)
 
-Hodgkin$Ratio <- Hodgkin$CD4/Hodgkin$CD8
-estat(~ Ratio|Group, data = Hodgkin)
+Hodgkin$Ratio <- Hodgkin$CD4 / Hodgkin$CD8
+estat(~ Ratio | Group, data = Hodgkin)
 
-qq_plot(~ Ratio|Group, data = Hodgkin)
+qq_plot(~ Ratio | Group, data = Hodgkin)
 }
 \keyword{datasets}

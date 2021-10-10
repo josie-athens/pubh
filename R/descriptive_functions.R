@@ -11,8 +11,7 @@
 #' height <- rnorm(100, 170, 8)
 #' rel_dis(height)
 #' @export
-rel_dis <- function(x)
-{
+rel_dis <- function(x) {
   rd <- sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)
   rd
 }
@@ -34,8 +33,7 @@ rel_dis <- function(x)
 #'
 #' round(reference_range(mean(x), sd(x)), 2)
 #' @export
-reference_range <- function(avg, std)
-{
+reference_range <- function(avg, std) {
   lower.ri <- avg - qnorm(0.975) * std
   upper.ri <- avg + qnorm(0.975) * std
   ri <- data.frame(lower.ri, upper.ri)
@@ -49,14 +47,13 @@ reference_range <- function(avg, std)
 #' @examples
 #' data(IgM, package = "ISwR")
 #' Ab <- data.frame(IgM)
-#' estat(~ IgM, data = Ab)
+#' estat(~IgM, data = Ab)
 #' geo_mean(IgM)
 #' @export
-geo_mean <- function(x)
-{
+geo_mean <- function(x) {
   positive.check <- which(x <= 0)
   if (length(positive.check) >= 1) {
-    print('Some observations are not positive')
+    print("Some observations are not positive")
   } else {
     lx <- length(x)
     geo <- exp(sum(log(x), na.rm = TRUE) / lx)
@@ -71,14 +68,13 @@ geo_mean <- function(x)
 #' @examples
 #' data(IgM, package = "ISwR")
 #' Ab <- data.frame(IgM)
-#' estat(~ IgM, data = Ab)
+#' estat(~IgM, data = Ab)
 #' harm_mean(IgM)
 #' @export
-harm_mean <- function(x)
-{
+harm_mean <- function(x) {
   zero.check <- which(x == 0)
   if (length(zero.check) >= 1) {
-    print('Some observations are equal to zero')
+    print("Some observations are equal to zero")
   } else {
     lx <- length(x)
     inv <- sum(1 / x, na.rm = TRUE)
@@ -103,28 +99,30 @@ harm_mean <- function(x)
 #'
 #' bst(IgM, "gmean")
 #' @export
-bst <- function (x, stat = "mean", n = 1000, CI = 95, digits = 2)
-{
+bst <- function(x, stat = "mean", n = 1000, CI = 95, digits = 2) {
   xmeans <- numeric(n)
   if (stat == "median") {
-    for (i in 1:n) xmeans[i] <- median(sample(x, replace = TRUE),
-                                       na.rm = TRUE)
+    for (i in 1:n) {
+      xmeans[i] <- median(sample(x, replace = TRUE),
+        na.rm = TRUE
+      )
+    }
     estimate <- median(x, na.rm = TRUE)
-  }
-  else if (stat == "gmean") {
+  } else if (stat == "gmean") {
     for (i in 1:n) xmeans[i] <- geo_mean(sample(x, replace = TRUE))
     estimate <- geo_mean(x)
-  }
-  else if (stat == "mean") {
-    for (i in 1:n) xmeans[i] <- mean(sample(x, replace = TRUE),
-                                     na.rm = TRUE)
+  } else if (stat == "mean") {
+    for (i in 1:n) {
+      xmeans[i] <- mean(sample(x, replace = TRUE),
+        na.rm = TRUE
+      )
+    }
     estimate <- mean(x, na.rm = TRUE)
-  }
-  else {
+  } else {
     stop("Statistic not available")
   }
-  alpha <- 1 - (CI/100)
-  tail <- alpha/2
+  alpha <- 1 - (CI / 100)
+  tail <- alpha / 2
   lower <- round(quantile(xmeans, tail, na.rm = TRUE), digits = digits)
   upper <- round(quantile(xmeans, 1 - tail, na.rm = TRUE), digits = digits)
   estimate <- round(estimate, digits = digits)
@@ -141,8 +139,7 @@ bst <- function (x, stat = "mean", n = 1000, CI = 95, digits = 2)
 #' @param x a numeric variable
 #' @param data2 A data frame where \code{x} can be found.
 #' @param digits Number of digits for rounding.
-stats_quotes <- function(x, data2, digits = 2)
-{
+stats_quotes <- function(x, data2, digits = 2) {
   n <- sum(!is.na(data2[[x]]))
   x.min <- min(data2[[x]], na.rm = TRUE)
   x.max <- max(data2[[x]], na.rm = TRUE)
@@ -152,7 +149,7 @@ stats_quotes <- function(x, data2, digits = 2)
   cv <- std / avg
   res <- data.frame(n, x.min, x.max, avg, med, std, cv)
   names(res) <- c("N", "Min.", "Max.", "Mean", "Median", "SD", "CV")
-  res <- round(res, digits=digits)
+  res <- round(res, digits = digits)
   res
 }
 
@@ -175,9 +172,8 @@ stats_quotes <- function(x, data2, digits = 2)
 #' @details Function \code{cross_tab} is a relatively simple wrapper to function \code{mytable} of package \code{moonBook}. Its main purpose is to construct contingency tables but it can also be used to report a table with descriptives for all variables as long as they are still stratified by the outcome. Please see examples to see how to list explanatory variables. For categorical explanatory variables, the function reports column percentages. If data is labelled with \code{sjlabelled}, the label of the outcome (dependent) variable is used to name the outcome; this name can be changed with argument \code{label}.
 #' @return A huxtable with descriptive statistics stratified by levels of the outcome.
 #' @seealso \code{\link[moonBook]{mytable}}
-cross_tab <- function (object = NULL, formula = NULL, data = NULL, label = NULL,
-                       show.total = TRUE, p_val = FALSE, pad = 3, width = 0.8, method = 1, ...)
-{
+cross_tab <- function(object = NULL, formula = NULL, data = NULL, label = NULL,
+                      show.total = TRUE, p_val = FALSE, pad = 3, width = 0.8, method = 1, ...) {
   .Deprecated("cross_tbl")
   if (inherits(object, "formula")) {
     formula <- object
@@ -196,15 +192,20 @@ cross_tab <- function (object = NULL, formula = NULL, data = NULL, label = NULL,
   nl <- k + 2
   nm <- k + 1
   nl2 <- nl + 1
-  if (is.null(sjlabelled::get_label(outcome)) == FALSE & is.null(label))
-  {
+  if (is.null(sjlabelled::get_label(outcome)) == FALSE & is.null(label)) {
     lab <- sjlabelled::get_label(outcome)
+  } else {
+    lab <- ifelse(is.null(label), dependent, label)
   }
-  else {lab <- ifelse(is.null(label), dependent, label)}
-  tbl <- moonBook::mytable(formula, data = data, show.total = show.total,
-                           method = method, ...) %>% moonBook::mytable2df()
-  if (p_val == TRUE) {tvl <- tbl}
-  else {tvl <- tbl %>% dplyr::select(-ncol(tbl))}
+  tbl <- moonBook::mytable(formula,
+    data = data, show.total = show.total,
+    method = method, ...
+  ) %>% moonBook::mytable2df()
+  if (p_val == TRUE) {
+    tvl <- tbl
+  } else {
+    tvl <- tbl %>% dplyr::select(-ncol(tbl))
+  }
   names(tvl)[1] <- " "
 
   res <- tvl %>%
@@ -214,8 +215,11 @@ cross_tab <- function (object = NULL, formula = NULL, data = NULL, label = NULL,
     huxtable::merge_cells(1, 2:nm) %>%
     huxtable::set_header_rows(1, TRUE) %>%
     huxtable::set_align(1:3, huxtable::everywhere, "center")
-  if (nv > 1) {res <- res}
-  else {res <- res %>% huxtable::set_bold(4, 1)}
+  if (nv > 1) {
+    res <- res
+  } else {
+    res <- res %>% huxtable::set_bold(4, 1)
+  }
 
   res <- res %>%
     huxtable::set_top_padding(pad) %>%
@@ -261,14 +265,13 @@ cross_tab <- function (object = NULL, formula = NULL, data = NULL, label = NULL,
 #'
 #' ## Descriptive statistics for all variables in the \code{Oncho} data set except \code{id}.
 #' Oncho %>%
-#'   select(- id) %>%
+#'   select(-id) %>%
 #'   cross_tbl(by = "mf", bold = TRUE) %>%
 #'   theme_pubh(2)
 #' @export
 cross_tbl <- function(data, by, head_label = " ",
                       bold = TRUE, show_total = TRUE, p_val = FALSE,
-                      pad = 3, method = 2, ...)
-{
+                      pad = 3, method = 2, ...) {
   if (method == 1) {
     tbl <- data %>%
       gtsummary::tbl_summary(
@@ -279,10 +282,9 @@ cross_tbl <- function(data, by, head_label = " ",
       gtsummary::modify_spanning_header(all_stat_cols() ~ paste0(
         "**",
         sjlabelled::get_label(data[[by]]),
-        "**")
-      )
-  }
-  else {
+        "**"
+      ))
+  } else {
     tbl <- data %>%
       gtsummary::tbl_summary(
         by = tidyselect::all_of(by),
@@ -291,12 +293,13 @@ cross_tbl <- function(data, by, head_label = " ",
       gtsummary::modify_spanning_header(all_stat_cols() ~ paste0(
         "**",
         sjlabelled::get_label(data[[by]]),
-        "**")
-      )
+        "**"
+      ))
   }
 
-  if (show_total == FALSE) tbl <- tbl
-  else {
+  if (show_total == FALSE) {
+    tbl <- tbl
+  } else {
     tbl <- tbl %>%
       gtsummary::add_overall(last = TRUE)
   }
@@ -305,13 +308,17 @@ cross_tbl <- function(data, by, head_label = " ",
     gtsummary::modify_header(label ~ head_label) %>%
     gtsummary::modify_footnote(everything() ~ NA)
 
-  if (bold == FALSE) tbl <- tbl
-  else {tbl <- tbl %>% gtsummary::bold_labels()}
+  if (bold == FALSE) {
+    tbl <- tbl
+  } else {
+    tbl <- tbl %>% gtsummary::bold_labels()
+  }
 
   if (p_val == TRUE) {
     tbl <- tbl %>% gtsummary::add_p()
+  } else {
+    tbl <- tbl
   }
-  else {tbl <- tbl}
 
   tbl <- tbl %>%
     gtsummary::as_hux_table() %>%
@@ -337,26 +344,25 @@ cross_tbl <- function(data, by, head_label = " ",
 #' @examples
 #' data(kfm, package = "ISwR")
 #' require(sjlabelled, quietly = TRUE)
-#' kfm = kfm %>%
-#' var_labels(
-#'   dl.milk = 'Breast-milk intake (dl/day)',
-#'   sex = 'Sex',
-#'   weight = 'Child weight (kg)',
-#'   ml.suppl = 'Milk substitute (ml/day)',
-#'   mat.weight = 'Maternal weight (kg)',
-#'   mat.height = 'Maternal height (cm)'
-#'  )
+#' kfm <- kfm %>%
+#'   var_labels(
+#'     dl.milk = "Breast-milk intake (dl/day)",
+#'     sex = "Sex",
+#'     weight = "Child weight (kg)",
+#'     ml.suppl = "Milk substitute (ml/day)",
+#'     mat.weight = "Maternal weight (kg)",
+#'     mat.height = "Maternal height (cm)"
+#'   )
 #'
 #' kfm %>%
-#'   estat(~ dl.milk)
+#'   estat(~dl.milk)
 #'
-#' estat(~ dl.milk|sex, data = kfm)
+#' estat(~ dl.milk | sex, data = kfm)
 #'
 #' kfm %>%
-#'   estat(~ weight|sex)
+#'   estat(~ weight | sex)
 #' @export
-estat <- function (object = NULL, formula = NULL, data = NULL, digits = 2, label = NULL)
-{
+estat <- function(object = NULL, formula = NULL, data = NULL, digits = 2, label = NULL) {
   if (inherits(object, "formula")) {
     formula <- object
     object <- NULL
@@ -368,9 +374,10 @@ estat <- function (object = NULL, formula = NULL, data = NULL, digits = 2, label
   vars <- all.vars(formula)
   y <- vars[1]
   outcome <- data[[y]]
-  if (!is.numeric(outcome))
+  if (!is.numeric(outcome)) {
     stop(y, " must be a numerical variable")
-  if (is.null(sjlabelled::get_label(outcome)) == FALSE & is.null(label)){
+  }
+  if (is.null(sjlabelled::get_label(outcome)) == FALSE & is.null(label)) {
     lab <- sjlabelled::get_label(outcome)
   } else {
     lab <- ifelse(is.null(label), y, label)
@@ -382,23 +389,26 @@ estat <- function (object = NULL, formula = NULL, data = NULL, digits = 2, label
     res <- data.frame(lab, res)
     names(res)[1] <- ""
     res
-  }
-  else {
+  } else {
     x <- vars[2]
     exposure <- data[[x]]
-    if (!is.factor(exposure))
+    if (!is.factor(exposure)) {
       stop(x, " must be a factor")
+    }
     lev <- levels(exposure)
     nl <- length(lev)
     res <- numeric(nl * 7)
     dim(res) <- c(nl, 7)
     for (i in 1:nl) {
       res[i, ] <- as.numeric(stats_quotes(y,
-                                          data2 = subset(data, exposure == lev[i])))
+        data2 = subset(data, exposure == lev[i])
+      ))
     }
     res <- as.data.frame(res)
-    names(res) <- c("N", "Min.", "Max.", "Mean", "Median",
-                    "SD", "CV")
+    names(res) <- c(
+      "N", "Min.", "Max.", "Mean", "Median",
+      "SD", "CV"
+    )
     res <- round(res, digits = digits)
     res <- data.frame(var = lev, res)
     names(res)[1] <- x
@@ -407,7 +417,8 @@ estat <- function (object = NULL, formula = NULL, data = NULL, digits = 2, label
     res <- data.frame(var, res)
     names(res)[1] <- ""
     names(res)[2] <- ifelse(is.null(sjlabelled::get_label(exposure)) == FALSE,
-                            sjlabelled::get_label(exposure), x)
+      sjlabelled::get_label(exposure), x
+    )
     res
   }
 }

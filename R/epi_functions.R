@@ -14,25 +14,26 @@
 #' @return An expanded data frame with replicates given by the frequencies.
 #' @examples
 #' Freq <- c(5032, 5095, 41, 204)
-#' Mortality <- gl(2, 2, labels=c("No", "Yes"))
-#' Calcium <- gl(2, 1, 4, labels=c("No", "Yes"))
+#' Mortality <- gl(2, 2, labels = c("No", "Yes"))
+#' Calcium <- gl(2, 1, 4, labels = c("No", "Yes"))
 #' anyca <- data.frame(Freq, Mortality, Calcium)
 #' anyca
 #' anyca.exp <- expand_df(anyca)
 #' with(anyca.exp, table(Calcium, Mortality))
 #' @export
-expand_df <- function(aggregate.data, index.var = "Freq", retain.freq = FALSE)
-{
+expand_df <- function(aggregate.data, index.var = "Freq", retain.freq = FALSE) {
   output <- NULL
   for (i in 1:nrow(aggregate.data)) {
     if (retain.freq) {
-      output <- rbind(output, aggregate.data[rep(i, aggregate.data[,
-                                                                   which(names(aggregate.data) == index.var)][i]),
-                                             ])
+      output <- rbind(output, aggregate.data[rep(i, aggregate.data[
+        ,
+        which(names(aggregate.data) == index.var)
+      ][i]), ])
     } else {
-      output <- rbind(output, aggregate.data[rep(i, aggregate.data[,
-                                                                   which(names(aggregate.data) == index.var)][i]),
-                                             ][, -which(names(aggregate.data) == index.var)])
+      output <- rbind(output, aggregate.data[rep(i, aggregate.data[
+        ,
+        which(names(aggregate.data) == index.var)
+      ][i]), ][, -which(names(aggregate.data) == index.var)])
     }
   }
   data.frame(output, row.names = 1:nrow(output))
@@ -69,13 +70,13 @@ expand_df <- function(aggregate.data, index.var = "Freq", retain.freq = FALSE)
 #' oswego %>%
 #'   select(ill, sex, chocolate.ice.cream) %>%
 #'   tbl_summary() %>%
-#'   cosm_sum() %>% theme_pubh()
+#'   cosm_sum() %>%
+#'   theme_pubh()
 #'
 #' oswego %>%
-#'   mhor(ill ~ sex/chocolate.ice.cream)
+#'   mhor(ill ~ sex / chocolate.ice.cream)
 #' @export
-mhor <- function(object = NULL, formula = NULL, data = NULL)
-{
+mhor <- function(object = NULL, formula = NULL, data = NULL) {
   if (inherits(object, "formula")) {
     formula <- object
     object <- NULL
@@ -95,9 +96,9 @@ mhor <- function(object = NULL, formula = NULL, data = NULL)
   nr2 <- nrow(model.ci)
   n1 <- length(levels(data[[stratum]])) + 1
   modelci <- data.frame(
-    "OR" = round(model.ci[n1:nr2,5], 2),
-    "Lower CI" = round(model.ci[n1:nr2,6], 2),
-    "Upper CI" = round(model.ci[n1:nr2,7], 2),
+    "OR" = round(model.ci[n1:nr2, 5], 2),
+    "Lower CI" = round(model.ci[n1:nr2, 6], 2),
+    "Upper CI" = round(model.ci[n1:nr2, 7], 2),
     "p" = round_pval(model.ci[n1:nr2, 4])
   )
   names(modelci)[4] <- "Pr(>|z|)"
@@ -110,7 +111,7 @@ mhor <- function(object = NULL, formula = NULL, data = NULL)
   cat("\n")
   print(res)
   cat("\n")
-  if(model2.aov[[3,3]] < 0.001) {
+  if (model2.aov[[3, 3]] < 0.001) {
     cat("Test for effect modification (interaction): p ", round_pval(model2.aov[[3, 3]]), "\n", "\n")
   } else {
     cat("Test for effect modification (interaction): p = ", round(model2.aov[[3, 3]], 4), "\n", "\n")
@@ -136,11 +137,10 @@ mhor <- function(object = NULL, formula = NULL, data = NULL)
 #' prop_or(p2 = p2, or = or)
 #' 20 / 240
 #' @export
-prop_or <- function(p2, or)
-{
-	p1 <- 1-p2
-	por <- (or*p2)/(p1 + or*p2)
-	por
+prop_or <- function(p2, or) {
+  p1 <- 1 - p2
+  por <- (or * p2) / (p1 + or * p2)
+  por
 }
 
 #' Function to calculate OR using Wald CI, and plot trend.
@@ -165,41 +165,46 @@ prop_or <- function(p2, or)
 #'
 #' Freq <- c(3441, 34, 39137, 519, 20509, 280, 12149, 196, 11882, 199)
 #' Biopsy <- gl(2, 1, 10, labels = c("No", "Yes"))
-#' Weight <- gl(5, 2, 10, labels = c("Underweight", "Normal", "Over (11-24%)",
-#'              "Over (25-39%)", "Over (> 39%)"))
+#' Weight <- gl(5, 2, 10, labels = c(
+#'   "Underweight", "Normal", "Over (11-24%)",
+#'   "Over (25-39%)", "Over (> 39%)"
+#' ))
 #' breast <- data.frame(Freq, Biopsy, Weight)
 #' breast
 #'
 #' breast <- expand_df(breast)
 #' require(sjlabelled, quietly = TRUE)
 #'
-#' breast = var_labels(breast,
-#'   Weight = 'Weight group'
-#'   )
+#' breast <- var_labels(breast,
+#'   Weight = "Weight group"
+#' )
 #'
 #' odds_trend(Biopsy ~ Weight, data = breast)$df
+#' odds_trend(Biopsy ~ Weight, data = breast)$fig
 #' @export
 odds_trend <- function(formula, data, angle = 45,
-                       hjust = 1, method = "wald", ...)
-{
+                       hjust = 1, method = "wald", ...) {
   vars <- all.vars(formula)
   x <- vars[2]
   outcome <- data[[vars[1]]]
   exposure <- data[[vars[2]]]
   orwald <- epitools::oddsratio(exposure, outcome, method = method, ...)
   n <- nrow(orwald$measure)
-  or.df <- data.frame(x = 1:n, round(orwald$measure, 2),
-                      round_pval(orwald$p.value[, 3]),
-                      round_pval(orwald$p.value[, 2]))
+  or.df <- data.frame(
+    x = 1:n, round(orwald$measure, 2),
+    round_pval(orwald$p.value[, 3]),
+    round_pval(orwald$p.value[, 2])
+  )
   names(or.df)[5:6] <- c("chi.square", "fisher.exact")
   names(or.df)[1:2] <- c("Exposure", "OR")
   nam <- row.names(or.df)
   or.df$Exposure <- factor(or.df$Exposure, labels = nam)
   or.df <- data.frame(or.df, row.names = NULL)
   df <- or.df
-  fit = glm(formula, data = data, binomial)
-  fig = sjPlot::plot_model(fit, type = 'pred', terms = x,
-                           title = '', dot.size = 1) %>%
+  df2 <- df[-1, ]
+  fig <- df2 %>%
+    gf_pointrange(OR + lower + upper ~ Exposure) %>%
+    gf_labs(x = get_label(exposure)) %>%
     gf_theme(axis.text.x = ggplot2::element_text(angle = angle, hjust = hjust))
   res <- list(df = df, fig = fig)
   res
@@ -219,16 +224,15 @@ odds_trend <- function(formula, data, angle = 45,
 #' @examples
 #' ## We compare the use of lung’s X-rays on the screening of TB against the gold standard test.
 #' Freq <- c(1739, 8, 51, 22)
-#' BCG <- gl(2, 1, 4, labels=c("Negative", "Positive"))
-#' Xray <- gl(2, 2, labels=c("Negative", "Positive"))
+#' BCG <- gl(2, 1, 4, labels = c("Negative", "Positive"))
+#' Xray <- gl(2, 2, labels = c("Negative", "Positive"))
 #' tb <- data.frame(Freq, BCG, Xray)
 #' tb <- expand_df(tb)
 #'
 #' tb %>%
 #'   diag_test(BCG ~ Xray)
 #' @export
-diag_test <- function(object = NULL, formula = NULL, data = NULL, ...)
-{
+diag_test <- function(object = NULL, formula = NULL, data = NULL, ...) {
   if (inherits(object, "formula")) {
     formula <- object
     object <- NULL
@@ -240,7 +244,7 @@ diag_test <- function(object = NULL, formula = NULL, data = NULL, ...)
   vars <- all.vars(formula)
   outcome <- vars[1]
   exposure <- vars[2]
-  dat  <- epitools::epitable(data[[exposure]], data[[outcome]], rev='both')
+  dat <- epitools::epitable(data[[exposure]], data[[outcome]], rev = "both")
   print(epiR::epi.tests(dat, ...))
   cat("\n")
 }
@@ -261,12 +265,11 @@ diag_test <- function(object = NULL, formula = NULL, data = NULL, ...)
 #' ## We compare the use of lung’s X-rays on the screening of TB against the gold standard test.
 #' diag_test2(22, 51, 8, 1739)
 #' @export
-diag_test2 <- function(aa, bb, cc, dd)
-{
-	cat("\n")
-	dat  <- as.table(matrix(c(aa, bb, cc, dd), nrow = 2, byrow = TRUE))
-	print(epiR::epi.tests(dat))
-	cat("\n")
+diag_test2 <- function(aa, bb, cc, dd) {
+  cat("\n")
+  dat <- as.table(matrix(c(aa, bb, cc, dd), nrow = 2, byrow = TRUE))
+  print(epiR::epi.tests(dat))
+  cat("\n")
 }
 
 #' Measures of association from two by two contingency tables (formula).
@@ -288,8 +291,8 @@ diag_test2 <- function(aa, bb, cc, dd)
 #' @examples
 #' ## A case-control study on the effect of alcohol on oesophageal cancer.
 #' Freq <- c(386, 29, 389, 171)
-#' status <- gl(2, 1, 4, labels=c("Control", "Case"))
-#' alcohol <- gl(2, 2, labels=c("0-39", "40+"))
+#' status <- gl(2, 1, 4, labels = c("Control", "Case"))
+#' alcohol <- gl(2, 2, labels = c("0-39", "40+"))
 #' cancer <- data.frame(Freq, status, alcohol)
 #' cancer <- expand_df(cancer)
 #' contingency(status ~ alcohol, data = cancer, method = "case.control")
@@ -305,8 +308,7 @@ diag_test2 <- function(aa, bb, cc, dd)
 #' Oncho %>%
 #'   contingency(mf ~ area)
 #' @export
-contingency <- function(object = NULL, formula = NULL, data = NULL, method="cohort.count", ...)
-{
+contingency <- function(object = NULL, formula = NULL, data = NULL, method = "cohort.count", ...) {
   if (inherits(object, "formula")) {
     formula <- object
     object <- NULL
@@ -318,15 +320,18 @@ contingency <- function(object = NULL, formula = NULL, data = NULL, method="coho
   vars <- all.vars(formula)
   outcome <- vars[1]
   exposure <- vars[2]
-  dat  <- epitools::epitable(data[[exposure]], data[[outcome]], rev='both')
+  dat <- epitools::epitable(data[[exposure]], data[[outcome]], rev = "both")
   print(dat)
   cat("\n")
-  dat2  <- as.table(matrix(c(as.numeric(dat[1]), as.numeric(dat[3]), as.numeric(dat[2]), as.numeric(dat[4])), nrow = 2, byrow = TRUE))
+  dat2 <- as.table(matrix(c(as.numeric(dat[1]), as.numeric(dat[3]), as.numeric(dat[2]), as.numeric(dat[4])), nrow = 2, byrow = TRUE))
   dat.epi <- epiR::epi.2by2(dat2, method = method, ...)
   print(dat.epi)
   cat("\n")
-  if(chisq.fisher(dat) == 1) print(fisher.test(dat))
-  else print(chisq.test(dat))
+  if (chisq.fisher(dat) == 1) {
+    print(fisher.test(dat))
+  } else {
+    print(chisq.test(dat))
+  }
 }
 
 #' Measures of association from two by two contingency tables (direct input).
@@ -342,26 +347,28 @@ contingency <- function(object = NULL, formula = NULL, data = NULL, method="coho
 #' @examples
 #' ## A case-control study on the effect of alcohol on oesophageal cancer.
 #' Freq <- c(386, 29, 389, 171)
-#' status <- gl(2, 1, 4, labels=c("Control", "Case"))
-#' alcohol <- gl(2, 2, labels=c("0-39", "40+"))
+#' status <- gl(2, 1, 4, labels = c("Control", "Case"))
+#' alcohol <- gl(2, 2, labels = c("0-39", "40+"))
 #' cancer <- data.frame(Freq, status, alcohol)
 #' cancer <- expand_df(cancer)
 #'
 #' contingency2(171, 389, 29, 386, method = "case.control")
 #' @export
-contingency2 <- function(aa, bb, cc, dd, ...)
-{
-	dat  <- as.table(matrix(c(aa, bb, cc, dd), nrow = 2, byrow = TRUE))
-	colnames(dat) <- c("Yes", "No")
-	rownames(dat) <- c("Yes", "No")
-	cat("\n")
-	print(dat)
-	cat("\n")
-	dat.epi <- epiR::epi.2by2(dat, ...)
-	print(dat.epi)
-	cat("\n")
-	if(chisq.fisher(dat) == 1) print(fisher.test(dat))
-		else print(chisq.test(dat))
+contingency2 <- function(aa, bb, cc, dd, ...) {
+  dat <- as.table(matrix(c(aa, bb, cc, dd), nrow = 2, byrow = TRUE))
+  colnames(dat) <- c("Yes", "No")
+  rownames(dat) <- c("Yes", "No")
+  cat("\n")
+  print(dat)
+  cat("\n")
+  dat.epi <- epiR::epi.2by2(dat, ...)
+  print(dat.epi)
+  cat("\n")
+  if (chisq.fisher(dat) == 1) {
+    print(fisher.test(dat))
+  } else {
+    print(chisq.test(dat))
+  }
 }
 
 
@@ -369,12 +376,11 @@ contingency2 <- function(aa, bb, cc, dd, ...)
 #'
 #' \code{chisq.fisher} is an internal function called by \code{contingency} and \code{contingency2} that uses the Fisher exact test if results from the assumptions for the chi-squared test fail.
 #' @param tab A numeric two by two table.
-chisq.fisher <- function(tab)
-{
-	n <- sum(tab)
-	sr <- rowSums(tab)
-	sc <- colSums(tab)
-	elem <- outer(sr, sc, "*")/n
-	res <- any(elem < 5)*1
-	res
+chisq.fisher <- function(tab) {
+  n <- sum(tab)
+  sr <- rowSums(tab)
+  sc <- colSums(tab)
+  elem <- outer(sr, sc, "*") / n
+  res <- any(elem < 5) * 1
+  res
 }

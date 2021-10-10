@@ -28,15 +28,15 @@ confidence intervals of a continuous variable by levels of one or two categorica
 \examples{
 data(kfm, package = "ISwR")
 require(sjlabelled, quietly = TRUE)
-kfm = kfm \%>\%
+kfm <- kfm \%>\%
   var_labels(
-     dl.milk = 'Breast-milk intake (dl/day)',
-     sex = 'Sex',
-     weight = 'Child weight (kg)',
-     ml.suppl = 'Milk substitute (ml/day)',
-     mat.weight = 'Maternal weight (kg)',
-     mat.height = 'Maternal height (cm)'
-     )
+    dl.milk = "Breast-milk intake (dl/day)",
+    sex = "Sex",
+    weight = "Child weight (kg)",
+    ml.suppl = "Milk substitute (ml/day)",
+    mat.weight = "Maternal weight (kg)",
+    mat.height = "Maternal height (cm)"
+  )
 
 kfm \%>\%
   gen_bst_df(dl.milk ~ sex)
@@ -45,13 +45,14 @@ data(birthwt, package = "MASS")
 require(dplyr, quietly = TRUE)
 birthwt <- mutate(birthwt,
   smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
-  Race = factor(race > 1, labels = c("White", "Non-white")))
+  Race = factor(race > 1, labels = c("White", "Non-white"))
+)
 
-birthwt = birthwt \%>\%
+birthwt <- birthwt \%>\%
   var_labels(
-    bwt = 'Birth weight (g)',
-    smoke = 'Smoking status'
+    bwt = "Birth weight (g)",
+    smoke = "Smoking status"
   )
 
-gen_bst_df(bwt ~ smoke|Race, data = birthwt)
+gen_bst_df(bwt ~ smoke | Race, data = birthwt)
 }

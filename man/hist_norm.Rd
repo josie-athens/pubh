@@ -45,13 +45,13 @@ birthwt <- birthwt \%>\%
     Race = factor(race > 1, labels = c("White", "Non-white"))
   ) \%>\%
   var_labels(
-    bwt = 'Birth weight (g)',
-    smoke = 'Smoking status'
- )
+    bwt = "Birth weight (g)",
+    smoke = "Smoking status"
+  )
 
 birthwt \%>\%
-  hist_norm(~ bwt, alpha = 0.7, bins = 20, fill = 'cadetblue')
+  hist_norm(~bwt, alpha = 0.7, bins = 20, fill = "cadetblue")
 
 birthwt \%>\%
-  hist_norm(~ bwt|smoke, alpha = 0.7, bins = 20, fill = 'cadetblue')
+  hist_norm(~ bwt | smoke, alpha = 0.7, bins = 20, fill = "cadetblue")
 }

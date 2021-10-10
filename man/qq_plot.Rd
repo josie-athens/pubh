@@ -36,18 +36,18 @@ qq_plot(
 \examples{
 data(kfm, package = "ISwR")
 require(sjlabelled, quietly = TRUE)
-kfm = kfm \%>\%
+kfm <- kfm \%>\%
   var_labels(
-     dl.milk = 'Breast-milk intake (dl/day)',
-     sex = 'Sex',
-     weight = 'Child weight (kg)',
-     ml.suppl = 'Milk substitute (ml/day)',
-     mat.weight = 'Maternal weight (kg)',
-     mat.height = 'Maternal height (cm)'
-     )
+    dl.milk = "Breast-milk intake (dl/day)",
+    sex = "Sex",
+    weight = "Child weight (kg)",
+    ml.suppl = "Milk substitute (ml/day)",
+    mat.weight = "Maternal weight (kg)",
+    mat.height = "Maternal height (cm)"
+  )
 
 kfm \%>\%
-  qq_plot(~ dl.milk)
+  qq_plot(~dl.milk)
 
-qq_plot(~ dl.milk|sex, data = kfm)
+qq_plot(~ dl.milk | sex, data = kfm)
 }

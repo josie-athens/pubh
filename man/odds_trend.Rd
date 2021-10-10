@@ -38,19 +38,22 @@ Additional methods for confidence intervals include: \code{"midp"}, \code{"fishe
 
 Freq <- c(3441, 34, 39137, 519, 20509, 280, 12149, 196, 11882, 199)
 Biopsy <- gl(2, 1, 10, labels = c("No", "Yes"))
-Weight <- gl(5, 2, 10, labels = c("Underweight", "Normal", "Over (11-24\%)",
-             "Over (25-39\%)", "Over (> 39\%)"))
+Weight <- gl(5, 2, 10, labels = c(
+  "Underweight", "Normal", "Over (11-24\%)",
+  "Over (25-39\%)", "Over (> 39\%)"
+))
 breast <- data.frame(Freq, Biopsy, Weight)
 breast
 
 breast <- expand_df(breast)
 require(sjlabelled, quietly = TRUE)
 
-breast = var_labels(breast,
-  Weight = 'Weight group'
-  )
+breast <- var_labels(breast,
+  Weight = "Weight group"
+)
 
 odds_trend(Biopsy ~ Weight, data = breast)$df
+odds_trend(Biopsy ~ Weight, data = breast)$fig
 }
 \seealso{
 \code{\link[epitools]{oddsratio}}.

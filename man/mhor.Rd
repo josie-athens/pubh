@@ -41,10 +41,11 @@ oswego <- oswego \%>\%
 oswego \%>\%
   select(ill, sex, chocolate.ice.cream) \%>\%
   tbl_summary() \%>\%
-  cosm_sum() \%>\% theme_pubh()
+  cosm_sum() \%>\%
+  theme_pubh()
 
 oswego \%>\%
-  mhor(ill ~ sex/chocolate.ice.cream)
+  mhor(ill ~ sex / chocolate.ice.cream)
 }
 \seealso{
 \link{mh}

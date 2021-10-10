@@ -64,9 +64,9 @@ birthwt <- birthwt \%>\%
     race = factor(race, labels = c("White", "African American", "Other"))
   ) \%>\%
   var_labels(
-    bwt = 'Birth weight (g)',
-    smoke = 'Smoking status',
-    race = 'Race'
+    bwt = "Birth weight (g)",
+    smoke = "Smoking status",
+    race = "Race"
   )
 
 model_norm <- lm(bwt ~ smoke + race, data = birthwt)

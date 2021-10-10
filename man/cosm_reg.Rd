@@ -39,7 +39,8 @@ model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
 
 model_binom \%>\%
   tbl_regression(exponentiate = TRUE) \%>\%
-  cosm_reg(bold = TRUE) \%>\% theme_pubh(1) \%>\%
+  cosm_reg(bold = TRUE) \%>\%
+  theme_pubh(1) \%>\%
   add_footnote(get_r2(model_binom), font_size = 9)
 
 data(birthwt, package = "MASS")
@@ -49,15 +50,16 @@ birthwt <- birthwt \%>\%
     race = factor(race, labels = c("White", "African American", "Other"))
   ) \%>\%
   var_labels(
-    bwt = 'Birth weight (g)',
-    smoke = 'Smoking status',
-    race = 'Race'
+    bwt = "Birth weight (g)",
+    smoke = "Smoking status",
+    race = "Race"
   )
 
 model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 
 model_norm \%>\%
   tbl_regression() \%>\%
-  cosm_reg(bold = TRUE) \%>\% theme_pubh(1) \%>\%
+  cosm_reg(bold = TRUE) \%>\%
+  theme_pubh(1) \%>\%
   add_footnote(get_r2(model_norm), font_size = 9)
 }

@@ -36,10 +36,10 @@ Vanderpump \%>\%
   tbl_strata(
     strata = smoker,
     .tbl_fun = ~ .x \%>\%
-    tbl_summary(by = agegrp)
- ) \%>\%
- cosm_sum(bold = TRUE, head_label = " ")
+      tbl_summary(by = agegrp)
+  ) \%>\%
+  cosm_sum(bold = TRUE, head_label = " ")
 
-mhor(vstatus ~ agegrp/smoker, data = Vanderpump)
+mhor(vstatus ~ agegrp / smoker, data = Vanderpump)
 }
 \keyword{datasets}

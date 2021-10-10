@@ -31,7 +31,7 @@ require(dplyr, quietly = TRUE)
 
 data(Oncho)
 Oncho \%>\%
-  select(- id) \%>\%
+  select(-id) \%>\%
   tbl_summary() \%>\%
   cosm_sum(bold = TRUE) \%>\%
   theme_pubh(1)

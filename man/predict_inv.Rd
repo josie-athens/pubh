@@ -34,7 +34,7 @@ titration <- titration \%>\%
 
 titration \%>\%
   gf_point(OD ~ Riboflavin) \%>\%
-  gf_smooth(col = 'indianred3', se = TRUE, lwd = 0.5, method = 'loess')
+  gf_smooth(col = "indianred3", se = TRUE, lwd = 0.5, method = "loess")
 
 ## Model with intercept different from zero:
 model <- lm(OD ~ Riboflavin, data = titration)

@@ -20,8 +20,8 @@ A data frame with the classes, the mid-point, the frequencies, the relative and 
 \code{freq_cont} tabulates a continuous variable by given classes.
 }
 \examples{
-data(IgM, package="ISwR")
+data(IgM, package = "ISwR")
 Ab <- data.frame(IgM)
-estat(~ IgM, data = Ab)
+estat(~IgM, data = Ab)
 freq_cont(IgM, seq(0, 4.5, 0.5))
 }

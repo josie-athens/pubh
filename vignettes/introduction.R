@@ -4,6 +4,12 @@
 ## ----eval=FALSE---------------------------------------------------------------
 #  y ~ x|z, data = my_data
 
+## ----eval=FALSE---------------------------------------------------------------
+#  data %>%
+#    f1(...) %>%
+#    f2(...) %>%
+#    f3(...)
+
 ## ----message=FALSE, results='hide'--------------------------------------------
 rm(list = ls())
 library(tidyverse)
@@ -30,8 +36,8 @@ Oncho %>%
   ) %>%
   copy_labels(Oncho) %>%
   select(mf, area) %>% 
-  cross_tbl(by = "mf") %>%
-  theme_pubh()
+  cross_tbl(by = "area") %>%
+  theme_pubh(2)
 
 ## -----------------------------------------------------------------------------
 Oncho %>%
@@ -40,8 +46,8 @@ Oncho %>%
     mf = relevel(mf, ref = "Infected")
   ) %>%
   copy_labels(Oncho) %>%
-  cross_tbl(by = "mf") %>%
-  theme_pubh()
+  cross_tbl(by = "area") %>%
+  theme_pubh(2)
 
 ## -----------------------------------------------------------------------------
 data(Hodgkin)
@@ -56,12 +62,12 @@ Hodgkin %>% head()
 ## -----------------------------------------------------------------------------
 Hodgkin %>%
   estat(~ CD4) %>%
-  as_hux() %>% theme_pubh(1)
+  as_hux() %>% theme_pubh()
 
 ## -----------------------------------------------------------------------------
 Hodgkin %>%
   estat(~ Ratio|Group) %>%
-  as_hux() %>% theme_pubh(1)
+  as_hux() %>% theme_pubh()
 
 ## -----------------------------------------------------------------------------
 Hodgkin %>%
@@ -70,7 +76,7 @@ Hodgkin %>%
   ) %>%
   copy_labels(Hodgkin) %>%
   cross_tbl(by = "Group", bold = FALSE) %>%
-  theme_pubh() %>%
+  theme_pubh(2) %>%
   add_footnote("Median (IQR)", font_size = 9)
 
 ## -----------------------------------------------------------------------------
@@ -144,13 +150,13 @@ model_bwt <- lm(bwt ~ smoke + race, data = birthwt)
 ## -----------------------------------------------------------------------------
 model_bwt %>% 
   tbl_regression() %>% 
-  cosm_reg() %>% theme_pubh(1) %>% 
+  cosm_reg() %>% theme_pubh() %>% 
   add_footnote(get_r2(model_bwt), font_size = 9)
 
 ## -----------------------------------------------------------------------------
 model_bwt %>%
   glm_coef(labels = model_labels(model_bwt)) %>%
-  as_hux() %>% theme_pubh(1) %>% 
+  as_hux() %>% theme_pubh() %>% 
   set_align(everywhere, 2:3, "right") %>%
   add_footnote(get_r2(model_bwt), font_size = 9)
 
@@ -177,8 +183,8 @@ Bernard %>%
   ) %>%
   copy_labels(Bernard) %>%
   select(fate, treat) %>% 
-  cross_tbl(by = "fate") %>%
-  theme_pubh()
+  cross_tbl(by = "treat") %>%
+  theme_pubh(2)
 
 ## -----------------------------------------------------------------------------
 dat <- matrix(c(84, 140 , 92, 139), nrow = 2, byrow = TRUE)
@@ -205,17 +211,6 @@ oswego <- oswego %>%
     sex = "Sex",
     chocolate.ice.cream = "Consumed chocolate ice cream"
   )
-
-## -----------------------------------------------------------------------------
-oswego %>%
-  mutate(
-    ill = relevel(ill, ref = "Yes"),
-    chocolate.ice.cream = relevel(chocolate.ice.cream, ref = "Yes")
-  ) %>%
-  copy_labels(oswego) %>%
-  select(ill, sex, chocolate.ice.cream) %>% 
-  cross_tbl(by = "ill", missing_text = "(Missing)") %>%
-  theme_pubh()
 
 ## -----------------------------------------------------------------------------
 oswego %>%

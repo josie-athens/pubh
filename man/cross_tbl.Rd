@@ -65,7 +65,7 @@ Oncho \%>\%
 
 ## Descriptive statistics for all variables in the \code{Oncho} data set except \code{id}.
 Oncho \%>\%
-  select(- id) \%>\%
+  select(-id) \%>\%
   cross_tbl(by = "mf", bold = TRUE) \%>\%
   theme_pubh(2)
 }

@@ -38,22 +38,22 @@ box_plot(
 \examples{
 data(kfm, package = "ISwR")
 require(sjlabelled, quietly = TRUE)
-kfm = kfm \%>\%
+kfm <- kfm \%>\%
   var_labels(
-     dl.milk = 'Breast-milk intake (dl/day)',
-     sex = 'Sex',
-     weight = 'Child weight (kg)',
-     ml.suppl = 'Milk substitute (ml/day)',
-     mat.weight = 'Maternal weight (kg)',
-     mat.height = 'Maternal height (cm)'
-     )
+    dl.milk = "Breast-milk intake (dl/day)",
+    sex = "Sex",
+    weight = "Child weight (kg)",
+    ml.suppl = "Milk substitute (ml/day)",
+    mat.weight = "Maternal weight (kg)",
+    mat.height = "Maternal height (cm)"
+  )
 
 kfm \%>\%
-  box_plot(dl.milk ~ sex, fill = 'thistle', alpha = 0.8)
+  box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8)
 
 t.test(dl.milk ~ sex, data = kfm)
 
 kfm \%>\%
-  box_plot(dl.milk ~ sex, fill = 'thistle', alpha = 0.8) \%>\%
-  gf_star(1, 10.9, 2, 11, 11.4, legend = 'p = 0.035', size = 2.5)
+  box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) \%>\%
+  gf_star(1, 10.9, 2, 11, 11.4, legend = "p = 0.035", size = 2.5)
 }

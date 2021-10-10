@@ -31,6 +31,6 @@ Sandler \%>\%
   select(cancer, passive) \%>\%
   cross_tbl(by = "cancer")
 
-mhor(cancer ~ smoke/passive, data = Sandler)
+mhor(cancer ~ smoke / passive, data = Sandler)
 }
 \keyword{datasets}

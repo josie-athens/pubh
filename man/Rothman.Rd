@@ -37,10 +37,10 @@ Rothman \%>\%
   tbl_summary() \%>\%
   cosm_sum()
 
-mhor(stroke ~ ht/oc, data = Rothman)
+mhor(stroke ~ ht / oc, data = Rothman)
 
 ## Model with standard interaction term:
-model1 <- glm(stroke ~ ht*oc, data = Rothman, family = binomial)
+model1 <- glm(stroke ~ ht * oc, data = Rothman, family = binomial)
 glm_coef(model1)
 
 ## Model considering join exposure:
@@ -48,8 +48,10 @@ Rothman$join <- 0
 Rothman$join[Rothman$oc == "Non-user" & Rothman$ht == "Yes"] <- 1
 Rothman$join[Rothman$oc == "User" & Rothman$ht == "No"] <- 2
 Rothman$join[Rothman$oc == "User" & Rothman$ht == "Yes"] <- 3
-Rothman$join <- factor(Rothman$join, labels=c("Unexposed", "Hypertension", "OC user",
-                       "OC and hypertension"))
+Rothman$join <- factor(Rothman$join, labels = c(
+  "Unexposed", "Hypertension", "OC user",
+  "OC and hypertension"
+))
 
 require(sjlabelled, quietly = TRUE)
 Rothman$join <- set_label(Rothman$join, label = "Exposure")
