@@ -172,15 +172,6 @@ model_clogit %>%
   theme_pubh() %>%
   add_footnote(get_r2(model_clogit), font_size = 9)
 
-## -----------------------------------------------------------------------------
-require(ggeffects, quietly = TRUE)
-bdendo_pred <- ggemmeans(model_clogit, terms = c('gall', 'est'))
-
-## -----------------------------------------------------------------------------
-bdendo_pred %>%
-  gf_pointrange(predicted + conf.low + conf.high ~ x|group, col = ~ x) %>%
-  gf_labs(y = "P(cancer)", x = "", col = get_label(bdendo$gall))
-
 ## ----message=FALSE------------------------------------------------------------
 #require(MASS, quietly = TRUE)
 data(housing, package = "MASS")

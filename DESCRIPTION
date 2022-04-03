@@ -1,6 +1,6 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 1.2.5
+Version: 1.2.7
 Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@gmail.com", role = c("aut", "cre")),
     person("Frank", "Harell", email = "f.harrell@vanderbilt.edu", role = "ctb"),
@@ -16,7 +16,7 @@ Description: A toolbox for making R functions and capabilities more
     or Public Health. Please note that use of the 
     provided data sets is for educational purposes only.
 Depends:
-    R (>= 4.0.0),
+    R (>= 4.1.0),
     emmeans,
     ggformula,
     gtsummary,

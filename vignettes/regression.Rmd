@@ -283,22 +283,6 @@ model_clogit %>%
   add_footnote(get_r2(model_clogit), font_size = 9)
 ```
 
-
-Creating data frame needed to construct the effect plot:
-
-```{r}
-require(ggeffects, quietly = TRUE)
-bdendo_pred <- ggemmeans(model_clogit, terms = c('gall', 'est'))
-```
-
-Effect plot:
-
-```{r}
-bdendo_pred %>%
-  gf_pointrange(predicted + conf.low + conf.high ~ x|group, col = ~ x) %>%
-  gf_labs(y = "P(cancer)", x = "", col = get_label(bdendo$gall))
-```
-
 ## Ordinal Logistic Regression
 
 We use data about house satisfaction.
