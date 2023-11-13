@@ -7,7 +7,7 @@ importFrom("stats", "addmargins", "binomial", "chisq.test", "coef",
 importFrom("graphics", "pairs", "plot")
 importFrom("ggformula", "gf_boxplot", "gf_dhistogram", "gf_fitdistr",
            "gf_errorbarh", "gf_hline",  "gf_jitter", "gf_labs", "gf_point",
-           "gf_pointrangeh", "gf_qq", "gf_qqline", "gf_segment", "gf_smooth",
+           "gf_qq", "gf_qqline", "gf_segment", "gf_smooth",
            "gf_summary", "gf_theme", "gf_text",  "gf_vline", "gf_pointrange")
 importFrom("emmeans", "emmeans" , "pwpp")
 importFrom("moonBook", "mytable", "mytable2df")

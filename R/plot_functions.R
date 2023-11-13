@@ -161,11 +161,11 @@ multiple <- function(model, formula, adjust = "mvt", type = "response",
     names(emm_plot)[2] <- "Effect"
     if (names(emm_df)[2] == "estimate") {
       fig_ci <- emm_plot %>%
-        gf_pointrangeh(contrast ~ Effect + lower.CL + upper.CL, col = ~log10_pval, ylab = " ") %>%
+        gf_pointrange(contrast ~ Effect + lower.CL + upper.CL, col = ~log10_pval, ylab = " ") %>%
         gf_vline(xintercept = ~0, lty = 2, col = "indianred")
     } else {
       fig_ci <- emm_plot %>%
-        gf_pointrangeh(contrast ~ Effect + lower.CL + upper.CL, col = ~log10_pval, ylab = " ") %>%
+        gf_pointrange(contrast ~ Effect + lower.CL + upper.CL, col = ~log10_pval, ylab = " ") %>%
         gf_vline(xintercept = ~1, lty = 2, col = "indianred")
     }
   } else {
@@ -173,11 +173,11 @@ multiple <- function(model, formula, adjust = "mvt", type = "response",
     names(emm_plot)[2] <- "confounder"
     if (names(emm_df)[3] == "estimate") {
       fig_ci <- emm_plot %>%
-        gf_pointrangeh(contrast ~ Effect + lower.CL + upper.CL | confounder, col = ~log10_pval, ylab = " ") %>%
+        gf_pointrange(contrast ~ Effect + lower.CL + upper.CL | confounder, col = ~log10_pval, ylab = " ") %>%
         gf_vline(xintercept = ~0, lty = 2, col = "indianred")
     } else {
       fig_ci <- emm_plot %>%
-        gf_pointrangeh(contrast ~ Effect + lower.CL + upper.CL | confounder, col = ~log10_pval, ylab = " ") %>%
+        gf_pointrange(contrast ~ Effect + lower.CL + upper.CL | confounder, col = ~log10_pval, ylab = " ") %>%
         gf_vline(xintercept = ~1, lty = 2, col = "indianred")
     }
   }
