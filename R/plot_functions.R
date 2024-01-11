@@ -628,8 +628,10 @@ bar_error <- function(object = NULL, formula = NULL, data = NULL,
 #'
 #' gen_bst_df(bwt ~ smoke | Race, data = birthwt)
 #' @export
-gen_bst_df <- function(object = NULL, formula = NULL, data = NULL, stat = "mean", ...) {
-  if (inherits(object, "formula")) {
+gen_bst_df = function (object = NULL, formula = NULL, data = NULL, stat = "mean", ...)
+{
+  if (inherits(object, "formula"))
+  {
     formula <- object
     object <- NULL
   }
@@ -645,38 +647,30 @@ gen_bst_df <- function(object = NULL, formula = NULL, data = NULL, stat = "mean"
   nv <- length(vars)
   if (nv == 2) {
     n <- length(levels(exposure))
-    first <- tapply(
-      outcome, exposure, bst, stat,
-      ...
-    )
+    first <- tapply(outcome, exposure, bst, stat, ...)
     second <- numeric(n * 3)
     dim(second) <- c(n, 3)
     pos <- c(2, 4, 5)
     for (i in 1:n) second[i, ] <- as.numeric(first[[i]][pos])
     df <- as.data.frame(second)
     names(df) <- c(resp, "LowerCI", "UpperCI")
-    final <- data.frame(df, factor(levels(exposure),
-      levels = levels(exposure)
-    ))
+    final <- data.frame(df, factor(levels(exposure), levels = levels(exposure)))
     resp <- ifelse(is.null(sjlabelled::get_label(outcome)),
-      resp, sjlabelled::get_label(outcome)
-    )
-    expl <- ifelse(is.null(sjlabelled::get_label(exposure)), expl,
-      sjlabelled::get_label(exposure)
-    )
+                   resp, sjlabelled::get_label(outcome))
+    expl <- ifelse(is.null(sjlabelled::get_label(exposure)),
+                   expl, sjlabelled::get_label(exposure))
     names(final)[1] <- resp
     names(final)[4] <- expl
     final
-  } else {
-    strat <- vars[3]
-    strat2 <- data[[vars[3]]]
+  }
+  else {
+    condit <- vars[3]
+    strat <- data[[condit]]
     n1 <- length(levels(exposure))
-    n2 <- length(levels(strat2))
+    n2 <- length(levels(strat))
     n <- n1 * n2
-    first <- tapply(outcome, survival::strata(
-      exposure,
-      strat2
-    ), bst, stat, ...)
+    first <- tapply(outcome, survival::strata(exposure, strat),
+                    bst, stat, ...)
     second <- numeric(n * 3)
     dim(second) <- c(n, 3)
     pos <- c(2, 4, 5)
@@ -684,20 +678,18 @@ gen_bst_df <- function(object = NULL, formula = NULL, data = NULL, stat = "mean"
     df <- as.data.frame(second)
     names(df) <- c(resp, "LowerCI", "UpperCI")
     gp1 <- factor(rep(levels(exposure), each = n2), levels = levels(exposure))
-    gp2 <- factor(rep(levels(strat2), n1), levels = levels(strat2))
+    gp2 <- factor(rep(levels(strat), n1), levels = levels(strat))
     final <- data.frame(df, gp1, gp2)
-    resp <- ifelse(is.null(sjlabelled::get_label(outcome)), resp,
-      sjlabelled::get_label(outcome)
-    )
-    expl <- ifelse(is.null(sjlabelled::get_label(exposure)), expl,
-      sjlabelled::get_label(exposure)
-    )
-    strat <- ifelse(is.null(sjlabelled::get_label(strat2)), expl,
-      sjlabelled::get_label(strat2)
-    )
+    resp <- ifelse(is.null(sjlabelled::get_label(outcome)),
+                   resp, sjlabelled::get_label(outcome))
+    expl <- ifelse(is.null(sjlabelled::get_label(exposure)),
+                   expl, sjlabelled::get_label(exposure))
+    strat <- ifelse(is.null(sjlabelled::get_label(strat)),
+                    expl, sjlabelled::get_label(strat))
     names(final)[1] <- resp
     names(final)[4] <- expl
-    names(final)[5] <- strat
+    names(final)[5] <- condit
     final
   }
 }
+

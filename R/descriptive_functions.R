@@ -148,7 +148,7 @@ stats_quotes <- function(x, data2, digits = 2) {
   std <- sd(data2[[x]], na.rm = TRUE)
   cv <- std / avg
   res <- data.frame(n, x.min, x.max, avg, med, std, cv)
-  names(res) <- c("N", "Min.", "Max.", "Mean", "Median", "SD", "CV")
+  names(res) <- c("N", "Min", "Max", "Mean", "Median", "SD", "CV")
   res <- round(res, digits = digits)
   res
 }
@@ -330,7 +330,7 @@ estat <- function(object = NULL, formula = NULL, data = NULL, digits = 2, label 
     }
     res <- as.data.frame(res)
     names(res) <- c(
-      "N", "Min.", "Max.", "Mean", "Median",
+      "N", "Min", "Max", "Mean", "Median",
       "SD", "CV"
     )
     res <- round(res, digits = digits)
