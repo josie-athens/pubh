@@ -485,7 +485,7 @@ cosm_reg <- function(gt_tbl, pad = 3, type = 3, bold = TRUE, head_label = "**Var
   if (is.null(type)) {
     tbl <- tbl0
   } else {
-    tbl <- tbl0 %>% gtsummary::add_global_p(type = type, quiet = TRUE)
+    tbl <- tbl0 %>% gtsummary::add_global_p(type = type)
   }
 
   if (bold == FALSE) {
