@@ -119,14 +119,14 @@ rank_leverage <- function(x) {
 #' titration <- data.frame(Riboflavin, OD)
 #'
 #' require(sjlabelled, quietly = TRUE)
-#' titration <- titration %>%
+#' titration <- titration |>
 #'   var_labels(
 #'     Riboflavin = "Riboflavin (nmol/ml)",
 #'     OD = "Optical density"
 #'   )
 #'
-#' titration %>%
-#'   gf_point(OD ~ Riboflavin) %>%
+#' titration |>
+#'   gf_point(OD ~ Riboflavin) |>
 #'   gf_smooth(col = "indianred3", se = TRUE, lwd = 0.5, method = "loess")
 #'
 #' ## Model with intercept different from zero:
@@ -371,17 +371,17 @@ pseudo_r2 <- function(model) {
 #' require(dplyr, quietly = TRUE)
 #' data(Oncho)
 #'
-#' Oncho %>%
-#'   select(area, mf) %>%
-#'   cross_tbl(by = "area") %>%
+#' Oncho |>
+#'   select(area, mf) |>
+#'   cross_tbl(by = "area") |>
 #'   theme_pubh(2)
 #'
 #' data(Bernard)
 #'
 #' t1 <- estat(~ apache | fate, data = Bernard)
 #' t2 <- estat(~ o2del | fate, data = Bernard)
-#' rbind(t1, t2) %>%
-#'   as_hux() %>%
+#' rbind(t1, t2) |>
+#'   as_hux() |>
 #'   theme_pubh(c(1, 3))
 #' @export
 theme_pubh <- function(ht, rw = 1) {
@@ -405,27 +405,27 @@ theme_pubh <- function(ht, rw = 1) {
 #' require(dplyr, quietly = TRUE)
 #'
 #' data(Oncho)
-#' Oncho %>%
-#'   select(-id) %>%
-#'   tbl_summary() %>%
-#'   cosm_sum(bold = TRUE) %>%
+#' Oncho |>
+#'   select(-id) |>
+#'   tbl_summary() |>
+#'   cosm_sum(bold = TRUE) |>
 #'   theme_pubh(1)
 #' @export
 cosm_sum <- function(gt_tbl, pad = 3, bold = FALSE, head_label = "**Variable**") {
-  tbl <- gt_tbl %>%
-    gtsummary::modify_header(label ~ head_label) %>%
+  tbl <- gt_tbl |>
+    gtsummary::modify_header(label ~ head_label) |>
     gtsummary::modify_footnote(everything() ~ NA)
 
   if (bold == FALSE) {
     tbl <- tbl
   } else {
-    tbl <- tbl %>% gtsummary::bold_labels()
+    tbl <- tbl |> gtsummary::bold_labels()
   }
 
-  tbl <- tbl %>%
-    gtsummary::as_hux_table() %>%
-    huxtable::set_align(everywhere, -1, "right") %>%
-    huxtable::set_top_padding(pad) %>%
+  tbl <- tbl |>
+    gtsummary::as_hux_table() |>
+    huxtable::set_align(everywhere, -1, "right") |>
+    huxtable::set_top_padding(pad) |>
     huxtable::set_bottom_padding(pad)
 
   tbl
@@ -443,7 +443,7 @@ cosm_sum <- function(gt_tbl, pad = 3, bold = FALSE, head_label = "**Variable**")
 #' require(sjlabelled, quietly = TRUE)
 #'
 #' data(diet, package = "Epi")
-#' diet <- diet %>%
+#' diet <- diet |>
 #'   var_labels(
 #'     chd = "Coronary Heart Disease",
 #'     fibre = "Fibre intake (g/day)"
@@ -451,18 +451,18 @@ cosm_sum <- function(gt_tbl, pad = 3, bold = FALSE, head_label = "**Variable**")
 #'
 #' model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
 #'
-#' model_binom %>%
-#'   tbl_regression(exponentiate = TRUE) %>%
-#'   cosm_reg(bold = TRUE) %>%
-#'   theme_pubh(1) %>%
+#' model_binom |>
+#'   tbl_regression(exponentiate = TRUE) |>
+#'   cosm_reg(bold = TRUE) |>
+#'   theme_pubh(1) |>
 #'   add_footnote(get_r2(model_binom), font_size = 9)
 #'
 #' data(birthwt, package = "MASS")
-#' birthwt <- birthwt %>%
+#' birthwt <- birthwt |>
 #'   mutate(
 #'     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
 #'     race = factor(race, labels = c("White", "African American", "Other"))
-#'   ) %>%
+#'   ) |>
 #'   var_labels(
 #'     bwt = "Birth weight (g)",
 #'     smoke = "Smoking status",
@@ -471,33 +471,33 @@ cosm_sum <- function(gt_tbl, pad = 3, bold = FALSE, head_label = "**Variable**")
 #'
 #' model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 #'
-#' model_norm %>%
-#'   tbl_regression() %>%
-#'   cosm_reg(bold = TRUE) %>%
-#'   theme_pubh(1) %>%
+#' model_norm |>
+#'   tbl_regression() |>
+#'   cosm_reg(bold = TRUE) |>
+#'   theme_pubh(1) |>
 #'   add_footnote(get_r2(model_norm), font_size = 9)
 #' @export
 cosm_reg <- function(gt_tbl, pad = 3, type = 3, bold = TRUE, head_label = "**Variable**") {
-  tbl0 <- gt_tbl %>%
-    gtsummary::modify_header(label ~ head_label) %>%
+  tbl0 <- gt_tbl |>
+    gtsummary::modify_header(label ~ head_label) |>
     gtsummary::modify_footnote(everything() ~ NA, abbreviation = TRUE)
 
   if (is.null(type)) {
     tbl <- tbl0
   } else {
-    tbl <- tbl0 %>% gtsummary::add_global_p(type = type)
+    tbl <- tbl0 |> gtsummary::add_global_p(type = type)
   }
 
   if (bold == FALSE) {
     tbl <- tbl
   } else {
-    tbl <- tbl %>% gtsummary::bold_labels()
+    tbl <- tbl |> gtsummary::bold_labels()
   }
 
-  tbl <- tbl %>%
-    gtsummary::as_hux_table() %>%
-    huxtable::set_align(everywhere, -1, "right") %>%
-    huxtable::set_top_padding(pad) %>%
+  tbl <- tbl |>
+    gtsummary::as_hux_table() |>
+    huxtable::set_align(everywhere, -1, "right") |>
+    huxtable::set_top_padding(pad) |>
     huxtable::set_bottom_padding(pad)
 
   tbl

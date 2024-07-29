@@ -15,7 +15,7 @@ vignette: >
 
 # Introduction
 
-The aim of this vignette is to illustrate the use of `pubh` functions for common regression analysis in Public Health. In particular, the vignette shows the use of the following functions from `pubh`:
+This vignette aims to illustrate the use of `pubh` functions for typical regression analysis in Public Health. In particular, the vignette shows the use of the following functions from `pubh`:
 
 1. `cosm_reg` for reporting tables of coefficients.
 2. `cross_tbl` for reporting tables of descriptive statistics by exposure of interest.
@@ -39,8 +39,7 @@ We start by loading relevant packages and setting the theme for the plots (as su
 rm(list = ls())
 library(tidyverse)
 library(rstatix)
-library(parameters)
-library(performance)
+library(easystats)
 library(jtools)
 library(pubh)
 library(sjlabelled)
@@ -55,17 +54,17 @@ knitr::opts_chunk$set(comment = NA)
 
 # Multiple Linear Regression
 
-For continuous outcomes there is no need of exponentiating the results unless the outcome was fitted in the log-scale. In our first example we want to estimate the effect of smoking and race on the birth weight of babies.
+There is no need to exponentiate the results for continuous outcomes unless the outcome fits in the log scale. In our first example, we want to estimate the effect of smoking and race on babies' birth weights.
 
 We can generate factors and assign labels in the same `pipe` stream:
 
 ```{r}
 data(birthwt, package = "MASS")
-birthwt <- birthwt %>%
+birthwt <- birthwt |>
   mutate(
     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
     race = factor(race, labels = c("White", "African American", "Other"))
-    ) %>%
+    ) |>
   var_labels(
     bwt = 'Birth weight (g)',
     smoke = 'Smoking status',
@@ -78,16 +77,16 @@ Is good to start with some basic descriptive statistics, so we can compare the b
 Graphical analysis:
 
 ```{r}
-birthwt %>%
+birthwt |>
   box_plot(bwt ~ smoke, fill = ~ race)
 ```
 
-Another way to compare the means between the groups is with `gen_bst_df` which estimates means with corresponding bootstrapped CIs.
+Another way to compare the means between the groups is with `gen_bst_df`, which estimates the means of corresponding bootstrapped CIs.
 
 ```{r}
-birthwt %>%
-  gen_bst_df(bwt ~ race|smoke) %>%
-  as_hux() %>% theme_pubh()
+birthwt |>
+  gen_bst_df(bwt ~ race|smoke) |>
+  as_hux() |> theme_pubh()
 ```
 
 We fit a linear model.
@@ -101,71 +100,84 @@ model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 Traditional output from the model:
 
 ```{r}
-model_norm %>% Anova()
+model_norm |> Anova()
 ```
 
 ```{r}
-model_norm %>% parameters()
+model_norm |> parameters()
 ```
 
 ```{r}
-model_norm %>% performance()
+model_norm |> performance()
 ```
 
 Table of coefficients for publication:
 
 ```{r}
-model_norm %>%
-  tbl_regression() %>% 
-  cosm_reg() %>% theme_pubh() %>% 
+model_norm |>
+  tbl_regression() |> 
+  cosm_reg() |> theme_pubh() |> 
   add_footnote(get_r2(model_norm), font_size = 9)
 ```
 
 ```{r}
-model_norm %>% 
-  glm_coef(labels = model_labels(model_norm)) %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh() %>%
+model_norm |> 
+  glm_coef(labels = model_labels(model_norm)) |>
+  as_hux() |> set_align(everywhere, 2:3, "right") |>
+  theme_pubh() |>
   add_footnote(get_r2(model_norm), font_size = 9)
 ```
 
 Function `glm_coef` allows the use of robust standard errors.
 
 ```{r}
-model_norm %>%
-  glm_coef(se_rob = TRUE, labels = model_labels(model_norm)) %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh() %>%
+model_norm |>
+  glm_coef(se_rob = TRUE, labels = model_labels(model_norm)) |>
+  as_hux() |> set_align(everywhere, 2:3, "right") |>
+  theme_pubh() |>
   add_footnote(paste(
     get_r2(model_norm), "\n",
     "CIs and p-values estimated with robust standard errors."),
     font_size = 9)
 ```
 
-To construct the effect plot, we can use `plot_model` from the `sjPlot` package. The advantage of `plot_model` is that recognises labelled data and uses that information for annotating the plots.
+We can use `plot_model` from the `sjPlot` package to construct the effect plot. The advantage of `plot_model` is that it recognises labelled data and uses that information to annotate the plots.
 
 ```{r}
-model_norm %>%
+model_norm |>
   plot_model("pred", terms = ~race|smoke, dot.size = 1.5, title = "")
 ```
 
-When the explanatory variables are categorical, another option is `emmip` from the `emmeans` package. We can include CIs in `emmip` but as estimates are *connected*, the resulting plots look more messy, so I recommend  `emmip` to look at the trace.
+Another option is to use functions from `easystats`, `estimate_means` calculates the mean birth weight for each combination with corresponding confidence intervals and `see` plots them.
 
 ```{r}
-emmip(model_norm, smoke ~ race) %>%
+model_norm |> 
+  estimate_means(by = c("race", "smoke")) |> 
+  plot() |> 
+  gf_labs(
+    x = "", y = "Birth weight (g)", title = "",
+    col = "Smoking status"
+  )
+```
+
+
+When the explanatory variables are categorical, another option is `emmip` from the `emmeans` package. We can include CIs in `emmip` but as estimates are *connected*, the resulting plots look messy, so I recommend  `emmip` to look at the trace.
+
+```{r}
+emmip(model_norm, smoke ~ race) |>
   gf_labs(y = get_label(birthwt$bwt), x = "", col = "Smoking status")
 ```
 
 # Logistic Regression
 
-For logistic regression we are interested in the odds ratios. We will look at the effect of amount of fibre intake on the development of coronary heart disease.
+For logistic regression, we are interested in odds ratios. We will examine the effect of fibre intake on the development of coronary heart disease.
 
 ```{r}
 data(diet, package = "Epi")
-diet <- diet %>%
+diet <- diet |>
   mutate(
     chd = factor(chd, labels = c("No CHD", "CHD"))
-  ) %>%
+  ) |>
   var_labels(
     chd = "Coronary Heart Disease",
     fibre = "Fibre intake (10 g/day)"
@@ -175,13 +187,13 @@ diet <- diet %>%
 We start with descriptive statistics:
 
 ```{r}
-diet %>% estat(~ fibre|chd) %>%
-  as_hux() %>% theme_pubh()
+diet |> estat(~ fibre|chd) |>
+  as_hux() |> theme_pubh()
 ```
 
 ```{r}
-diet %>% na.omit() %>%
-  copy_labels(diet) %>%
+diet |> na.omit() |>
+  copy_labels(diet) |>
   box_plot(fibre ~ chd)
 ```
 
@@ -194,26 +206,26 @@ model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
 Summary:
 
 ```{r}
-model_binom %>% parameters(exponentiate = TRUE)
+model_binom |> parameters(exponentiate = TRUE)
 ```
 
 ```{r}
-model_binom %>% performance()
+model_binom |> performance()
 ```
 
 Table of coefficients for publication:
 
 ```{r}
-model_binom %>% 
-  tbl_regression(exponentiate = TRUE) %>% 
-  cosm_reg() %>% theme_pubh() %>% 
+model_binom |> 
+  tbl_regression(exponentiate = TRUE) |> 
+  cosm_reg() |> theme_pubh() |> 
   add_footnote(get_r2(model_binom), font_size = 9)
 ```
 
 Effect plot:
 
 ```{r}
-model_binom %>%
+model_binom |>
   plot_model("pred", terms = "fibre [all]", title = "")
 ```
 
@@ -223,12 +235,12 @@ We will look at a matched case-control study on the effect of oestrogen use and 
 
 ```{r}
 data(bdendo, package = "Epi") 
-bdendo <- bdendo %>%
+bdendo <- bdendo |>
   mutate(
     cancer = factor(d, labels = c('Control', 'Case')),
     gall = factor(gall, labels = c("No GBD", "GBD")),
     est = factor(est, labels = c("No oestrogen", "Oestrogen"))
-  ) %>%
+  ) |>
   var_labels(
     cancer = 'Endometrial cancer',
     gall = 'Gall bladder disease',
@@ -239,27 +251,27 @@ bdendo <- bdendo %>%
 We start with descriptive statistics:
 
 ```{r}
-bdendo %>% 
+bdendo |> 
   mutate(
     cancer = relevel(cancer, ref = "Case"),
     gall = relevel(gall, ref = "GBD"),
     est = relevel(est, ref = "Oestrogen")
-  ) %>%
-  copy_labels(bdendo) %>%
-  select(cancer, gall, est) %>% 
+  ) |>
+  copy_labels(bdendo) |>
+  select(cancer, gall, est) |> 
   tbl_strata(
     strata = est,
-    .tbl_fun = ~ .x %>%
+    .tbl_fun = ~ .x |>
       tbl_summary(by = gall)
-  ) %>% 
-  cosm_sum(bold = TRUE, head_label = " ") %>% 
-  theme_pubh(2) %>% 
+  ) |> 
+  cosm_sum(bold = TRUE, head_label = " ") |> 
+  theme_pubh(2) |> 
   set_align(1, everywhere, "center")
 ```
 
 ```{r}
-bdendo %>%
-  gf_percents(~ cancer|gall, fill = ~ est, position = "dodge", alpha = 0.6) %>%
+bdendo |>
+  gf_percents(~ cancer|gall, fill = ~ est, position = "dodge", alpha = 0.6) |>
   gf_labs(
     y = "Percent",
     x = "",
@@ -275,11 +287,11 @@ model_clogit <- clogit(cancer == 'Case' ~ est * gall + strata(set), data = bdend
 ```
 
 ```{r}
-model_clogit %>%
+model_clogit |>
   glm_coef(labels = c("Oestrogen/No oestrogen", "GBD/No GBD",
-                      "Oestrogen:GBD Interaction")) %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh() %>%
+                      "Oestrogen:GBD Interaction")) |>
+  as_hux() |> set_align(everywhere, 2:3, "right") |>
+  theme_pubh() |>
   add_footnote(get_r2(model_clogit), font_size = 9)
 ```
 
@@ -290,7 +302,7 @@ We use data about house satisfaction.
 ```{r message=FALSE}
 #require(MASS, quietly = TRUE)
 data(housing, package = "MASS")
-housing <- housing %>%
+housing <- housing |>
   var_labels(
     Sat = "Satisfaction",
     Infl = "Perceived influence",
@@ -306,36 +318,36 @@ model_ord <- MASS::polr(Sat ~ Infl + Type + Cont, weights = Freq, data = housing
 ```
 
 ```{r}
-model_ord %>% 
-  tbl_regression(exponentiate = TRUE) %>% 
-  cosm_reg() %>% theme_pubh() %>% 
+model_ord |> 
+  tbl_regression(exponentiate = TRUE) |> 
+  cosm_reg() |> theme_pubh() |> 
   add_footnote(get_r2(model_ord), font_size = 9)
 ```
 
 Effect plots:
 
 ```{r}
-model_ord %>%
+model_ord |>
   plot_model(type = "pred", terms = c("Infl", "Cont"), 
-           dot.size = 1, title = "") %>%
+           dot.size = 1, title = "") |>
   gf_theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 ```{r}
-model_ord %>%
+model_ord |>
   plot_model(type = "pred", terms = c("Infl", "Type"), 
-           dot.size = 1, title = "") %>%
+           dot.size = 1, title = "") |>
   gf_theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 ```{r}
-emmip(model_ord, Infl ~ Type |Cont) %>%
+emmip(model_ord, Infl ~ Type |Cont) |>
   gf_labs(x = "Type of rental", col = "Perceived influence")
 ```
 
 # Poisson Regression
 
-For Poisson regression we are interested in incidence rate ratios. We will look at the effect of sex, ethnicity and age group on number of absent days from school in a year.
+For Poisson regression, we are interested in incidence rate ratios. We will examine the effect of sex, ethnicity, and age group on the number of absent days from school in a year.
 
 ```{r}
 data(quine, package = "MASS")
@@ -344,7 +356,7 @@ levels(quine$Sex) <- c("Female", "Male")
 ```
 
 ```{r}
-quine <- quine %>%
+quine <- quine |>
   var_labels(
     Days = "Number of absent days",
     Eth = "Ethnicity",
@@ -355,15 +367,15 @@ quine <- quine %>%
 Descriptive statistics:
 
 ```{r}
-quine %>% 
-  cross_tbl(by = "Eth") %>% 
-  theme_pubh(2) %>% 
+quine |> 
+  cross_tbl(by = "Eth") |> 
+  theme_pubh(2) |> 
   add_footnote("n (%); Median (IQR)", font_size = 9)
 ```
 
 
 ```{r}
-quine %>%
+quine |>
   box_plot(Days ~ Age|Sex, fill = ~ Eth)
 ```
 
@@ -374,51 +386,51 @@ model_pois <- glm(Days ~ Eth + Sex + Age, family = poisson, data = quine)
 ```
 
 ```{r}
-model_pois %>% 
-  tbl_regression(exponentiate = TRUE) %>% 
-  cosm_reg() %>% theme_pubh() %>% 
+model_pois |> 
+  tbl_regression(exponentiate = TRUE) |> 
+  cosm_reg() |> theme_pubh() |> 
   add_footnote(get_r2(model_pois), font_size = 9)
 ```
 
 ```{r}
-model_pois %>% performance()
+model_pois |> performance()
 ```
 
 ## Negative-binomial
 
-The assumption is that the mean is equal than the variance. If that is the case, deviance should be close to the degrees of freedom of the residuals. We can check for overdispersion:
+The assumption is that the mean is equal to the variance. If that is the case, deviance should be close to the degrees of freedom of the residuals. We can check for overdispersion:
 
 ```{r}
-model_pois %>% check_overdispersion()
+model_pois |> check_overdispersion()
 ```
 
-Thus, we have over-dispersion. One option is to use a negative binomial distribution.
+Thus, we have overdispersion. One option is to use a negative binomial distribution.
 
 ```{r}
 model_negbin <- MASS::glm.nb(Days ~ Eth + Sex + Age, data = quine)
 ```
 
 ```{r}
-model_negbin %>% 
-  tbl_regression(exponentiate = TRUE) %>% 
-  cosm_reg() %>% theme_pubh() %>% 
+model_negbin |> 
+  tbl_regression(exponentiate = TRUE) |> 
+  cosm_reg() |> theme_pubh() |> 
   add_footnote(get_r2(model_negbin), font_size = 9)
 ```
 
 ```{r}
-model_negbin %>% performance()
+model_negbin |> performance()
 ```
 
 Effect plot:
 
 ```{r}
-model_negbin %>%
+model_negbin |>
   plot_model(type = "pred", terms = c("Age", "Eth"), 
            dot.size = 1.5, title = "") 
 ```
 
 ```{r}
-emmip(model_negbin, Eth ~ Age|Sex) %>%
+emmip(model_negbin, Eth ~ Age|Sex) |>
   gf_labs(y = "Number of absent days", x = "Age group", col = "Ethnicity")
 ```
 
@@ -433,7 +445,7 @@ multiple(model_negbin, ~ Age|Eth)$df
 We can see the comparison graphically with:
 
 ```{r}
-multiple(model_negbin, ~ Age|Eth)$fig_ci %>%
+multiple(model_negbin, ~ Age|Eth)$fig_ci |>
   gf_labs(x = "IRR")
 ```
 
@@ -444,10 +456,10 @@ We will use an example on the effect of thiotepa versus placebo on the developme
 
 ```{r}
 data(bladder)
-bladder <- bladder %>%
+bladder <- bladder |>
   mutate(times = stop,
          rx = factor(rx, labels=c("Placebo", "Thiotepa"))
-         ) %>%
+         ) |>
   var_labels(times = "Survival time",
              rx = "Treatment")
 ```
@@ -461,24 +473,24 @@ model_surv <- survreg(Surv(times, event) ~ rx, data = bladder)
 Using robust standard errors:
 
 ```{r}
-model_surv %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo", "Scale"), se_rob = TRUE) %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh(1) %>%
+model_surv |>
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo", "Scale"), se_rob = TRUE) |>
+  as_hux() |> set_align(everywhere, 2:3, "right") |>
+  theme_pubh(1) |>
   add_footnote(get_r2(model_surv), font_size = 9)
 ```
 
-In this example the scale parameter is not statistically different from one, meaning hazard is constant and thus, we can use the exponential distribution:
+In this example, the scale parameter is not statistically different from one, meaning the hazard is constant, and thus, we can use the exponential distribution:
 
 ```{r}
 model_exp <- survreg(Surv(times, event) ~ rx, data = bladder, dist = "exponential")
 ```
 
 ```{r}
-model_exp %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo"), se_rob = TRUE) %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh() %>%
+model_exp |>
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo"), se_rob = TRUE) |>
+  as_hux() |> set_align(everywhere, 2:3, "right") |>
+  theme_pubh() |>
   add_footnote(get_r2(model_exp), font_size = 9)
 ```
 
@@ -487,17 +499,17 @@ model_exp %>%
 Using naive standard errors:
 
 ```{r}
-model_exp %>%
-  glm_coef(labels = c("Treatment: Thiotepa/Placebo")) %>%
-  as_hux() %>% set_align(everywhere, 2:3, "right") %>%
-  theme_pubh() %>%
+model_exp |>
+  glm_coef(labels = c("Treatment: Thiotepa/Placebo")) |>
+  as_hux() |> set_align(everywhere, 2:3, "right") |>
+  theme_pubh() |>
   add_footnote(get_r2(model_exp), font_size = 9)
 ```
 
 
 ```{r}
-model_exp %>%
-  plot_model(type = "pred", terms = ~ rx, dot.size = 1.5, title = "") %>%
+model_exp |>
+  plot_model(type = "pred", terms = ~ rx, dot.size = 1.5, title = "") |>
   gf_labs(y = "Survival time", x = "Treatment", title = "")
 ```
 
@@ -509,9 +521,9 @@ model_cox <-  coxph(Surv(times, event) ~ rx, data = bladder)
 ```
 
 ```{r}
-model_cox %>% 
-  tbl_regression(exponentiate = TRUE) %>% 
-  cosm_reg() %>% theme_pubh() %>% 
+model_cox |> 
+  tbl_regression(exponentiate = TRUE) |> 
+  cosm_reg() |> theme_pubh() |> 
   add_footnote(get_r2(model_cox), font_size = 9)
 ```
 

@@ -16,7 +16,6 @@ importFrom("huxtable", "as_hux", "set_align", "insert_row", "merge_cells",
            "set_top_border", "set_bottom_border", "final", "style_header_rows",
            "set_top_padding", "set_bottom_padding")
 importFrom("sjmisc", "round_num")
-importFrom("magrittr", "%>%")
 importFrom("dplyr", "select")
 importFrom("sjlabelled", "get_label", "term_labels")
 importFrom("tidyselect",  "matches", "vars_select", "all_of")

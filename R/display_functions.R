@@ -21,11 +21,11 @@ round_pval <- function(pval) {
 #' require(sjlabelled, quietly = TRUE)
 #'
 #' data(birthwt, package = "MASS")
-#' birthwt <- birthwt %>%
+#' birthwt <- birthwt |>
 #'   mutate(
 #'     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
 #'     race = factor(race, labels = c("White", "African American", "Other"))
-#'   ) %>%
+#'   ) |>
 #'   var_labels(
 #'     bwt = "Birth weight (g)",
 #'     smoke = "Smoking status",
@@ -38,7 +38,7 @@ round_pval <- function(pval) {
 #'
 #' model_int <- lm(formula = bwt ~ smoke * race, data = birthwt)
 #'
-#' model_int %>%
+#' model_int |>
 #'   glm_coef(labels = c(
 #'     model_labels(model_int),
 #'     "Smoker: African American",
@@ -85,11 +85,11 @@ model_labels <- function(model, intercept = TRUE) {
 #'
 #' ## Continuous outcome.
 #' data(birthwt, package = "MASS")
-#' birthwt <- birthwt %>%
+#' birthwt <- birthwt |>
 #'   mutate(
 #'     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
 #'     race = factor(race, labels = c("White", "African American", "Other"))
-#'   ) %>%
+#'   ) |>
 #'   var_labels(
 #'     bwt = "Birth weight (g)",
 #'     smoke = "Smoking status",
@@ -103,10 +103,10 @@ model_labels <- function(model, intercept = TRUE) {
 #' ## Logistic regression.
 #' data(diet, package = "Epi")
 #' model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
-#' model_binom %>%
+#' model_binom |>
 #'   glm_coef(labels = c("Constant", "Fibre intake (g/day)"))
 #'
-#' model_binom %>%
+#' model_binom |>
 #'   glm_coef(labels = c("Constant", "Fibre intake (g/day)"), type = "ext")
 #' @export
 glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = FALSE,
@@ -600,11 +600,11 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = FA
 #' require(sjlabelled, quietly = TRUE)
 #'
 #' data(birthwt, package = "MASS")
-#' birthwt <- birthwt %>%
+#' birthwt <- birthwt |>
 #'   mutate(
 #'     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
 #'     race = factor(race, labels = c("White", "African American", "Other"))
-#'   ) %>%
+#'   ) |>
 #'   var_labels(
 #'     bwt = "Birth weight (g)",
 #'     smoke = "Smoking status",
@@ -613,11 +613,11 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = FA
 #'
 #' model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 #'
-#' model_norm %>%
-#'   glm_coef(labels = model_labels(model_norm)) %>%
-#'   as_hux() %>%
-#'   set_align(everywhere, 2:3, "right") %>%
-#'   theme_pubh() %>%
+#' model_norm |>
+#'   glm_coef(labels = model_labels(model_norm)) |>
+#'   as_hux() |>
+#'   set_align(everywhere, 2:3, "right") |>
+#'   theme_pubh() |>
 #'   add_footnote(get_r2(model_norm), font_size = 9)
 #' @export
 get_r2 <- function(model, ...) {
@@ -625,21 +625,21 @@ get_r2 <- function(model, ...) {
   if (class(model)[1] == "lmerMod") {
     res <- paste(
       "Conditional R2 =",
-      r2(model, ...)[[1]] %>% round(3),
+      r2(model, ...)[[1]] |> round(3),
       "\n",
       "Marginal R2 =",
-      r2(model, ...)[[2]] %>% round(3)
+      r2(model, ...)[[2]] |> round(3)
     )
   } else if (class(model)[1] == "lme") {
     res <- paste(
       "Marginal R2 =",
-      r2(model, ...)[[2]] %>% round(3)
+      r2(model, ...)[[2]] |> round(3)
     )
   } else {
     res <- paste(
       names(r2(model, ...)[[1]]),
       "=",
-      r2(model, ...)[[1]] %>% round(3)
+      r2(model, ...)[[1]] |> round(3)
     )
   }
   res

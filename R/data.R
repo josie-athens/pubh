@@ -16,8 +16,8 @@
 #' require(dplyr, quietly = TRUE)
 #' data(Brenner)
 #'
-#' Brenner %>%
-#'   select(infected, ulcer) %>%
+#' Brenner |>
+#'   select(infected, ulcer) |>
 #'   cross_tbl(by = "infected")
 #'
 #' contingency(infected ~ ulcer, data = Brenner, method = "cross.sectional")
@@ -39,8 +39,8 @@
 #' require(dplyr, quietly = TRUE)
 #' data(Roberts)
 #'
-#' Roberts %>%
-#'   select(survived, emo) %>%
+#' Roberts |>
+#'   select(survived, emo) |>
 #'   cross_tbl(by = "survived")
 "Roberts"
 
@@ -59,8 +59,8 @@
 #' require(dplyr, quietly = TRUE)
 #' data(Macmahon)
 #'
-#' Macmahon %>%
-#'   select(cancer, age) %>%
+#' Macmahon |>
+#'   select(cancer, age) |>
 #'   cross_tbl(by = "cancer")
 "Macmahon"
 
@@ -80,8 +80,8 @@
 #' require(dplyr, quietly = TRUE)
 #' data(Sandler)
 #'
-#' Sandler %>%
-#'   select(cancer, passive) %>%
+#' Sandler |>
+#'   select(cancer, passive) |>
 #'   cross_tbl(by = "cancer")
 #'
 #' mhor(cancer ~ smoke / passive, data = Sandler)
@@ -105,13 +105,13 @@
 #' require(dplyr, quietly = TRUE)
 #' data(Vanderpump)
 #'
-#' Vanderpump %>%
-#'   select(vstatus, agegrp, smoker) %>%
+#' Vanderpump |>
+#'   select(vstatus, agegrp, smoker) |>
 #'   tbl_strata(
 #'     strata = smoker,
-#'     .tbl_fun = ~ .x %>%
+#'     .tbl_fun = ~ .x |>
 #'       tbl_summary(by = agegrp)
-#'   ) %>%
+#'   ) |>
 #'   cosm_sum(bold = TRUE, head_label = " ")
 #'
 #' mhor(vstatus ~ agegrp / smoker, data = Vanderpump)
@@ -137,9 +137,9 @@
 #' require(dplyr, quietly = TRUE)
 #' data(Rothman)
 #'
-#' Rothman %>%
-#'   select(stroke, oc, ht) %>%
-#'   tbl_summary() %>%
+#' Rothman |>
+#'   select(stroke, oc, ht) |>
+#'   tbl_summary() |>
 #'   cosm_sum()
 #'
 #' mhor(stroke ~ ht / oc, data = Rothman)
@@ -161,8 +161,8 @@
 #' require(sjlabelled, quietly = TRUE)
 #' Rothman$join <- set_label(Rothman$join, label = "Exposure")
 #'
-#' Rothman %>%
-#'   select(stroke, join) %>%
+#' Rothman |>
+#'   select(stroke, join) |>
 #'   cross_tbl(by = "stroke")
 #'
 #' model2 <- glm(stroke ~ join, data = Rothman, family = binomial)
@@ -187,17 +187,17 @@
 #' require(dplyr, quietly = TRUE)
 #' require(sjlabelled, quietly = TRUE)
 #'
-#' Hodgkin <- Hodgkin %>%
+#' Hodgkin <- Hodgkin |>
 #'   mutate(
 #'     Ratio = CD4 / CD8
-#'   ) %>%
+#'   ) |>
 #'   var_labels(
 #'     Ratio = "CD4+ / CD8+ T-cells"
 #'   )
 #'
 #' estat(~ Ratio | Group, data = Hodgkin)
 #'
-#' Hodgkin %>%
+#' Hodgkin |>
 #'   qq_plot(~ Ratio | Group)
 #'
 #' Hodgkin$Ratio <- Hodgkin$CD4 / Hodgkin$CD8
@@ -228,8 +228,8 @@
 #' require(dplyr, quietly = TRUE)
 #' data(Bernard)
 #'
-#' Bernard %>%
-#'   select(fate, treat) %>%
+#' Bernard |>
+#'   select(fate, treat) |>
 #'   cross_tbl(by = "fate")
 #'
 #' contingency(fate ~ treat, data = Bernard)
@@ -249,7 +249,7 @@
 #' @examples
 #' data(Tuzson)
 #'
-#' Tuzson %>%
+#' Tuzson |>
 #'   gf_point(flexion ~ extension)
 #'
 #' cor.test(~ flexion + extension, data = Tuzson)
@@ -270,9 +270,9 @@
 #' in predominantly European middle-aged New Zealanders: findings from a nationwide 1989 survey. New Zealand
 #' Med J 125: 60-69.
 #' @examples
-#' Sharples %>%
-#'   bland_altman(srweight ~ weight, transform = TRUE) %>%
-#'   gf_labs(x = "Mean of weights (kg)", y = "Measured weight / Self-reported weight") %>%
+#' Sharples |>
+#'   bland_altman(srweight ~ weight, transform = TRUE) |>
+#'   gf_labs(x = "Mean of weights (kg)", y = "Measured weight / Self-reported weight") |>
 #'   gf_theme(theme = sjPlot::theme_sjplot2(base_size = 9))
 "Sharples"
 
@@ -292,7 +292,7 @@
 #' @examples
 #' data(Fentress)
 #'
-#' Fentress %>%
+#' Fentress |>
 #'   strip_error(pain ~ group)
 "Fentress"
 
@@ -309,8 +309,8 @@
 #' @examples
 #' data(Kirkwood)
 #'
-#' Kirkwood %>%
-#'   gf_point(volume ~ weight) %>%
+#' Kirkwood |>
+#'   gf_point(volume ~ weight) |>
 #'   gf_lm(col = "indianred3", interval = "confidence", fill = "indianred3")
 "Kirkwood"
 
@@ -335,8 +335,8 @@
 #' require(dplyr, quietly = TRUE)
 #' data(Oncho)
 #'
-#' Oncho %>%
-#'   select(mf, agegrp) %>%
+#' Oncho |>
+#'   select(mf, agegrp) |>
 #'   cross_tbl(by = "mf")
 "Oncho"
 

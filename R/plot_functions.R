@@ -10,7 +10,7 @@
 #' @examples
 #' data(kfm, package = "ISwR")
 #' require(sjlabelled, quietly = TRUE)
-#' kfm <- kfm %>%
+#' kfm <- kfm |>
 #'   var_labels(
 #'     dl.milk = "Breast-milk intake (dl/day)",
 #'     sex = "Sex",
@@ -20,14 +20,14 @@
 #'     mat.height = "Maternal height (cm)"
 #'   )
 #'
-#' kfm %>%
-#'   gf_point(weight ~ dl.milk) %>%
-#'   gf_lm(col = 2, interval = "confidence", col = 2) %>%
+#' kfm |>
+#'   gf_point(weight ~ dl.milk) |>
+#'   gf_lm(col = 2, interval = "confidence", col = 2) |>
 #'   axis_labs()
 #'
-#' kfm %>%
-#'   box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) %>%
-#'   axis_labs() %>%
+#' kfm |>
+#'   box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) |>
+#'   axis_labs() |>
 #'   gf_star(x1 = 1, y1 = 10.9, x2 = 2, y2 = 11, y3 = 11.2)
 #' @export
 axis_labs <- function(object) {
@@ -42,7 +42,7 @@ axis_labs <- function(object) {
   xl <- ifelse(is.null(sjlabelled::get_label(exposure)), x,
     sjlabelled::get_label(exposure)
   )
-  object %>%
+  object |>
     gf_labs(x = xl, y = yl)
 }
 
@@ -67,7 +67,7 @@ axis_labs <- function(object) {
 #' @examples
 #' data(kfm, package = "ISwR")
 #' require(sjlabelled, quietly = TRUE)
-#' kfm <- kfm %>%
+#' kfm <- kfm |>
 #'   var_labels(
 #'     dl.milk = "Breast-milk intake (dl/day)",
 #'     sex = "Sex",
@@ -77,31 +77,31 @@ axis_labs <- function(object) {
 #'     mat.height = "Maternal height (cm)"
 #'   )
 #'
-#' kfm %>%
-#'   box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) %>%
+#' kfm |>
+#'   box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) |>
 #'   gf_star(x1 = 1, y1 = 10.9, x2 = 2, y2 = 11, y3 = 11.2)
 #'
-#' kfm %>%
-#'   box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) %>%
+#' kfm |>
+#'   box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) |>
 #'   gf_star(1, 10.9, 2, 11, 11.4, legend = "p = 0.035", size = 2.5)
 #'
 #' data(energy, package = "ISwR")
-#' energy <- energy %>%
+#' energy <- energy |>
 #'   var_labels(
 #'     expend = "Energy expenditure (MJ/day)",
 #'     stature = "Stature"
 #'   )
 #'
-#' energy %>%
-#'   strip_error(expend ~ stature, col = "red") %>%
+#' energy |>
+#'   strip_error(expend ~ stature, col = "red") |>
 #'   gf_star(1, 13, 2, 13.2, 13.4, "**")
 #' @export
 gf_star <- function(fig, x1, y1, x2, y2, y3, legend = "*", ...) {
   dt <- data.frame(x1, y1, x2, y2, mid = mean(c(x1, x2)), y3)
-  fig %>%
-    gf_segment(y2 + y2 ~ x1 + x2, data = dt, inherit = FALSE) %>%
-    gf_segment(y1 + y2 ~ x1 + x1, data = dt, inherit = FALSE) %>%
-    gf_segment(y1 + y2 ~ x2 + x2, data = dt, inherit = FALSE) %>%
+  fig |>
+    gf_segment(y2 + y2 ~ x1 + x2, data = dt, inherit = FALSE) |>
+    gf_segment(y1 + y2 ~ x1 + x1, data = dt, inherit = FALSE) |>
+    gf_segment(y1 + y2 ~ x2 + x2, data = dt, inherit = FALSE) |>
     gf_text(y3 ~ mid, data = dt, label = legend, inherit = FALSE, ...)
 }
 
@@ -129,10 +129,10 @@ gf_star <- function(fig, x1, y1, x2, y2, y3, legend = "*", ...) {
 #' model_1 <- aov(bwt ~ race, data = birthwt)
 #' multiple(model_1, ~race)$df
 #'
-#' multiple(model_1, ~race)$fig_ci %>%
+#' multiple(model_1, ~race)$fig_ci |>
 #'   gf_labs(y = "Race", x = "Difference in birth weights (g)")
 #'
-#' multiple(model_1, ~race)$fig_pval %>%
+#' multiple(model_1, ~race)$fig_pval |>
 #'   gf_labs(y = "Race")
 #' @export
 multiple <- function(model, formula, adjust = "mvt", type = "response",
@@ -142,9 +142,9 @@ multiple <- function(model, formula, adjust = "mvt", type = "response",
   emm_ci <- as.data.frame(confint(pairs(term_emm, adjust = adjust, reverse = reverse), level = level))
   log10_pval <- log10(emm_df[["p.value"]])
   emm_df$p.value <- round_pval(emm_df[["p.value"]])
-  emm_df <- emm_df %>%
+  emm_df <- emm_df |>
     dplyr::select(-df)
-  emm_ci <- emm_ci %>%
+  emm_ci <- emm_ci |>
     dplyr::select(-df)
   vars <- all.vars(formula)
   n <- length(vars)
@@ -160,24 +160,24 @@ multiple <- function(model, formula, adjust = "mvt", type = "response",
   if (n == 1) {
     names(emm_plot)[2] <- "Effect"
     if (names(emm_df)[2] == "estimate") {
-      fig_ci <- emm_plot %>%
-        gf_pointrange(contrast ~ Effect + lower.CL + upper.CL, col = ~log10_pval, ylab = " ") %>%
+      fig_ci <- emm_plot |>
+        gf_pointrange(contrast ~ Effect + lower.CL + upper.CL, col = ~log10_pval, ylab = " ") |>
         gf_vline(xintercept = ~0, lty = 2, col = "indianred")
     } else {
-      fig_ci <- emm_plot %>%
-        gf_pointrange(contrast ~ Effect + lower.CL + upper.CL, col = ~log10_pval, ylab = " ") %>%
+      fig_ci <- emm_plot |>
+        gf_pointrange(contrast ~ Effect + lower.CL + upper.CL, col = ~log10_pval, ylab = " ") |>
         gf_vline(xintercept = ~1, lty = 2, col = "indianred")
     }
   } else {
     names(emm_plot)[3] <- "Effect"
     names(emm_plot)[2] <- "confounder"
     if (names(emm_df)[3] == "estimate") {
-      fig_ci <- emm_plot %>%
-        gf_pointrange(contrast ~ Effect + lower.CL + upper.CL | confounder, col = ~log10_pval, ylab = " ") %>%
+      fig_ci <- emm_plot |>
+        gf_pointrange(contrast ~ Effect + lower.CL + upper.CL | confounder, col = ~log10_pval, ylab = " ") |>
         gf_vline(xintercept = ~0, lty = 2, col = "indianred")
     } else {
-      fig_ci <- emm_plot %>%
-        gf_pointrange(contrast ~ Effect + lower.CL + upper.CL | confounder, col = ~log10_pval, ylab = " ") %>%
+      fig_ci <- emm_plot |>
+        gf_pointrange(contrast ~ Effect + lower.CL + upper.CL | confounder, col = ~log10_pval, ylab = " ") |>
         gf_vline(xintercept = ~1, lty = 2, col = "indianred")
     }
   }
@@ -203,23 +203,23 @@ multiple <- function(model, formula, adjust = "mvt", type = "response",
 #' @examples
 #' data(wright, package = "ISwR")
 #'
-#' wright %>%
+#' wright |>
 #'   bland_altman(mini.wright ~ std.wright,
 #'     pch = 16,
 #'     ylab = "Large-mini expiratory flow rate (l/min)",
 #'     xlab = "Mean expiratory flow rate (l/min)"
-#'   ) %>%
+#'   ) |>
 #'   gf_labs(
 #'     y = "Large-mini expiratory flow rate (l/min)",
 #'     x = "Mean expiratory flow rate (l/min)"
-#'   ) %>%
+#'   ) |>
 #'   gf_theme(theme = sjPlot::theme_sjplot2(base_size = 9))
 #'
 #' data(Sharples)
 #'
-#' Sharples %>%
-#'   bland_altman(srweight ~ weight, transform = TRUE) %>%
-#'   gf_labs(x = "Mean of weights (kg)", y = "Measured weight / Self-reported weight") %>%
+#' Sharples |>
+#'   bland_altman(srweight ~ weight, transform = TRUE) |>
+#'   gf_labs(x = "Mean of weights (kg)", y = "Measured weight / Self-reported weight") |>
 #'   gf_theme(theme = sjPlot::theme_sjplot2(base_size = 9))
 #' @export
 bland_altman <- function(object = NULL, formula = NULL, data = NULL,
@@ -259,17 +259,17 @@ bland_altman <- function(object = NULL, formula = NULL, data = NULL,
     gf_point(Ratio ~ Average,
       data = df, pch = pch,
       size = size, col = col, ...
-    ) %>%
-      gf_hline(yintercept = ~ mean(Ratio), col = "indianred3") %>%
-      gf_hline(yintercept = ~lw2, col = "indianred3", lty = 2) %>%
+    ) |>
+      gf_hline(yintercept = ~ mean(Ratio), col = "indianred3") |>
+      gf_hline(yintercept = ~lw2, col = "indianred3", lty = 2) |>
       gf_hline(yintercept = ~up2, col = "indianred3", lty = 2)
   } else {
     gf_point(Difference ~ Average,
       data = df, pch = pch,
       size = size, col = col, ...
-    ) %>%
-      gf_hline(yintercept = ~ mean(Difference), col = "indianred3") %>%
-      gf_hline(yintercept = ~lw1, col = "indianred3", lty = 2) %>%
+    ) |>
+      gf_hline(yintercept = ~ mean(Difference), col = "indianred3") |>
+      gf_hline(yintercept = ~lw1, col = "indianred3", lty = 2) |>
       gf_hline(yintercept = ~up1, col = "indianred3", lty = 2)
   }
 }
@@ -289,7 +289,7 @@ bland_altman <- function(object = NULL, formula = NULL, data = NULL,
 #' @examples
 #' data(kfm, package = "ISwR")
 #' require(sjlabelled, quietly = TRUE)
-#' kfm <- kfm %>%
+#' kfm <- kfm |>
 #'   var_labels(
 #'     dl.milk = "Breast-milk intake (dl/day)",
 #'     sex = "Sex",
@@ -299,13 +299,13 @@ bland_altman <- function(object = NULL, formula = NULL, data = NULL,
 #'     mat.height = "Maternal height (cm)"
 #'   )
 #'
-#' kfm %>%
+#' kfm |>
 #'   box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8)
 #'
 #' t.test(dl.milk ~ sex, data = kfm)
 #'
-#' kfm %>%
-#'   box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) %>%
+#' kfm |>
+#'   box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) |>
 #'   gf_star(1, 10.9, 2, 11, 11.4, legend = "p = 0.035", size = 2.5)
 #' @export
 box_plot <- function(object = NULL, formula = NULL, data = NULL,
@@ -345,7 +345,7 @@ box_plot <- function(object = NULL, formula = NULL, data = NULL,
 #' @examples
 #' data(kfm, package = "ISwR")
 #' require(sjlabelled, quietly = TRUE)
-#' kfm <- kfm %>%
+#' kfm <- kfm |>
 #'   var_labels(
 #'     dl.milk = "Breast-milk intake (dl/day)",
 #'     sex = "Sex",
@@ -355,7 +355,7 @@ box_plot <- function(object = NULL, formula = NULL, data = NULL,
 #'     mat.height = "Maternal height (cm)"
 #'   )
 #'
-#' kfm %>%
+#' kfm |>
 #'   qq_plot(~dl.milk)
 #'
 #' qq_plot(~ dl.milk | sex, data = kfm)
@@ -376,7 +376,7 @@ qq_plot <- function(object = NULL, formula = NULL, data = NULL, pch = 20,
   gf_qq(formula,
     data = data, pch = pch, xlab = "Theoretical quantiles",
     ylab = yl, ...
-  ) %>%
+  ) |>
     gf_qqline(col = col, linetype = 1, lwd = 1)
 }
 
@@ -396,20 +396,20 @@ qq_plot <- function(object = NULL, formula = NULL, data = NULL, pch = 20,
 #' require(dplyr, quietly = TRUE)
 #' require(sjlabelled, quietly = TRUE)
 #' data(birthwt, package = "MASS")
-#' birthwt <- birthwt %>%
+#' birthwt <- birthwt |>
 #'   mutate(
 #'     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
 #'     Race = factor(race > 1, labels = c("White", "Non-white"))
-#'   ) %>%
+#'   ) |>
 #'   var_labels(
 #'     bwt = "Birth weight (g)",
 #'     smoke = "Smoking status"
 #'   )
 #'
-#' birthwt %>%
+#' birthwt |>
 #'   hist_norm(~bwt, alpha = 0.7, bins = 20, fill = "cadetblue")
 #'
-#' birthwt %>%
+#' birthwt |>
 #'   hist_norm(~ bwt | smoke, alpha = 0.7, bins = 20, fill = "cadetblue")
 #' @export
 hist_norm <- function(object = NULL, formula = NULL, data = NULL,
@@ -429,7 +429,7 @@ hist_norm <- function(object = NULL, formula = NULL, data = NULL,
   gf_dhistogram(formula,
     data = data, fill = fill, bins = bins,
     alpha = alpha, ylab = "Density", color = color, ...
-  ) %>%
+  ) |>
     gf_fitdistr(lwd = 0.7)
 }
 #' Strip plots with error bars.
@@ -448,46 +448,46 @@ hist_norm <- function(object = NULL, formula = NULL, data = NULL,
 #' @examples
 #' data(energy, package = "ISwR")
 #' require(sjlabelled, quietly = TRUE)
-#' energy <- energy %>%
+#' energy <- energy |>
 #'   var_labels(
 #'     expend = "Energy expenditure (MJ/day)",
 #'     stature = "Stature"
 #'   )
 #'
-#' energy %>%
+#' energy |>
 #'   strip_error(expend ~ stature, col = "red")
 #'
 #' t.test(expend ~ stature, data = energy)
 #'
 #' ## Adding an horizontal line to show significant difference:
-#' energy %>%
-#'   strip_error(expend ~ stature, col = "red") %>%
+#' energy |>
+#'   strip_error(expend ~ stature, col = "red") |>
 #'   gf_star(1, 13, 2, 13.2, 13.4, "**")
 #'
 #' data(birthwt, package = "MASS")
 #' require(dplyr, quietly = TRUE)
-#' birthwt <- birthwt %>%
+#' birthwt <- birthwt |>
 #'   mutate(
 #'     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
 #'     Race = factor(race > 1, labels = c("White", "Non-white"))
-#'   ) %>%
+#'   ) |>
 #'   var_labels(
 #'     bwt = "Birth weight (g)",
 #'     smoke = "Smoking status"
 #'   )
 #'
-#' birthwt %>%
+#' birthwt |>
 #'   strip_error(bwt ~ smoke | Race, col = "darksalmon")
 #'
-#' birthwt %>%
-#'   strip_error(bwt ~ smoke, col = ~Race) %>%
+#' birthwt |>
+#'   strip_error(bwt ~ smoke, col = ~Race) |>
 #'   gf_refine(ggsci::scale_color_jama())
 #'
-#' birthwt %>%
-#'   strip_error(bwt ~ smoke, pch = ~Race, col = ~Race) %>%
+#' birthwt |>
+#'   strip_error(bwt ~ smoke, pch = ~Race, col = ~Race) |>
 #'   gf_refine(ggsci::scale_color_jama())
 #'
-#' birthwt %>%
+#' birthwt |>
 #'   strip_error(bwt ~ smoke | Race)
 #' @export
 strip_error <- function(object = NULL, formula = NULL, data = NULL,
@@ -504,7 +504,7 @@ strip_error <- function(object = NULL, formula = NULL, data = NULL,
     gf_jitter(formula,
       data = data, width = 0.1, height = 0, alpha = alpha,
       pch = pch, size = size, col = col, ...
-    ) %>%
+    ) |>
       gf_summary(fun.data = "mean_cl_boot", geom = "pointrange", fatten = 1)
   } else {
     gf_point(formula,
@@ -514,7 +514,7 @@ strip_error <- function(object = NULL, formula = NULL, data = NULL,
         dodge.width = 0.7,
         jitter.width = 0.1
       ), ...
-    ) %>%
+    ) |>
       gf_summary(
         fun.data = "mean_cl_boot", geom = "pointrange", fatten = 1,
         position = ggplot2::position_dodge(width = 0.7)
@@ -539,23 +539,23 @@ strip_error <- function(object = NULL, formula = NULL, data = NULL,
 #' require(sjlabelled, quietly = TRUE)
 #' data(birthwt, package = "MASS")
 #'
-#' birthwt <- birthwt %>%
+#' birthwt <- birthwt |>
 #'   mutate(
 #'     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
 #'     Race = factor(race > 1, labels = c("White", "Non-white"))
-#'   ) %>%
+#'   ) |>
 #'   var_labels(
 #'     bwt = "Birth weight (g)",
 #'     smoke = "Smoking status"
 #'   )
 #'
-#' birthwt %>%
+#' birthwt |>
 #'   bar_error(bwt ~ smoke, fill = "plum3")
 #'
-#' birthwt %>%
+#' birthwt |>
 #'   bar_error(bwt ~ smoke | Race, fill = "plum3")
 #'
-#' birthwt %>%
+#' birthwt |>
 #'   bar_error(bwt ~ smoke, fill = ~Race)
 #' @export
 bar_error <- function(object = NULL, formula = NULL, data = NULL,
@@ -572,13 +572,13 @@ bar_error <- function(object = NULL, formula = NULL, data = NULL,
     gf_summary(formula,
       fun = "mean", data = data, geom = "bar",
       fill = fill, alpha = alpha, col = col, ...
-    ) %>%
+    ) |>
       gf_summary(fun.data = "mean_cl_boot", geom = "errorbar", width = 0.3)
   } else {
     gf_summary(formula,
       data = data, fill = fill, fun = "mean", geom = "bar",
       alpha = alpha, col = col, position = ggplot2::position_dodge(), ...
-    ) %>%
+    ) |>
       gf_summary(
         fun.data = "mean_cl_boot", geom = "errorbar", width = 0.3,
         position = ggplot2::position_dodge(width = 1)
@@ -600,7 +600,7 @@ bar_error <- function(object = NULL, formula = NULL, data = NULL,
 #' @examples
 #' data(kfm, package = "ISwR")
 #' require(sjlabelled, quietly = TRUE)
-#' kfm <- kfm %>%
+#' kfm <- kfm |>
 #'   var_labels(
 #'     dl.milk = "Breast-milk intake (dl/day)",
 #'     sex = "Sex",
@@ -610,7 +610,7 @@ bar_error <- function(object = NULL, formula = NULL, data = NULL,
 #'     mat.height = "Maternal height (cm)"
 #'   )
 #'
-#' kfm %>%
+#' kfm |>
 #'   gen_bst_df(dl.milk ~ sex)
 #'
 #' data(birthwt, package = "MASS")
@@ -620,7 +620,7 @@ bar_error <- function(object = NULL, formula = NULL, data = NULL,
 #'   Race = factor(race > 1, labels = c("White", "Non-white"))
 #' )
 #'
-#' birthwt <- birthwt %>%
+#' birthwt <- birthwt |>
 #'   var_labels(
 #'     bwt = "Birth weight (g)",
 #'     smoke = "Smoking status"

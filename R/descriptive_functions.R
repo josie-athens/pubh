@@ -176,44 +176,44 @@ stats_quotes <- function(x, data2, digits = 2) {
 #' #' data(Oncho)
 #'
 #' ## A two by two contingency table:
-#' Oncho %>%
-#'   select(mf, area) %>%
-#'   cross_tbl(by = "mf", bold = TRUE) %>%
+#' Oncho |>
+#'   select(mf, area) |>
+#'   cross_tbl(by = "mf", bold = TRUE) |>
 #'   theme_pubh(2)
 #'
 #' ## Reporting prevalence:
-#' Oncho %>%
-#'   select(mf, area) %>%
-#'   cross_tbl(by = "area", bold = TRUE) %>%
+#' Oncho |>
+#'   select(mf, area) |>
+#'   cross_tbl(by = "area", bold = TRUE) |>
 #'   theme_pubh(2)
 #'
 #' ## Descriptive statistics for all variables in the \code{Oncho} data set except \code{id}.
-#' Oncho %>%
-#'   select(-id) %>%
-#'   cross_tbl(by = "mf", bold = TRUE) %>%
+#' Oncho |>
+#'   select(-id) |>
+#'   cross_tbl(by = "mf", bold = TRUE) |>
 #'   theme_pubh(2)
 #' @export
 cross_tbl <- function(data, by, head_label = " ",
                       bold = TRUE, show_total = TRUE, p_val = FALSE,
                       pad = 3, method = 2, ...) {
   if (method == 1) {
-    tbl <- data %>%
+    tbl <- data |>
       gtsummary::tbl_summary(
         by = tidyselect::all_of(by),
         statistic = list(all_continuous() ~ "{mean} ({sd})"),
         ...
-      ) %>%
+      ) |>
       gtsummary::modify_spanning_header(all_stat_cols() ~ paste0(
         "**",
         sjlabelled::get_label(data[[by]]),
         "**"
       ))
   } else {
-    tbl <- data %>%
+    tbl <- data |>
       gtsummary::tbl_summary(
         by = tidyselect::all_of(by),
         ...
-      ) %>%
+      ) |>
       gtsummary::modify_spanning_header(all_stat_cols() ~ paste0(
         "**",
         sjlabelled::get_label(data[[by]]),
@@ -224,31 +224,31 @@ cross_tbl <- function(data, by, head_label = " ",
   if (show_total == FALSE) {
     tbl <- tbl
   } else {
-    tbl <- tbl %>%
+    tbl <- tbl |>
       gtsummary::add_overall(last = TRUE)
   }
 
-  tbl <- tbl %>%
-    gtsummary::modify_header(label ~ head_label) %>%
+  tbl <- tbl |>
+    gtsummary::modify_header(label ~ head_label) |>
     gtsummary::modify_footnote(everything() ~ NA)
 
   if (bold == FALSE) {
     tbl <- tbl
   } else {
-    tbl <- tbl %>% gtsummary::bold_labels()
+    tbl <- tbl |> gtsummary::bold_labels()
   }
 
   if (p_val == TRUE) {
-    tbl <- tbl %>% gtsummary::add_p()
+    tbl <- tbl |> gtsummary::add_p()
   } else {
     tbl <- tbl
   }
 
-  tbl <- tbl %>%
-    gtsummary::as_hux_table() %>%
-    huxtable::set_align(everywhere, -1, "right") %>%
-    huxtable::set_top_padding(pad) %>%
-    huxtable::set_bottom_padding(pad) %>%
+  tbl <- tbl |>
+    gtsummary::as_hux_table() |>
+    huxtable::set_align(everywhere, -1, "right") |>
+    huxtable::set_top_padding(pad) |>
+    huxtable::set_bottom_padding(pad) |>
     huxtable::set_align(1, everywhere, "center")
 
   tbl
@@ -268,7 +268,7 @@ cross_tbl <- function(data, by, head_label = " ",
 #' @examples
 #' data(kfm, package = "ISwR")
 #' require(sjlabelled, quietly = TRUE)
-#' kfm <- kfm %>%
+#' kfm <- kfm |>
 #'   var_labels(
 #'     dl.milk = "Breast-milk intake (dl/day)",
 #'     sex = "Sex",
@@ -278,12 +278,12 @@ cross_tbl <- function(data, by, head_label = " ",
 #'     mat.height = "Maternal height (cm)"
 #'   )
 #'
-#' kfm %>%
+#' kfm |>
 #'   estat(~dl.milk)
 #'
 #' estat(~ dl.milk | sex, data = kfm)
 #'
-#' kfm %>%
+#' kfm |>
 #'   estat(~ weight | sex)
 #' @export
 estat <- function(object = NULL, formula = NULL, data = NULL, digits = 2, label = NULL) {
