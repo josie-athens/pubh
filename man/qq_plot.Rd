@@ -21,13 +21,13 @@ qq_plot(
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
-\item{pch}{Point character passed to \link{gf_qq}.}
+\item{pch}{Point character passed to \code{\link[ggformula]{gf_qq}}.}
 
-\item{col}{Colour of the reference line, passed to \link{gf_line}.}
+\item{col}{Colour of the reference line, passed to \code{\link[ggformula]{gf_line}}.}
 
 \item{ylab}{Optional character passed as label for the y-axis.}
 
-\item{...}{Further arguments passed to \link{gf_qq}.}
+\item{...}{Further arguments passed to \code{\link[ggformula]{gf_qq}}.}
 }
 \description{
 \code{qq_plot} constructs quantile-quantile plots against the standard normal distribution
@@ -36,7 +36,7 @@ qq_plot(
 \examples{
 data(kfm, package = "ISwR")
 require(sjlabelled, quietly = TRUE)
-kfm <- kfm \%>\%
+kfm <- kfm |>
   var_labels(
     dl.milk = "Breast-milk intake (dl/day)",
     sex = "Sex",
@@ -46,7 +46,7 @@ kfm <- kfm \%>\%
     mat.height = "Maternal height (cm)"
   )
 
-kfm \%>\%
+kfm |>
   qq_plot(~dl.milk)
 
 qq_plot(~ dl.milk | sex, data = kfm)

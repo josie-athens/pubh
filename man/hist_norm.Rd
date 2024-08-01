@@ -30,7 +30,7 @@ hist_norm(
 
 \item{alpha}{Opacity (0 = invisible, 1 = opaque).}
 
-\item{...}{Further arguments passed to \link{gf_dhistogram}.}
+\item{...}{Further arguments passed to \code{\link[ggformula]{gf_dhistogram}}.}
 }
 \description{
 \code{hist_norm} constructs histograms and adds corresponding Normal density curve.
@@ -39,19 +39,19 @@ hist_norm(
 require(dplyr, quietly = TRUE)
 require(sjlabelled, quietly = TRUE)
 data(birthwt, package = "MASS")
-birthwt <- birthwt \%>\%
+birthwt <- birthwt |>
   mutate(
     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
     Race = factor(race > 1, labels = c("White", "Non-white"))
-  ) \%>\%
+  ) |>
   var_labels(
     bwt = "Birth weight (g)",
     smoke = "Smoking status"
   )
 
-birthwt \%>\%
+birthwt |>
   hist_norm(~bwt, alpha = 0.7, bins = 20, fill = "cadetblue")
 
-birthwt \%>\%
+birthwt |>
   hist_norm(~ bwt | smoke, alpha = 0.7, bins = 20, fill = "cadetblue")
 }

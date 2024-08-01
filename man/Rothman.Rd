@@ -32,9 +32,9 @@ been used as an example of join exposure by Rothman for measuring interactions (
 require(dplyr, quietly = TRUE)
 data(Rothman)
 
-Rothman \%>\%
-  select(stroke, oc, ht) \%>\%
-  tbl_summary() \%>\%
+Rothman |>
+  select(stroke, oc, ht) |>
+  tbl_summary() |>
   cosm_sum()
 
 mhor(stroke ~ ht / oc, data = Rothman)
@@ -56,8 +56,8 @@ Rothman$join <- factor(Rothman$join, labels = c(
 require(sjlabelled, quietly = TRUE)
 Rothman$join <- set_label(Rothman$join, label = "Exposure")
 
-Rothman \%>\%
-  select(stroke, join) \%>\%
+Rothman |>
+  select(stroke, join) |>
   cross_tbl(by = "stroke")
 
 model2 <- glm(stroke ~ join, data = Rothman, family = binomial)

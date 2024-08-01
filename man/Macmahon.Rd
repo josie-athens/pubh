@@ -26,8 +26,8 @@ cancer is related to the age that a woman gives childbirth.
 require(dplyr, quietly = TRUE)
 data(Macmahon)
 
-Macmahon \%>\%
-  select(cancer, age) \%>\%
+Macmahon |>
+  select(cancer, age) |>
   cross_tbl(by = "cancer")
 }
 \keyword{datasets}

@@ -27,8 +27,8 @@ respiratory failure. RCT compares active treatment against conventional manageme
 require(dplyr, quietly = TRUE)
 data(Roberts)
 
-Roberts \%>\%
-  select(survived, emo) \%>\%
+Roberts |>
+  select(survived, emo) |>
   cross_tbl(by = "survived")
 }
 \keyword{datasets}

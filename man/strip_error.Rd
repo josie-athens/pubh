@@ -23,7 +23,7 @@ numerical variable and both \code{x} and \code{z} are factors.}
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
-\item{pch}{Point character passed to \code{\link{gf_point}} or \code{\link{gf_jitter}}.}
+\item{pch}{Point character passed to \code{\link[ggformula]{gf_point}} or \code{\link[ggformula]{gf_jitter}}.}
 
 \item{size}{Size of the symbol (\code{pch}) for representing data values.}
 
@@ -31,7 +31,7 @@ numerical variable and both \code{x} and \code{z} are factors.}
 
 \item{col}{A colour or formula used for mapping colour.}
 
-\item{...}{Additional information passed to \code{\link{gf_jitter}} or \code{\link{gf_point}}.}
+\item{...}{Additional information passed to \code{\link[ggformula]{gf_jitter}} or \code{\link[ggformula]{gf_point}}.}
 }
 \description{
 \code{strip_error} constructs strip plots with error bars showing 95% bootstrapped
@@ -40,45 +40,43 @@ confidence intervals around mean values.
 \examples{
 data(energy, package = "ISwR")
 require(sjlabelled, quietly = TRUE)
-energy <- energy \%>\%
+energy <- energy |>
   var_labels(
     expend = "Energy expenditure (MJ/day)",
     stature = "Stature"
   )
 
-energy \%>\%
+energy |>
   strip_error(expend ~ stature, col = "red")
 
 t.test(expend ~ stature, data = energy)
 
 ## Adding an horizontal line to show significant difference:
-energy \%>\%
-  strip_error(expend ~ stature, col = "red") \%>\%
+energy |>
+  strip_error(expend ~ stature, col = "red") |>
   gf_star(1, 13, 2, 13.2, 13.4, "**")
 
 data(birthwt, package = "MASS")
 require(dplyr, quietly = TRUE)
-birthwt <- birthwt \%>\%
+birthwt <- birthwt |>
   mutate(
     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
     Race = factor(race > 1, labels = c("White", "Non-white"))
-  ) \%>\%
+  ) |>
   var_labels(
     bwt = "Birth weight (g)",
     smoke = "Smoking status"
   )
 
-birthwt \%>\%
+birthwt |>
   strip_error(bwt ~ smoke | Race, col = "darksalmon")
 
-birthwt \%>\%
-  strip_error(bwt ~ smoke, col = ~Race) \%>\%
-  gf_refine(ggsci::scale_color_jama())
+birthwt |>
+  strip_error(bwt ~ smoke, col = ~Race)
 
-birthwt \%>\%
-  strip_error(bwt ~ smoke, pch = ~Race, col = ~Race) \%>\%
-  gf_refine(ggsci::scale_color_jama())
+birthwt |>
+  strip_error(bwt ~ smoke, pch = ~Race, col = ~Race)
 
-birthwt \%>\%
+birthwt |>
   strip_error(bwt ~ smoke | Race)
 }

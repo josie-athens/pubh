@@ -47,12 +47,12 @@ contingency(status ~ alcohol, data = cancer, method = "case.control")
 data(Oncho)
 require(dplyr, quietly = TRUE)
 
-Oncho \%>\%
-  select(mf, area) \%>\%
-  cross_tbl(by = "mf") \%>\%
+Oncho |>
+  select(mf, area) |>
+  cross_tbl(by = "mf") |>
   theme_pubh(2)
 
-Oncho \%>\%
+Oncho |>
   contingency(mf ~ area)
 }
 \seealso{

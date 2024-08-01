@@ -31,13 +31,13 @@ Data represents women participating in a health survey in Whickham, England in 1
 require(dplyr, quietly = TRUE)
 data(Vanderpump)
 
-Vanderpump \%>\%
-  select(vstatus, agegrp, smoker) \%>\%
+Vanderpump |>
+  select(vstatus, agegrp, smoker) |>
   tbl_strata(
     strata = smoker,
-    .tbl_fun = ~ .x \%>\%
+    .tbl_fun = ~ .x |>
       tbl_summary(by = agegrp)
-  ) \%>\%
+  ) |>
   cosm_sum(bold = TRUE, head_label = " ")
 
 mhor(vstatus ~ agegrp / smoker, data = Vanderpump)

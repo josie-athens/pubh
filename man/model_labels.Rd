@@ -24,11 +24,11 @@ require(dplyr, quietly = TRUE)
 require(sjlabelled, quietly = TRUE)
 
 data(birthwt, package = "MASS")
-birthwt <- birthwt \%>\%
+birthwt <- birthwt |>
   mutate(
     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
     race = factor(race, labels = c("White", "African American", "Other"))
-  ) \%>\%
+  ) |>
   var_labels(
     bwt = "Birth weight (g)",
     smoke = "Smoking status",
@@ -41,7 +41,7 @@ glm_coef(model_norm, labels = model_labels(model_norm))
 
 model_int <- lm(formula = bwt ~ smoke * race, data = birthwt)
 
-model_int \%>\%
+model_int |>
   glm_coef(labels = c(
     model_labels(model_int),
     "Smoker: African American",

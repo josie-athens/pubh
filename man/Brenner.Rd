@@ -27,8 +27,8 @@ according to parental history of duodenal or gastric ulcer.
 require(dplyr, quietly = TRUE)
 data(Brenner)
 
-Brenner \%>\%
-  select(infected, ulcer) \%>\%
+Brenner |>
+  select(infected, ulcer) |>
   cross_tbl(by = "infected")
 
 contingency(infected ~ ulcer, data = Brenner, method = "cross.sectional")

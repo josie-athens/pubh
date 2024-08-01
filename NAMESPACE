@@ -25,6 +25,13 @@ importFrom("lmtest", "coeftest")
 importFrom("gtsummary", "as_hux_table", "bold_labels", "modify_header",
            "modify_footnote", "add_global_p", "modify_spanning_header",
            "tbl_summary", "add_overall", "add_p")
+importFrom("jtools", "summ")
+importFrom("survival", "strata")
+importFrom("performance", "r2")
+importFrom("Epi", "ci.lin")
+importFrom("car", "Anova")
+importFrom("epitools", "oddsratio", "epitable")
+importFrom("epiR", "epi.tests", "epi.2by2")
 
 export(axis_labs)
 export(bar_error)

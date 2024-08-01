@@ -58,11 +58,11 @@ require(sjlabelled, quietly = TRUE)
 
 ## Continuous outcome.
 data(birthwt, package = "MASS")
-birthwt <- birthwt \%>\%
+birthwt <- birthwt |>
   mutate(
     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
     race = factor(race, labels = c("White", "African American", "Other"))
-  ) \%>\%
+  ) |>
   var_labels(
     bwt = "Birth weight (g)",
     smoke = "Smoking status",
@@ -76,9 +76,9 @@ glm_coef(model_norm, labels = model_labels(model_norm))
 ## Logistic regression.
 data(diet, package = "Epi")
 model_binom <- glm(chd ~ fibre, data = diet, family = binomial)
-model_binom \%>\%
+model_binom |>
   glm_coef(labels = c("Constant", "Fibre intake (g/day)"))
 
-model_binom \%>\%
+model_binom |>
   glm_coef(labels = c("Constant", "Fibre intake (g/day)"), type = "ext")
 }

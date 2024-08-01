@@ -26,27 +26,24 @@ pooled odds ratio. The test for effect modification (test for interaction) is al
 data(oswego, package = "epitools")
 require(dplyr, quietly = TRUE)
 require(sjlabelled, quietly = TRUE)
-oswego <- oswego \%>\%
+oswego <- oswego |>
   mutate(
     ill = factor(ill, labels = c("No", "Yes")),
     sex = factor(sex, labels = c("Female", "Male")),
     chocolate.ice.cream = factor(chocolate.ice.cream, labels = c("No", "Yes"))
-  ) \%>\%
+  ) |>
   var_labels(
     ill = "Developed illness",
     sex = "Sex",
     chocolate.ice.cream = "Consumed chocolate ice cream"
   )
 
-oswego \%>\%
-  select(ill, sex, chocolate.ice.cream) \%>\%
-  tbl_summary() \%>\%
-  cosm_sum() \%>\%
+oswego |>
+  select(ill, sex, chocolate.ice.cream) |>
+  tbl_summary() |>
+  cosm_sum() |>
   theme_pubh()
 
-oswego \%>\%
+oswego |>
   mhor(ill ~ sex / chocolate.ice.cream)
-}
-\seealso{
-\link{mh}
 }

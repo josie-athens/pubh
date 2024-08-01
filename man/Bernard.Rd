@@ -33,8 +33,8 @@ had sepsis, defined as fever, tachycardia, tachypnea, and acute failure of at le
 require(dplyr, quietly = TRUE)
 data(Bernard)
 
-Bernard \%>\%
-  select(fate, treat) \%>\%
+Bernard |>
+  select(fate, treat) |>
   cross_tbl(by = "fate")
 
 contingency(fate ~ treat, data = Bernard)

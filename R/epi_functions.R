@@ -44,7 +44,6 @@ expand_df <- function(aggregate.data, index.var = "Freq", retain.freq = FALSE) {
 #' \code{mhor} computes odds ratios by levels of the stratum variable as well as the Mantel-Haenszel
 #' pooled odds ratio. The test for effect modification (test for interaction) is also displayed.
 #'
-#' @seealso \link{mh}
 #' @param object When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.
 #' @param formula A formula with shape: outcome ~ stratum/exposure.
 #' @param data A data frame containing the variables used in \code{formula}.

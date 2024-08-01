@@ -24,8 +24,8 @@ Body weight and plasma volume in eight healthy men.
 \examples{
 data(Kirkwood)
 
-Kirkwood \%>\%
-  gf_point(volume ~ weight) \%>\%
+Kirkwood |>
+  gf_point(volume ~ weight) |>
   gf_lm(col = "indianred3", interval = "confidence", fill = "indianred3")
 }
 \keyword{datasets}

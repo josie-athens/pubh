@@ -30,7 +30,7 @@ Xray <- gl(2, 2, labels = c("Negative", "Positive"))
 tb <- data.frame(Freq, BCG, Xray)
 tb <- expand_df(tb)
 
-tb \%>\%
+tb |>
   diag_test(BCG ~ Xray)
 }
 \seealso{

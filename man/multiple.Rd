@@ -49,10 +49,10 @@ birthwt$race <- factor(birthwt$race, labels = c("White", "African American", "Ot
 model_1 <- aov(bwt ~ race, data = birthwt)
 multiple(model_1, ~race)$df
 
-multiple(model_1, ~race)$fig_ci \%>\%
+multiple(model_1, ~race)$fig_ci |>
   gf_labs(y = "Race", x = "Difference in birth weights (g)")
 
-multiple(model_1, ~race)$fig_pval \%>\%
+multiple(model_1, ~race)$fig_pval |>
   gf_labs(y = "Race")
 }
 \seealso{

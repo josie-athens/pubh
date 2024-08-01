@@ -37,15 +37,13 @@ We start by loading relevant packages and setting the theme for the plots (as su
 
 ```{r message=FALSE, results = 'hide'}
 rm(list = ls())
-library(tidyverse)
+library(dplyr)
 library(rstatix)
 library(easystats)
-library(jtools)
 library(pubh)
 library(sjlabelled)
-library(sjPlot)
 
-theme_set(sjPlot::theme_sjplot2(base_size = 10))
+theme_set(see::theme_lucid(base_size = 10))
 theme_update(legend.position = "top")
 options('huxtable.knit_print_df' = FALSE)
 options('huxtable.autoformat_number_format' = list(numeric = "%5.2f"))
@@ -141,14 +139,14 @@ model_norm |>
     font_size = 9)
 ```
 
-We can use `plot_model` from the `sjPlot` package to construct the effect plot. The advantage of `plot_model` is that it recognises labelled data and uses that information to annotate the plots.
+We can use functions from `easystats`: `estimate_means` calculates the mean birth weight for each combination with corresponding confidence intervals.
 
 ```{r}
 model_norm |>
-  plot_model("pred", terms = ~race|smoke, dot.size = 1.5, title = "")
+  estimate_means(c("race", "smoke"))
 ```
 
-Another option is to use functions from `easystats`, `estimate_means` calculates the mean birth weight for each combination with corresponding confidence intervals and `see` plots them.
+We can plot the output from `estimate_means` using a recipe from `see`:
 
 ```{r}
 model_norm |> 
@@ -157,6 +155,20 @@ model_norm |>
   gf_labs(
     x = "", y = "Birth weight (g)", title = "",
     col = "Smoking status"
+  )
+```
+
+We have more flexibility and construct a more tidy plot too:
+
+```{r}
+model_norm |>
+  estimate_means(c("race", "smoke")) |>
+  gf_point(Mean ~ race) |>
+  gf_errorbar(CI_low + CI_high ~ race, width = 0.3) |>
+  gf_facet_wrap(~smoke) |>
+  gf_labs(
+    x = "Race",
+    y = "Birth weight (g)"
   )
 ```
 
@@ -226,7 +238,13 @@ Effect plot:
 
 ```{r}
 model_binom |>
-  plot_model("pred", terms = "fibre [all]", title = "")
+  estimate_means(by = "fibre") |>
+  gf_line(Probability ~ fibre) |>
+  gf_ribbon(CI_low + CI_high ~ fibre) |>
+  gf_labs(
+    x = "Fibre intake (10 g/day)",
+    y = "Probability of CHD"
+  )
 ```
 
 ## Matched Case-Control Studies: Conditional Logistic Regression
@@ -328,16 +346,19 @@ Effect plots:
 
 ```{r}
 model_ord |>
-  plot_model(type = "pred", terms = c("Infl", "Cont"), 
-           dot.size = 1, title = "") |>
-  gf_theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-```{r}
-model_ord |>
-  plot_model(type = "pred", terms = c("Infl", "Type"), 
-           dot.size = 1, title = "") |>
-  gf_theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  estimate_means(by = c("Infl", "Cont", "Type")) |>
+  mutate(
+    Mean = inv_logit(Mean),
+    CI_low = inv_logit(CI_low),
+    CI_high = inv_logit(CI_high)
+  ) |>
+  gf_errorbar(CI_low + CI_high ~ Infl, width = 0.2) |>
+  gf_point(Mean ~ Infl, size = 0.7) |>
+  gf_facet_grid(~ Type + Cont) |>
+  gf_labs(
+    x = "Perceived influence",
+    y = "Satisfaction"
+  )
 ```
 
 ```{r}
@@ -425,8 +446,14 @@ Effect plot:
 
 ```{r}
 model_negbin |>
-  plot_model(type = "pred", terms = c("Age", "Eth"), 
-           dot.size = 1.5, title = "") 
+  estimate_means(by = c("Age", "Eth", "Sex")) |>
+  gf_errorbar(CI_low + CI_high ~ Age, width = 0.2) |>
+  gf_point(Mean ~ Age, size = 1) |>
+  gf_facet_wrap(~ Eth + Sex) |>
+  gf_labs(
+    x = "Age group",
+    y = "Number of absent days"
+  )
 ```
 
 ```{r}
@@ -509,8 +536,13 @@ model_exp |>
 
 ```{r}
 model_exp |>
-  plot_model(type = "pred", terms = ~ rx, dot.size = 1.5, title = "") |>
-  gf_labs(y = "Survival time", x = "Treatment", title = "")
+  estimate_means(by = "rx") |>
+  gf_errorbar(CI_low + CI_high ~ rx, width = 0.3) |>
+  gf_point(Mean ~ rx, size = 1) |>
+  gf_labs(
+    x = "Treatment",
+    y = "Survival time"
+  )
 ```
 
 
@@ -525,6 +557,11 @@ model_cox |>
   tbl_regression(exponentiate = TRUE) |> 
   cosm_reg() |> theme_pubh() |> 
   add_footnote(get_r2(model_cox), font_size = 9)
+```
+
+```{r}
+model_cox |>
+  estimate_means(by = "rx")
 ```
 
 > **Interpretation:** Patients receiving Thiotepa are 64% less likely of dying than those in the Placebo group.

@@ -28,7 +28,7 @@ untreated children. The active treatments were either relaxation alone or relaxa
 \examples{
 data(Fentress)
 
-Fentress \%>\%
+Fentress |>
   strip_error(pain ~ group)
 }
 \keyword{datasets}

@@ -21,7 +21,7 @@ This functions is helpful when data has been already labelled by \code{sjlabelle
 \examples{
 data(kfm, package = "ISwR")
 require(sjlabelled, quietly = TRUE)
-kfm <- kfm \%>\%
+kfm <- kfm |>
   var_labels(
     dl.milk = "Breast-milk intake (dl/day)",
     sex = "Sex",
@@ -31,13 +31,13 @@ kfm <- kfm \%>\%
     mat.height = "Maternal height (cm)"
   )
 
-kfm \%>\%
-  gf_point(weight ~ dl.milk) \%>\%
-  gf_lm(col = 2, interval = "confidence", col = 2) \%>\%
+kfm |>
+  gf_point(weight ~ dl.milk) |>
+  gf_lm(col = 2, interval = "confidence", col = 2) |>
   axis_labs()
 
-kfm \%>\%
-  box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) \%>\%
-  axis_labs() \%>\%
+kfm |>
+  box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) |>
+  axis_labs() |>
   gf_star(x1 = 1, y1 = 10.9, x2 = 2, y2 = 11, y3 = 11.2)
 }

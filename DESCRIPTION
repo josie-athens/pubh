@@ -1,6 +1,6 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 1.3.3
+Version: 1.3.7
 Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@gmail.com", role = c("aut", "cre")),
     person("Frank", "Harell", email = "f.harrell@vanderbilt.edu", role = "ctb"),
@@ -29,8 +29,10 @@ Imports:
     epiR, 
     epitools,
     ggplot2,
+    jtools,
     lmtest,
     moonBook,
+    performance,
     sandwich, 
     sjlabelled,
     sjmisc,
@@ -39,28 +41,26 @@ Imports:
     tidyselect
 Suggests:
     broom,
+    broom.helpers (>= 1.15.0),
     cardx,
     easystats,
     effectsize,
     ggeffects,
     ggsci,
     ISwR,
-    jtools,
     knitr,
     lme4, 
     MASS, 
     nlme, 
     nnet,
-    performance,
     report,
     rmarkdown,
     rstatix,
     sjPlot,
-    tidyverse
-Remotes: ddsjoberg/gtsummary, insightsengineering/cardx
+    see
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 BugReports: https://github.com/josie-athens/pubh/issues

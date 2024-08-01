@@ -30,7 +30,7 @@ bland_altman(
 
 \item{transform}{Logical, should ratios instead of difference be used to construct the plot?}
 
-\item{...}{Further arguments passed to \code{\link{gf_point}}.}
+\item{...}{Further arguments passed to \code{\link[ggformula]{gf_point}}.}
 }
 \description{
 Bland-Altman agreement plots.
@@ -45,22 +45,20 @@ outcomes (difference in the log scale) by using option \code{transform = TRUE}.
 \examples{
 data(wright, package = "ISwR")
 
-wright \%>\%
+wright |>
   bland_altman(mini.wright ~ std.wright,
     pch = 16,
     ylab = "Large-mini expiratory flow rate (l/min)",
     xlab = "Mean expiratory flow rate (l/min)"
-  ) \%>\%
+  ) |>
   gf_labs(
     y = "Large-mini expiratory flow rate (l/min)",
     x = "Mean expiratory flow rate (l/min)"
-  ) \%>\%
-  gf_theme(theme = sjPlot::theme_sjplot2(base_size = 9))
+  )
 
 data(Sharples)
 
-Sharples \%>\%
-  bland_altman(srweight ~ weight, transform = TRUE) \%>\%
-  gf_labs(x = "Mean of weights (kg)", y = "Measured weight / Self-reported weight") \%>\%
-  gf_theme(theme = sjPlot::theme_sjplot2(base_size = 9))
+Sharples |>
+  bland_altman(srweight ~ weight, transform = TRUE) |>
+  gf_labs(x = "Mean of weights (kg)", y = "Measured weight / Self-reported weight")
 }

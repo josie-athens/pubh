@@ -33,8 +33,8 @@ to whether they lived in villages in savannah or rainforest area.
 require(dplyr, quietly = TRUE)
 data(Oncho)
 
-Oncho \%>\%
-  select(mf, agegrp) \%>\%
+Oncho |>
+  select(mf, agegrp) |>
   cross_tbl(by = "mf")
 }
 \keyword{datasets}

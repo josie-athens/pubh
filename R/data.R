@@ -272,8 +272,7 @@
 #' @examples
 #' Sharples |>
 #'   bland_altman(srweight ~ weight, transform = TRUE) |>
-#'   gf_labs(x = "Mean of weights (kg)", y = "Measured weight / Self-reported weight") |>
-#'   gf_theme(theme = sjPlot::theme_sjplot2(base_size = 9))
+#'   gf_labs(x = "Mean of weights (kg)", y = "Measured weight / Self-reported weight")
 "Sharples"
 
 #' Migraine pain reduction.

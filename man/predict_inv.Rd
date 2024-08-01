@@ -26,14 +26,14 @@ OD <- 0.0125 * Riboflavin + rnorm(9, 0.6, 0.03)
 titration <- data.frame(Riboflavin, OD)
 
 require(sjlabelled, quietly = TRUE)
-titration <- titration \%>\%
+titration <- titration |>
   var_labels(
     Riboflavin = "Riboflavin (nmol/ml)",
     OD = "Optical density"
   )
 
-titration \%>\%
-  gf_point(OD ~ Riboflavin) \%>\%
+titration |>
+  gf_point(OD ~ Riboflavin) |>
   gf_smooth(col = "indianred3", se = TRUE, lwd = 0.5, method = "loess")
 
 ## Model with intercept different from zero:

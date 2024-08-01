@@ -24,16 +24,16 @@ of adding a bottom border line at desired row numbers.
 require(dplyr, quietly = TRUE)
 data(Oncho)
 
-Oncho \%>\%
-  select(area, mf) \%>\%
-  cross_tbl(by = "area") \%>\%
+Oncho |>
+  select(area, mf) |>
+  cross_tbl(by = "area") |>
   theme_pubh(2)
 
 data(Bernard)
 
 t1 <- estat(~ apache | fate, data = Bernard)
 t2 <- estat(~ o2del | fate, data = Bernard)
-rbind(t1, t2) \%>\%
-  as_hux() \%>\%
+rbind(t1, t2) |>
+  as_hux() |>
   theme_pubh(c(1, 3))
 }

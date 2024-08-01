@@ -28,7 +28,7 @@ numerical variable and both \code{x} and \code{z} are factors.}
 
 \item{alpha}{Opacity of the colour fill (0 = invisible, 1 = opaque).}
 
-\item{...}{Additional information passed to \code{\link{gf_summary}}.}
+\item{...}{Additional information passed to \code{\link[ggformula]{gf_summary}}.}
 }
 \description{
 \code{bar_error} constructs bar charts in with error bars showing 95% bootstrapped
@@ -39,22 +39,22 @@ require(dplyr, quietly = TRUE)
 require(sjlabelled, quietly = TRUE)
 data(birthwt, package = "MASS")
 
-birthwt <- birthwt \%>\%
+birthwt <- birthwt |>
   mutate(
     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
     Race = factor(race > 1, labels = c("White", "Non-white"))
-  ) \%>\%
+  ) |>
   var_labels(
     bwt = "Birth weight (g)",
     smoke = "Smoking status"
   )
 
-birthwt \%>\%
+birthwt |>
   bar_error(bwt ~ smoke, fill = "plum3")
 
-birthwt \%>\%
+birthwt |>
   bar_error(bwt ~ smoke | Race, fill = "plum3")
 
-birthwt \%>\%
+birthwt |>
   bar_error(bwt ~ smoke, fill = ~Race)
 }

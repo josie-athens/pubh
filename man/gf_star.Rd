@@ -21,7 +21,7 @@ gf_star(fig, x1, y1, x2, y2, y3, legend = "*", ...)
 
 \item{legend}{Character text used for annotating the plot.}
 
-\item{...}{Additional information passed to \code{\link{gf_text}}.}
+\item{...}{Additional information passed to \code{\link[ggformula]{gf_text}}.}
 }
 \description{
 \code{gf_star} Is a function used to display differences between groups (see details).
@@ -37,7 +37,7 @@ See examples.
 \examples{
 data(kfm, package = "ISwR")
 require(sjlabelled, quietly = TRUE)
-kfm <- kfm \%>\%
+kfm <- kfm |>
   var_labels(
     dl.milk = "Breast-milk intake (dl/day)",
     sex = "Sex",
@@ -47,22 +47,22 @@ kfm <- kfm \%>\%
     mat.height = "Maternal height (cm)"
   )
 
-kfm \%>\%
-  box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) \%>\%
+kfm |>
+  box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) |>
   gf_star(x1 = 1, y1 = 10.9, x2 = 2, y2 = 11, y3 = 11.2)
 
-kfm \%>\%
-  box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) \%>\%
+kfm |>
+  box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) |>
   gf_star(1, 10.9, 2, 11, 11.4, legend = "p = 0.035", size = 2.5)
 
 data(energy, package = "ISwR")
-energy <- energy \%>\%
+energy <- energy |>
   var_labels(
     expend = "Energy expenditure (MJ/day)",
     stature = "Stature"
   )
 
-energy \%>\%
-  strip_error(expend ~ stature, col = "red") \%>\%
+energy |>
+  strip_error(expend ~ stature, col = "red") |>
   gf_star(1, 13, 2, 13.2, 13.4, "**")
 }

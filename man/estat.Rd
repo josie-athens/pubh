@@ -26,7 +26,7 @@ A data frame with descriptive statistics.
 \examples{
 data(kfm, package = "ISwR")
 require(sjlabelled, quietly = TRUE)
-kfm <- kfm \%>\%
+kfm <- kfm |>
   var_labels(
     dl.milk = "Breast-milk intake (dl/day)",
     sex = "Sex",
@@ -36,12 +36,12 @@ kfm <- kfm \%>\%
     mat.height = "Maternal height (cm)"
   )
 
-kfm \%>\%
+kfm |>
   estat(~dl.milk)
 
 estat(~ dl.milk | sex, data = kfm)
 
-kfm \%>\%
+kfm |>
   estat(~ weight | sex)
 }
 \seealso{

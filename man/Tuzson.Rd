@@ -25,7 +25,7 @@ in cerebral palsy.
 \examples{
 data(Tuzson)
 
-Tuzson \%>\%
+Tuzson |>
   gf_point(flexion ~ extension)
 
 cor.test(~ flexion + extension, data = Tuzson)

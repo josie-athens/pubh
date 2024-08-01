@@ -28,7 +28,7 @@ confidence intervals of a continuous variable by levels of one or two categorica
 \examples{
 data(kfm, package = "ISwR")
 require(sjlabelled, quietly = TRUE)
-kfm <- kfm \%>\%
+kfm <- kfm |>
   var_labels(
     dl.milk = "Breast-milk intake (dl/day)",
     sex = "Sex",
@@ -38,7 +38,7 @@ kfm <- kfm \%>\%
     mat.height = "Maternal height (cm)"
   )
 
-kfm \%>\%
+kfm |>
   gen_bst_df(dl.milk ~ sex)
 
 data(birthwt, package = "MASS")
@@ -48,7 +48,7 @@ birthwt <- mutate(birthwt,
   Race = factor(race > 1, labels = c("White", "Non-white"))
 )
 
-birthwt <- birthwt \%>\%
+birthwt <- birthwt |>
   var_labels(
     bwt = "Birth weight (g)",
     smoke = "Smoking status"

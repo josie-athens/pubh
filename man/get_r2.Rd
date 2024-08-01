@@ -23,11 +23,11 @@ require(dplyr, quietly = TRUE)
 require(sjlabelled, quietly = TRUE)
 
 data(birthwt, package = "MASS")
-birthwt <- birthwt \%>\%
+birthwt <- birthwt |>
   mutate(
     smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
     race = factor(race, labels = c("White", "African American", "Other"))
-  ) \%>\%
+  ) |>
   var_labels(
     bwt = "Birth weight (g)",
     smoke = "Smoking status",
@@ -36,11 +36,11 @@ birthwt <- birthwt \%>\%
 
 model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 
-model_norm \%>\%
-  glm_coef(labels = model_labels(model_norm)) \%>\%
-  as_hux() \%>\%
-  set_align(everywhere, 2:3, "right") \%>\%
-  theme_pubh() \%>\%
+model_norm |>
+  glm_coef(labels = model_labels(model_norm)) |>
+  as_hux() |>
+  set_align(everywhere, 2:3, "right") |>
+  theme_pubh() |>
   add_footnote(get_r2(model_norm), font_size = 9)
 }
 \seealso{

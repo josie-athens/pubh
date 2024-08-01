@@ -22,7 +22,7 @@ box_plot(
 
 \item{data}{A data frame where the variables in the \code{formula} can be found.}
 
-\item{fill}{Colour used for the box passed to \code{\link{gf_boxplot}}.}
+\item{fill}{Colour used for the box passed to \code{\link[ggformula]{gf_boxplot}}.}
 
 \item{alpha}{Opacity (0 = invisible, 1 = opaque).}
 
@@ -30,15 +30,15 @@ box_plot(
 
 \item{outlier.size}{Size of the outlier symbol.}
 
-\item{...}{Further arguments passed to \code{\link{gf_boxplot}}.}
+\item{...}{Further arguments passed to \code{\link[ggformula]{gf_boxplot}}.}
 }
 \description{
-\code{box_plot} is a wrap function that calls \link{gf_boxplot} to construct more aesthetic box plots.
+\code{box_plot} is a wrap function that calls \code{gf_boxplot} to construct more aesthetic box plots.
 }
 \examples{
 data(kfm, package = "ISwR")
 require(sjlabelled, quietly = TRUE)
-kfm <- kfm \%>\%
+kfm <- kfm |>
   var_labels(
     dl.milk = "Breast-milk intake (dl/day)",
     sex = "Sex",
@@ -48,12 +48,12 @@ kfm <- kfm \%>\%
     mat.height = "Maternal height (cm)"
   )
 
-kfm \%>\%
+kfm |>
   box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8)
 
 t.test(dl.milk ~ sex, data = kfm)
 
-kfm \%>\%
-  box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) \%>\%
+kfm |>
+  box_plot(dl.milk ~ sex, fill = "thistle", alpha = 0.8) |>
   gf_star(1, 10.9, 2, 11, 11.4, legend = "p = 0.035", size = 2.5)
 }

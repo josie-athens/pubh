@@ -52,21 +52,21 @@ require(dplyr, quietly = TRUE)
 #' data(Oncho)
 
 ## A two by two contingency table:
-Oncho \%>\%
-  select(mf, area) \%>\%
-  cross_tbl(by = "mf", bold = TRUE) \%>\%
+Oncho |>
+  select(mf, area) |>
+  cross_tbl(by = "mf", bold = TRUE) |>
   theme_pubh(2)
 
 ## Reporting prevalence:
-Oncho \%>\%
-  select(mf, area) \%>\%
-  cross_tbl(by = "area", bold = TRUE) \%>\%
+Oncho |>
+  select(mf, area) |>
+  cross_tbl(by = "area", bold = TRUE) |>
   theme_pubh(2)
 
 ## Descriptive statistics for all variables in the \code{Oncho} data set except \code{id}.
-Oncho \%>\%
-  select(-id) \%>\%
-  cross_tbl(by = "mf", bold = TRUE) \%>\%
+Oncho |>
+  select(-id) |>
+  cross_tbl(by = "mf", bold = TRUE) |>
   theme_pubh(2)
 }
 \seealso{

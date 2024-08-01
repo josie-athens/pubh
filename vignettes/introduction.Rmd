@@ -56,7 +56,7 @@ Using epidemiology friendly terms:
 
 It is worth noting that `Stata` requires variables to be given in the same order as in formulas: outcome first, predictors next.
 
-The `pubh` package integrates well with other packages of the `tidyverse` which use formulas and the pipe operator `|>` to add layers over functions. In particular, `pubh` uses `ggformula` as a graphical interface for plotting and takes advantage of variable labels from `sjlabelled`. This versatility allows it to interact also with tables from `moonBook` and effect plots from `sjPlot`.
+The `pubh` package integrates well with other packages of the `tidyverse` which use formulas and the pipe operator `|>` to add layers over functions. In particular, `pubh` uses `ggformula` as a graphical interface for plotting and takes advantage of variable labels from `sjlabelled`. This versatility allows it to interact also with tables from `moonBook`.
 
 ### Stratification
 
@@ -109,14 +109,12 @@ Some examples. We start by loading packages.
 
 ```{r message=FALSE, results='hide'}
 rm(list = ls())
-library(tidyverse)
+library(dplyr)
 library(rstatix)
-library(jtools)
 library(pubh)
 library(sjlabelled)
-library(sjPlot)
 
-theme_set(sjPlot::theme_sjplot2(base_size = 10))
+theme_set(see::theme_lucid(base_size = 10))
 theme_update(legend.position = "top")
 options('huxtable.knit_print_df' = FALSE)
 options('huxtable.autoformat_number_format' = list(numeric = "%5.2f"))

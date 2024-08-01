@@ -27,8 +27,8 @@ of a spouse who smoked at least one cigarette per day for at least 6 months.
 require(dplyr, quietly = TRUE)
 data(Sandler)
 
-Sandler \%>\%
-  select(cancer, passive) \%>\%
+Sandler |>
+  select(cancer, passive) |>
   cross_tbl(by = "cancer")
 
 mhor(cancer ~ smoke / passive, data = Sandler)
