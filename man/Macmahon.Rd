@@ -22,12 +22,4 @@ Macmahon
 An international case-control study to test the hypothesis that breast
 cancer is related to the age that a woman gives childbirth.
 }
-\examples{
-require(dplyr, quietly = TRUE)
-data(Macmahon)
-
-Macmahon |>
-  select(cancer, age) |>
-  cross_tbl(by = "cancer")
-}
 \keyword{datasets}

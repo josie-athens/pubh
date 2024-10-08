@@ -56,7 +56,7 @@ Using epidemiology friendly terms:
 
 It is worth noting that `Stata` requires variables to be given in the same order as in formulas: outcome first, predictors next.
 
-The `pubh` package integrates well with other packages of the `tidyverse` which use formulas and the pipe operator `|>` to add layers over functions. In particular, `pubh` uses `ggformula` as a graphical interface for plotting and takes advantage of variable labels from `sjlabelled`. This versatility allows it to interact also with tables from `moonBook`.
+The `pubh` package integrates well with other packages of the `tidyverse` which use formulas and the pipe operator `|>` to add layers over functions. In particular, `pubh` uses `ggformula` as a graphical interface for plotting and takes advantage of variable labels from `sjlabelled`. This versatility allows it to interact also with tables from `crosstable`.
 
 ### Stratification
 
@@ -93,15 +93,10 @@ The main contributions of the `pubh` package to students and professionals from 
 
 1. Use of a common syntax for the most used analysis.
 2. A function, `glm_coef` that displays coefficients from most common regression analysis in a way that can be easy interpreted and used for publications.
-3. Integration with the `ggformula` package, introducing plotting functions with a relatively simple syntax.
-4. Integration with the most common epidemiological analysis, using the standard formula syntax explained in the previous section.
-5. Integration with the `gtsummary` and `huxtable` packages. The `pubh` use huxtables as standard as they can be easily exported to *html*, *pdf* and *doc* files when *knitting*. Tables of descriptive statistics and of regression coefficients are generated through functions from `gtsummary` and then converted to `huxtable` objects with convenient cosmetics.
 
 # Descriptive statistics
 
-There are many options currently available for displaying descriptive statistics. I recommend the function `tbl_summary` from the `gtsummary` package for constructing tables of descriptive statistics where results don't need to be stratified. 
-
-In Public Health and Epidemiology, it is expected to be interested in comparing cohorts, categorical variables considered as exposure of interest. The most classic example is randomised control trials, were we want to compare treatment versus control cohorts. Package `pubh` introduces the function `cross_tbl` as a wrapper to `tbl_summary` from `gtsummary`. The idea is to construct these tables, in a simple way and convert them to huxtables.
+There are many options currently available for displaying descriptive statistics. I recommend the function `crosstable` from the `crosstable` package for constructing tables of descriptive statistics where results need to be stratified. 
 
 The `estat` function from the `pubh` package displays descriptive statistics of continuous outcomes; it can use *labels* to display nice tables. To aid in understanding the variability, `estat` also shows the relative dispersion (coefficient of variation), which is particularly interesting for comparing variances between groups (factors).
 
@@ -111,14 +106,9 @@ Some examples. We start by loading packages.
 rm(list = ls())
 library(dplyr)
 library(rstatix)
+library(crosstable)
 library(pubh)
 library(sjlabelled)
-
-theme_set(see::theme_lucid(base_size = 10))
-theme_update(legend.position = "top")
-options('huxtable.knit_print_df' = FALSE)
-options('huxtable.autoformat_number_format' = list(numeric = "%5.2f"))
-knitr::opts_chunk$set(comment = NA)
 ```
 
 We will use a data set about a study of onchocerciasis in Sierra Leone.
@@ -128,17 +118,26 @@ data(Oncho)
 Oncho |> head()
 ```
 
+```{r}
+crosstable_options(
+  total = "row",
+  percent_pattern="{n} ({p_col})",
+  percent_digits = 1,
+  funs = c("Mean (std)" = meansd, "Median [IQR]" = mediqr)
+)
+```
+
 A two-by-two contingency table:
 
 ```{r}
 Oncho |>
+  select(mf, area) |>
   mutate(
     mf = relevel(mf, ref = "Infected")
   ) |>
   copy_labels(Oncho) |>
-  select(mf, area) |> 
-  cross_tbl(by = "area") |>
-  theme_pubh(2)
+  crosstable(by = area) |>
+  ctf()
 ```
 
 Table with all descriptive statistics except `id` and `mfload`:
@@ -150,8 +149,8 @@ Oncho |>
     mf = relevel(mf, ref = "Infected")
   ) |>
   copy_labels(Oncho) |>
-  cross_tbl(by = "area") |>
-  theme_pubh(2)
+  crosstable(by = area) |>
+  ctf()
 ```
 
 Next, we use a data set about blood counts of T cells from patients in remission from Hodgkin's disease or in remission from disseminated malignancies. We generate the new variable `Ratio` and add labels to the variables.
@@ -171,8 +170,7 @@ Descriptive statistics for CD4+ T cells:
 
 ```{r}
 Hodgkin |>
-  estat(~ CD4) |>
-  as_hux() |> theme_pubh()
+  estat(~ CD4)
 ```
 
 In the previous code, the left-hand side of the formula is empty as it's the case when working with only one variable.
@@ -189,8 +187,7 @@ For example:
 
 ```{r}
 Hodgkin |>
-  estat(~ Ratio|Group) |>
-  as_hux() |> theme_pubh()
+  estat(~ Ratio|Group)
 ```
 
 As before, we can report a table of descriptive statistics for all variables in the data set:
@@ -201,9 +198,8 @@ Hodgkin |>
     Group = relevel(Group, ref = "Hodgkin")
   ) |>
   copy_labels(Hodgkin) |>
-  cross_tbl(by = "Group", bold = FALSE) |>
-  theme_pubh(2) |>
-  add_footnote("Median (IQR)", font_size = 9)
+  crosstable(by = Group) |>
+  ctf()
 ```
 
 
@@ -317,8 +313,7 @@ Both `strip_error` and `bar_error` can generate plots stratified by a third vari
 
 ```{r}
 birthwt |>
-  bar_error(bwt ~ smoke, fill = ~ Race) |>
-  gf_refine(ggsci::scale_fill_jama()) 
+  bar_error(bwt ~ smoke, fill = ~ Race) 
 ```
 
 ```{r}
@@ -326,11 +321,9 @@ birthwt |>
   bar_error(bwt ~ smoke|Race)
 ```
 
-
 ```{r}
 birthwt |>
-  strip_error(bwt ~ smoke, pch = ~ Race, col = ~ Race) |>
-  gf_refine(ggsci::scale_color_jama())
+  strip_error(bwt ~ smoke, pch = ~ Race, col = ~ Race)
 ```
 
 # Regression models
@@ -344,20 +337,8 @@ model_bwt <- lm(bwt ~ smoke + race, data = birthwt)
 ```
 
 ```{r}
-model_bwt |> 
-  tbl_regression() |> 
-  cosm_reg() |> theme_pubh() |> 
-  add_footnote(get_r2(model_bwt), font_size = 9)
-```
-
-Similar results can be obtained with the function `glm_coef`. 
-
-```{r}
 model_bwt |>
-  glm_coef(labels = model_labels(model_bwt)) |>
-  as_hux() |> theme_pubh() |> 
-  set_align(everywhere, 2:3, "right") |>
-  add_footnote(get_r2(model_bwt), font_size = 9)
+  glm_coef(labels = model_labels(model_bwt))
 ```
 
 In the last table of coefficients, confidence intervals and p-values for race levels are not adjusted for multiple comparisons. We can use functions from the `emmeans` package to make the corrections.
@@ -375,101 +356,3 @@ multiple(model_bwt, ~ race)$fig_ci |>
 multiple(model_bwt, ~ race)$fig_pval |>
   gf_labs(y = " ")
 ```
-
-
-# Epidemiology functions
-
-The `pubh` package offers two wrappers to `epiR` functions. 
-
-1. `contingency` calls `epi.2by2` and it's used to analyse two by two contingency tables.
-2. `diag_test` calls `epi.tests` to compute statistics related with screening tests.
-
-## Contingency tables
-
-Let's say we want to look at the effect of ibuprofen on preventing death in patients with sepsis.
-
-```{r}
-data(Bernard)
-Bernard |> head()
-```
-
-Let's look at the table:
-
-```{r}
-Bernard |>
-  mutate(
-    fate = relevel(fate, ref = "Dead"),
-    treat = relevel(treat, ref = "Ibuprofen")
-  ) |>
-  copy_labels(Bernard) |>
-  select(fate, treat) |> 
-  cross_tbl(by = "treat") |>
-  theme_pubh(2)
-```
-
-For `epi.2by2` we need to provide the table of counts in the correct order. For `contingency` we only need to provide the information in a formula:
-
-```{r}
-Bernard |>
-  contingency(fate ~ treat) 
-```
-
-Advantages of `contingency`:
-
-1. Easier input without the need to create the table.
-2. Displays the standard epidemiological table at the start of the output. This aids to check what are the reference levels on each category.
-3. In the case that the $\chi^2$-test is not appropriate, `contingency` would show the results of the Fisher exact test at the end of the output.
-
-### Mantel-Haenszel odds ratio
-
-For `mhor` the formula has the following syntax:
-
-```{r eval=FALSE}
-outcome ~ stratum/exposure, data = my_data
-```
-
-Thus, `mhor` displays the odds ratio of *exposure yes* against *exposure no* on *outcome yes* for different levels of *stratum*and the Mantel-Haenszel pooled odds ratio.
-
-Example: effect of eating chocolate ice cream on being ill by sex from the `oswego` data set.
-
-```{r}
-data(oswego, package = "epitools")
-
-oswego <- oswego |>
-  mutate(
-    ill = factor(ill, labels = c("No", "Yes")),
-    sex = factor(sex, labels = c("Female", "Male")),
-    chocolate.ice.cream = factor(chocolate.ice.cream, labels = c("No", "Yes"))
-  ) |>
-  var_labels(
-    ill = "Developed illness",
-    sex = "Sex",
-    chocolate.ice.cream = "Consumed chocolate ice cream"
-  )
-```
-
-```{r}
-oswego |>
-  mhor(ill ~ sex/chocolate.ice.cream)
-```
-
-## Diagnostic tests
-
-Example: We compare the use of lung’s X-rays on the screening of TB against the gold standard test.
-
-```{r}
-Freq <- c(1739, 8, 51, 22)
-BCG <- gl(2, 1, 4, labels=c("Negative", "Positive"))
-Xray <- gl(2, 2, labels=c("Negative", "Positive"))
-tb <- data.frame(Freq, BCG, Xray)
-tb <- expand_df(tb)
-
-diag_test(BCG ~ Xray, data = tb)
-```
-
-Using the immediate version (direct input):
-
-```{r}
-diag_test2(22, 51, 8, 1739)
-```
-

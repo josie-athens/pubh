@@ -24,12 +24,7 @@ on cancer. Passive smoking was defined as exposure to the cigarette smoke
 of a spouse who smoked at least one cigarette per day for at least 6 months.
 }
 \examples{
-require(dplyr, quietly = TRUE)
 data(Sandler)
-
-Sandler |>
-  select(cancer, passive) |>
-  cross_tbl(by = "cancer")
 
 mhor(cancer ~ smoke / passive, data = Sandler)
 }

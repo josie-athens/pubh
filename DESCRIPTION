@@ -1,6 +1,6 @@
 Package: pubh
 Title: A Toolbox for Public Health and Epidemiology
-Version: 1.3.7
+Version: 2.0.0
 Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@gmail.com", role = c("aut", "cre")),
     person("Frank", "Harell", email = "f.harrell@vanderbilt.edu", role = "ctb"),
@@ -16,22 +16,18 @@ Description: A toolbox for making R functions and capabilities more
     or Public Health. Please note that use of the 
     provided data sets is for educational purposes only.
 Depends:
-    R (>= 4.1.0),
+    R (>= 4.4.0),
     emmeans,
     ggformula,
-    gtsummary (>= 1.9.9),
-    huxtable,
     stats
 Imports:
     car, 
     dplyr, 
     Epi, 
-    epiR, 
     epitools,
     ggplot2,
     jtools,
     lmtest,
-    moonBook,
     performance,
     sandwich, 
     sjlabelled,
@@ -41,23 +37,17 @@ Imports:
     tidyselect
 Suggests:
     broom,
-    broom.helpers (>= 1.15.0),
+    broom.helpers,
     cardx,
+    crosstable,
     easystats,
     effectsize,
     ggeffects,
-    ggsci,
     ISwR,
     knitr,
-    lme4, 
     MASS, 
-    nlme, 
-    nnet,
-    report,
-    rmarkdown,
-    rstatix,
-    sjPlot,
-    see
+    nlme,
+    rstatix
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

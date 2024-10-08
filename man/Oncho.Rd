@@ -29,12 +29,4 @@ Oncho
 Study of onchocerciasis ("river blindness") in Sierra Leone, in which subjects were classified according
 to whether they lived in villages in savannah or rainforest area.
 }
-\examples{
-require(dplyr, quietly = TRUE)
-data(Oncho)
-
-Oncho |>
-  select(mf, agegrp) |>
-  cross_tbl(by = "mf")
-}
 \keyword{datasets}

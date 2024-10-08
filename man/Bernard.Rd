@@ -29,14 +29,4 @@ Bernard
 A randomised, double-blind, placebo-controlled trial of intravenous ibuprofen in 455 patients who
 had sepsis, defined as fever, tachycardia, tachypnea, and acute failure of at least one organ system.
 }
-\examples{
-require(dplyr, quietly = TRUE)
-data(Bernard)
-
-Bernard |>
-  select(fate, treat) |>
-  cross_tbl(by = "fate")
-
-contingency(fate ~ treat, data = Bernard)
-}
 \keyword{datasets}

@@ -36,12 +36,7 @@ birthwt <- birthwt |>
 
 model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 
-model_norm |>
-  glm_coef(labels = model_labels(model_norm)) |>
-  as_hux() |>
-  set_align(everywhere, 2:3, "right") |>
-  theme_pubh() |>
-  add_footnote(get_r2(model_norm), font_size = 9)
+get_r2(model_norm)
 }
 \seealso{
 \code{\link[performance]{r2}}.

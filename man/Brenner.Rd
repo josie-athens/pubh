@@ -23,14 +23,4 @@ Brenner
 A data set containing the prevalence of Helicobacter pylori infection in preschool children
 according to parental history of duodenal or gastric ulcer.
 }
-\examples{
-require(dplyr, quietly = TRUE)
-data(Brenner)
-
-Brenner |>
-  select(infected, ulcer) |>
-  cross_tbl(by = "infected")
-
-contingency(infected ~ ulcer, data = Brenner, method = "cross.sectional")
-}
 \keyword{datasets}

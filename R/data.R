@@ -12,15 +12,6 @@
 #' @source Brenner H, Rothenbacher D, Bode G, Adler G (1998) Parental history of gastric or duodenal ulcer
 #' and prevalence of Helicobacter pylori infection in preschool children: population based study.
 #' BMJ 316:665.
-#' @examples
-#' require(dplyr, quietly = TRUE)
-#' data(Brenner)
-#'
-#' Brenner |>
-#'   select(infected, ulcer) |>
-#'   cross_tbl(by = "infected")
-#'
-#' contingency(infected ~ ulcer, data = Brenner, method = "cross.sectional")
 "Brenner"
 
 #' Extracorporeal membrane oxygenation in neonates.
@@ -35,13 +26,6 @@
 #' @source Roberts, TE (1998) Extracorporeal Membrane Oxygenation Economics Working Group. Economic
 #' evaluation and randomised controlled trial of extracorporeal membrane oxygenation: UK collaborative
 #' trial. Brit Med J 317:911-16.
-#' @examples
-#' require(dplyr, quietly = TRUE)
-#' data(Roberts)
-#'
-#' Roberts |>
-#'   select(survived, emo) |>
-#'   cross_tbl(by = "survived")
 "Roberts"
 
 #' Breast cancer and age of childbirth.
@@ -55,13 +39,6 @@
 #' "25-29", "30-34" and ">34".}
 #' }
 #' @source Macmahon, B. et al. (1970). Age at first birth and breast cancer risk. Bull WHO 43, 209-221.
-#' @examples
-#' require(dplyr, quietly = TRUE)
-#' data(Macmahon)
-#'
-#' Macmahon |>
-#'   select(cancer, age) |>
-#'   cross_tbl(by = "cancer")
 "Macmahon"
 
 #' Passive smoking in adulthood and cancer risk.
@@ -77,12 +54,7 @@
 #' }
 #' @source Sandler, DP, Everson, RB, Wilcox, AJ (1985). Passive smoking in adulthood and cancer risk. Amer J Epidem, 121: 37-48.
 #' @examples
-#' require(dplyr, quietly = TRUE)
 #' data(Sandler)
-#'
-#' Sandler |>
-#'   select(cancer, passive) |>
-#'   cross_tbl(by = "cancer")
 #'
 #' mhor(cancer ~ smoke / passive, data = Sandler)
 "Sandler"
@@ -102,17 +74,7 @@
 #' @source Vittinghoff, E, Glidden, DV, Shiboski, SC and McCulloh, CE (2005) Regression methods in
 #' Biostatistics. Springer.
 #' @examples
-#' require(dplyr, quietly = TRUE)
 #' data(Vanderpump)
-#'
-#' Vanderpump |>
-#'   select(vstatus, agegrp, smoker) |>
-#'   tbl_strata(
-#'     strata = smoker,
-#'     .tbl_fun = ~ .x |>
-#'       tbl_summary(by = agegrp)
-#'   ) |>
-#'   cosm_sum(bold = TRUE, head_label = " ")
 #'
 #' mhor(vstatus ~ agegrp / smoker, data = Vanderpump)
 "Vanderpump"
@@ -134,13 +96,7 @@
 #' young women. JAMA 231:718-722.
 #' @source Rothman, KJ (2002) Epidemiology. An Introduction. Oxford University Press.
 #' @examples
-#' require(dplyr, quietly = TRUE)
 #' data(Rothman)
-#'
-#' Rothman |>
-#'   select(stroke, oc, ht) |>
-#'   tbl_summary() |>
-#'   cosm_sum()
 #'
 #' mhor(stroke ~ ht / oc, data = Rothman)
 #'
@@ -160,10 +116,6 @@
 #'
 #' require(sjlabelled, quietly = TRUE)
 #' Rothman$join <- set_label(Rothman$join, label = "Exposure")
-#'
-#' Rothman |>
-#'   select(stroke, join) |>
-#'   cross_tbl(by = "stroke")
 #'
 #' model2 <- glm(stroke ~ join, data = Rothman, family = binomial)
 #' glm_coef(model2)
@@ -224,15 +176,6 @@
 #' }
 #' @source  Bernard, GR, et al. (1997) The effects of ibuprofen on the physiology and survival of patients
 #' with sepsis, N Engl J Med 336: 912–918.
-#' @examples
-#' require(dplyr, quietly = TRUE)
-#' data(Bernard)
-#'
-#' Bernard |>
-#'   select(fate, treat) |>
-#'   cross_tbl(by = "fate")
-#'
-#' contingency(fate ~ treat, data = Bernard)
 "Bernard"
 
 #' Peak knee velocity in walking at flexion and extension.
@@ -330,13 +273,6 @@
 #' @source McMahon, JE, Sowa, SIC, Maude, GH and Kirkwood BR (1988) Onchocerciasis in Sierra Leone 2:
 #' a comparison of forest and savannah villages. Trans Roy Soc Trop Med Hyg 82: 595-600.
 #' @source Kirkwood, BR and Sterne, JAC (2003) Essential Medical Statistics. Second Edition. Blackwell.
-#' @examples
-#' require(dplyr, quietly = TRUE)
-#' data(Oncho)
-#'
-#' Oncho |>
-#'   select(mf, agegrp) |>
-#'   cross_tbl(by = "mf")
 "Oncho"
 
 #' RCT on the treatment of epilepsy.
@@ -360,20 +296,4 @@
 #' 1339-1351.
 #' @source Shoukri, MM and Chaudhary, MA (2007) Analysis of correlated data with SAS and R. Third Edition.
 #' Chapman & Hall/CRC.
-#' @examples
-#' data(Thall)
-#'
-#' c1 <- cbind(Thall[, c(1:5)], count = Thall$y1)[, c(1:4, 6)]
-#' c2 <- cbind(Thall[, c(1:4, 6)], count = Thall$y2)[, c(1:4, 6)]
-#' c3 <- cbind(Thall[, c(1:4, 7)], count = Thall$y3)[, c(1:4, 6)]
-#' c4 <- cbind(Thall[, c(1:4, 8)], count = Thall$y3)[, c(1:4, 6)]
-#' epilepsy <- rbind(c1, c2, c3, c4)
-#'
-#' require(lme4, quietly = TRUE)
-#' model_glmer <- glmer(count ~ treat + base + I(age - mean(age, na.rm = TRUE)) +
-#'   (1 | id), data = epilepsy, family = poisson)
-#' glm_coef(model_glmer, labels = c(
-#'   "Treatment (Prograbide/Control)",
-#'   "Baseline count", "Age (years)"
-#' ))
 "Thall"

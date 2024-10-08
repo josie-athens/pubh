@@ -613,12 +613,7 @@ glm_coef <- function(model, digits = 2, alpha = 0.05, labels = NULL, se_rob = FA
 #'
 #' model_norm <- lm(bwt ~ smoke + race, data = birthwt)
 #'
-#' model_norm |>
-#'   glm_coef(labels = model_labels(model_norm)) |>
-#'   as_hux() |>
-#'   set_align(everywhere, 2:3, "right") |>
-#'   theme_pubh() |>
-#'   add_footnote(get_r2(model_norm), font_size = 9)
+#' get_r2(model_norm)
 #' @export
 get_r2 <- function(model, ...) {
   r2 <- performance::r2
