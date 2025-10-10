@@ -26,7 +26,8 @@ in cerebral palsy.
 data(Tuzson)
 
 Tuzson |>
-  gf_point(flexion ~ extension)
+  ggplot(aes(extension, flexion)) +
+  geom_point()
 
 cor.test(~ flexion + extension, data = Tuzson)
 }

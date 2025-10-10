@@ -41,18 +41,7 @@ kfm <- kfm |>
 kfm |>
   gen_bst_df(dl.milk ~ sex)
 
-data(birthwt, package = "MASS")
-require(dplyr, quietly = TRUE)
-birthwt <- mutate(birthwt,
-  smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
-  Race = factor(race > 1, labels = c("White", "Non-white"))
-)
+data(Fentress)
 
-birthwt <- birthwt |>
-  var_labels(
-    bwt = "Birth weight (g)",
-    smoke = "Smoking status"
-  )
-
-gen_bst_df(bwt ~ smoke | Race, data = birthwt)
+Fentress |> gen_bst_df(pain ~ group)
 }

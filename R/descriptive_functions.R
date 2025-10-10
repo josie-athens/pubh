@@ -245,3 +245,105 @@ estat <- function(object = NULL, formula = NULL, data = NULL, digits = 2, label 
     res
   }
 }
+
+#' Table of descriptive statistics by categorical variable.
+#'
+#' \code{cross_tbl} is a wrapper to function  from package \code{\link[gtsummary]{tbl_summary}} that constructs tables of descriptive statistics stratified by levels of a categorical outcome.
+#' @param data A data frame where the variables in the \code{formula} can be found.
+#' @param by The quoted name of the  categorical variable (factor) used for the stratification.
+#' @param head_label Character, label to be used as head for the variable's column.
+#' @param bold Display labels in bold?
+#' @param show_total Logical, show column with totals?
+#' @param p_val Logical, show p-values?
+#' @param pad Numerical, padding above and bellow rows.
+#' @param method An integer indicating methods for continuous variables.
+#' 1 Reports means and standard deviations.
+#' 2 Reports medians and interquartile ranges.
+#' @param ... Additional arguments passed to \code{\link[gtsummary]{tbl_summary}}.
+#' @details Function \code{cross_tbl} is a relatively simple wrapper to function \code{\link[gtsummary]{tbl_summary}}. It constructs contingency tables and can also be used to report a table with descriptives for all variables stratified by one of the variables. Please see examples to see how to list variables. If data is labelled, the label of the stratifying variable is used as part of the header.
+#' @return A huxtable with descriptive statistics stratified by levels of the outcome.
+#' @seealso \code{\link[gtsummary]{tbl_summary}}
+#' @examples
+#' require(dplyr, quietly = TRUE)
+#'
+#' #' data(Oncho)
+#'
+#' ## A two by two contingency table:
+#' Oncho |>
+#'   select(mf, area) |>
+#'   cross_tbl(by = "mf", bold = TRUE) |>
+#'   theme_pubh(2)
+#'
+#' ## Reporting prevalence:
+#' Oncho |>
+#'   select(mf, area) |>
+#'   cross_tbl(by = "area", bold = TRUE) |>
+#'   theme_pubh(2)
+#'
+#' ## Descriptive statistics for all variables in the \code{Oncho} data set except \code{id}.
+#' Oncho |>
+#'   select(-id) |>
+#'   cross_tbl(by = "mf", bold = TRUE) |>
+#'   theme_pubh(2)
+#' @export
+cross_tbl <- function(data, by, head_label = " ",
+                      bold = TRUE, show_total = TRUE, p_val = FALSE,
+                      pad = 3, method = 2, ...) {
+  if (method == 1) {
+    tbl <- data |>
+      gtsummary::tbl_summary(
+        by = tidyselect::all_of(by),
+        statistic = list(all_continuous() ~ "{mean} ({sd})"),
+        ...
+      ) |>
+      gtsummary::modify_spanning_header(all_stat_cols() ~ paste0(
+        "**",
+        sjlabelled::get_label(data[[by]]),
+        "**"
+      ))
+  } else {
+    tbl <- data |>
+      gtsummary::tbl_summary(
+        by = tidyselect::all_of(by),
+        ...
+      ) |>
+      gtsummary::modify_spanning_header(all_stat_cols() ~ paste0(
+        "**",
+        sjlabelled::get_label(data[[by]]),
+        "**"
+      ))
+  }
+
+  if (show_total == FALSE) {
+    tbl <- tbl
+  } else {
+    tbl <- tbl |>
+      gtsummary::add_overall(last = TRUE)
+  }
+
+  tbl <- tbl |>
+    gtsummary::modify_header(label ~ head_label) |>
+    gtsummary::modify_footnote(everything() ~ NA)
+
+  if (bold == FALSE) {
+    tbl <- tbl
+  } else {
+    tbl <- tbl |> gtsummary::bold_labels()
+  }
+
+  if (p_val == TRUE) {
+    tbl <- tbl |> gtsummary::add_p()
+  } else {
+    tbl <- tbl
+  }
+
+  tbl <- tbl |>
+    gtsummary::as_hux_table() |>
+    huxtable::set_align(huxtable::everywhere, -1, "right") |>
+    huxtable::set_top_padding(pad) |>
+    huxtable::set_bottom_padding(pad) |>
+    huxtable::set_align(1, huxtable::everywhere, "center")
+
+  tbl
+}
+

@@ -33,8 +33,9 @@ titration <- titration |>
   )
 
 titration |>
-  gf_point(OD ~ Riboflavin) |>
-  gf_smooth(col = "indianred3", se = TRUE, lwd = 0.5, method = "loess")
+  ggplot(aes(Riboflavin, OD)) +
+  geom_point(col = bmj[1]) +
+  geom_smooth(col = bmj[2], se = TRUE, lwd = 0.5, method = "loess")
 
 ## Model with intercept different from zero:
 model <- lm(OD ~ Riboflavin, data = titration)

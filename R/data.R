@@ -150,12 +150,8 @@
 #' estat(~ Ratio | Group, data = Hodgkin)
 #'
 #' Hodgkin |>
-#'   qq_plot(~ Ratio | Group)
-#'
-#' Hodgkin$Ratio <- Hodgkin$CD4 / Hodgkin$CD8
-#' estat(~ Ratio | Group, data = Hodgkin)
-#'
-#' qq_plot(~ Ratio | Group, data = Hodgkin)
+#'   qq_plot(y = Ratio) +
+#'   facet_grid(cols = vars(Group))
 "Hodgkin"
 
 #' Survival of patients with sepsis.
@@ -193,7 +189,8 @@
 #' data(Tuzson)
 #'
 #' Tuzson |>
-#'   gf_point(flexion ~ extension)
+#'   ggplot(aes(extension, flexion)) +
+#'   geom_point()
 #'
 #' cor.test(~ flexion + extension, data = Tuzson)
 "Tuzson"
@@ -214,8 +211,10 @@
 #' Med J 125: 60-69.
 #' @examples
 #' Sharples |>
-#'   bland_altman(srweight ~ weight, transform = TRUE) |>
-#'   gf_labs(x = "Mean of weights (kg)", y = "Measured weight / Self-reported weight")
+#'   bland_altman(x = weight, y = srweight,
+#'   transform = TRUE, size = 0.7) +
+#'   xlab("Mean of weights (kg)") +
+#'   ylab("Measured / Self-reported weight")
 "Sharples"
 
 #' Migraine pain reduction.
@@ -235,7 +234,7 @@
 #' data(Fentress)
 #'
 #' Fentress |>
-#'   strip_error(pain ~ group)
+#'   strip_error(x = group, y = pain)
 "Fentress"
 
 #' Body weight and plasma volume.
@@ -252,8 +251,8 @@
 #' data(Kirkwood)
 #'
 #' Kirkwood |>
-#'   gf_point(volume ~ weight) |>
-#'   gf_lm(col = "indianred3", interval = "confidence", fill = "indianred3")
+#'   ggplot(aes(weight, volume)) +
+#'   geom_point()
 "Kirkwood"
 
 #' Onchocerciasis in Sierra Leone.

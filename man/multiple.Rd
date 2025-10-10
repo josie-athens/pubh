@@ -7,7 +7,7 @@
 multiple(
   model,
   formula,
-  adjust = "mvt",
+  adjust = "hochberg",
   type = "response",
   reverse = TRUE,
   level = 0.95,
@@ -47,13 +47,12 @@ data(birthwt, package = "MASS")
 birthwt$race <- factor(birthwt$race, labels = c("White", "African American", "Other"))
 
 model_1 <- aov(bwt ~ race, data = birthwt)
-multiple(model_1, ~race)$df
+multiple(model_1, ~race)
 
-multiple(model_1, ~race)$fig_ci |>
-  gf_labs(y = "Race", x = "Difference in birth weights (g)")
-
-multiple(model_1, ~race)$fig_pval |>
-  gf_labs(y = "Race")
+multiple(model_1, ~race) |>
+  effect_plot(x = estimate, y = contrast, orientation = "y") +
+  xlab("Difference in birth weights (g)") +
+  ylab("") + geom_vline(xintercept = 0, col = bmj[2], lty = 2)
 }
 \seealso{
 \code{\link[emmeans]{emmeans}}, \code{\link[emmeans]{pwpp}}.

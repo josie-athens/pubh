@@ -4,34 +4,16 @@
 \alias{strip_error}
 \title{Strip plots with error bars.}
 \usage{
-strip_error(
-  object = NULL,
-  formula = NULL,
-  data = NULL,
-  pch = 20,
-  size = 1,
-  alpha = 0.7,
-  col = "indianred3",
-  ...
-)
+strip_error(data, x, y, size = 0.5)
 }
 \arguments{
-\item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
+\item{data}{A data frame.}
 
-\item{formula}{A formula with shape: \code{y ~ x} or \code{y ~ x|z} where \code{y} is a
-numerical variable and both \code{x} and \code{z} are factors.}
+\item{x}{A categorical variable (the exposure).}
 
-\item{data}{A data frame where the variables in the \code{formula} can be found.}
+\item{y}{A numerical variable (the outcome or response variable).}
 
-\item{pch}{Point character passed to \code{\link[ggformula]{gf_point}} or \code{\link[ggformula]{gf_jitter}}.}
-
-\item{size}{Size of the symbol (\code{pch}) for representing data values.}
-
-\item{alpha}{Opacity of the symbol (0 = invisible, 1 = opaque).}
-
-\item{col}{A colour or formula used for mapping colour.}
-
-\item{...}{Additional information passed to \code{\link[ggformula]{gf_jitter}} or \code{\link[ggformula]{gf_point}}.}
+\item{size}{Size of the marker.}
 }
 \description{
 \code{strip_error} constructs strip plots with error bars showing 95% bootstrapped
@@ -47,36 +29,5 @@ energy <- energy |>
   )
 
 energy |>
-  strip_error(expend ~ stature, col = "red")
-
-t.test(expend ~ stature, data = energy)
-
-## Adding an horizontal line to show significant difference:
-energy |>
-  strip_error(expend ~ stature, col = "red") |>
-  gf_star(1, 13, 2, 13.2, 13.4, "**")
-
-data(birthwt, package = "MASS")
-require(dplyr, quietly = TRUE)
-birthwt <- birthwt |>
-  mutate(
-    smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
-    Race = factor(race > 1, labels = c("White", "Non-white"))
-  ) |>
-  var_labels(
-    bwt = "Birth weight (g)",
-    smoke = "Smoking status"
-  )
-
-birthwt |>
-  strip_error(bwt ~ smoke | Race, col = "darksalmon")
-
-birthwt |>
-  strip_error(bwt ~ smoke, col = ~Race)
-
-birthwt |>
-  strip_error(bwt ~ smoke, pch = ~Race, col = ~Race)
-
-birthwt |>
-  strip_error(bwt ~ smoke | Race)
+  strip_error(x = stature, y = expend)
 }

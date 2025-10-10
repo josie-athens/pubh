@@ -4,30 +4,14 @@
 \alias{qq_plot}
 \title{Quantile-quantile plots against the standard Normal distribution.}
 \usage{
-qq_plot(
-  object = NULL,
-  formula = NULL,
-  data = NULL,
-  pch = 20,
-  col = "indianred3",
-  ylab = NULL,
-  ...
-)
+qq_plot(data, y, size = 0.7)
 }
 \arguments{
-\item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
+\item{data}{A data frame.}
 
-\item{formula}{A formula with shape: \code{ ~ x} or \code{ ~ x|z} where \code{x} is a numerical variable and \code{z} is a factor.}
+\item{y}{A numerical variable in the data frame.}
 
-\item{data}{A data frame where the variables in the \code{formula} can be found.}
-
-\item{pch}{Point character passed to \code{\link[ggformula]{gf_qq}}.}
-
-\item{col}{Colour of the reference line, passed to \code{\link[ggformula]{gf_line}}.}
-
-\item{ylab}{Optional character passed as label for the y-axis.}
-
-\item{...}{Further arguments passed to \code{\link[ggformula]{gf_qq}}.}
+\item{size}{Size of the marker.}
 }
 \description{
 \code{qq_plot} constructs quantile-quantile plots against the standard normal distribution
@@ -47,7 +31,5 @@ kfm <- kfm |>
   )
 
 kfm |>
-  qq_plot(~dl.milk)
-
-qq_plot(~ dl.milk | sex, data = kfm)
+  qq_plot(dl.milk)
 }

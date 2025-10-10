@@ -29,6 +29,6 @@ untreated children. The active treatments were either relaxation alone or relaxa
 data(Fentress)
 
 Fentress |>
-  strip_error(pain ~ group)
+  strip_error(x = group, y = pain)
 }
 \keyword{datasets}

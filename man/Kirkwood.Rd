@@ -25,7 +25,7 @@ Body weight and plasma volume in eight healthy men.
 data(Kirkwood)
 
 Kirkwood |>
-  gf_point(volume ~ weight) |>
-  gf_lm(col = "indianred3", interval = "confidence", fill = "indianred3")
+  ggplot(aes(weight, volume)) +
+  geom_point()
 }
 \keyword{datasets}

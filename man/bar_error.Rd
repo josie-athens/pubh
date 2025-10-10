@@ -4,31 +4,16 @@
 \alias{bar_error}
 \title{Bar charts with error bars.}
 \usage{
-bar_error(
-  object = NULL,
-  formula = NULL,
-  data = NULL,
-  fill = "indianred3",
-  col = "black",
-  alpha = 0.7,
-  ...
-)
+bar_error(data, x, y, alpha = 0.7)
 }
 \arguments{
-\item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
+\item{data}{A data frame.}
 
-\item{formula}{A formula with shape: \code{y ~ x} or \code{y ~ x|z} where \code{y} is a
-numerical variable and both \code{x} and \code{z} are factors.}
+\item{x}{A variable in the data frame.}
 
-\item{data}{A data frame where the variables in the \code{formula} can be found.}
-
-\item{fill}{Colour used to fill the bars.}
-
-\item{col}{Colour used for the borders of the bars.}
+\item{y}{A variable in the data frame}
 
 \item{alpha}{Opacity of the colour fill (0 = invisible, 1 = opaque).}
-
-\item{...}{Additional information passed to \code{\link[ggformula]{gf_summary}}.}
 }
 \description{
 \code{bar_error} constructs bar charts in with error bars showing 95% bootstrapped
@@ -41,8 +26,7 @@ data(birthwt, package = "MASS")
 
 birthwt <- birthwt |>
   mutate(
-    smoke = factor(smoke, labels = c("Non-smoker", "Smoker")),
-    Race = factor(race > 1, labels = c("White", "Non-white"))
+    smoke = factor(smoke, labels = c("Non-smoker", "Smoker"))
   ) |>
   var_labels(
     bwt = "Birth weight (g)",
@@ -50,11 +34,5 @@ birthwt <- birthwt |>
   )
 
 birthwt |>
-  bar_error(bwt ~ smoke, fill = "plum3")
-
-birthwt |>
-  bar_error(bwt ~ smoke | Race, fill = "plum3")
-
-birthwt |>
-  bar_error(bwt ~ smoke, fill = ~Race)
+  bar_error(x = smoke, y = bwt)
 }

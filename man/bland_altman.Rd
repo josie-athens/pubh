@@ -4,33 +4,18 @@
 \alias{bland_altman}
 \title{Bland-Altman agreement plots.}
 \usage{
-bland_altman(
-  object = NULL,
-  formula = NULL,
-  data = NULL,
-  pch = 20,
-  size = 1,
-  col = "black",
-  transform = FALSE,
-  ...
-)
+bland_altman(data, x, y, size = 1, transform = FALSE)
 }
 \arguments{
-\item{object}{When chaining, this holds an object produced in the earlier portions of the chain. Most users can safely ignore this argument. See details and examples.}
+\item{data}{A data frame.}
 
-\item{formula}{A formula with shape: y ~ x (see details).}
+\item{x}{A numerical variable.}
 
-\item{data}{A data frame where the variables in the \code{formula} can be found.}
-
-\item{pch}{Symbol for plotting data.}
+\item{y}{A numerical variable.}
 
 \item{size}{Size of the symbol using to plot data.}
 
-\item{col}{Colour used for the symbol to plot data.}
-
-\item{transform}{Logical, should ratios instead of difference be used to construct the plot?}
-
-\item{...}{Further arguments passed to \code{\link[ggformula]{gf_point}}.}
+\item{transform}{Logical, should ratios instead of differences be used to construct the plot?}
 }
 \description{
 Bland-Altman agreement plots.
@@ -43,22 +28,13 @@ is not normal, but becomes normal with a log-transformation, \code{bland_altman}
 outcomes (difference in the log scale) by using option \code{transform = TRUE}.
 }
 \examples{
-data(wright, package = "ISwR")
-
-wright |>
-  bland_altman(mini.wright ~ std.wright,
-    pch = 16,
-    ylab = "Large-mini expiratory flow rate (l/min)",
-    xlab = "Mean expiratory flow rate (l/min)"
-  ) |>
-  gf_labs(
-    y = "Large-mini expiratory flow rate (l/min)",
-    x = "Mean expiratory flow rate (l/min)"
-  )
-
 data(Sharples)
 
 Sharples |>
-  bland_altman(srweight ~ weight, transform = TRUE) |>
-  gf_labs(x = "Mean of weights (kg)", y = "Measured weight / Self-reported weight")
+  bland_altman(
+    x = weight, y = srweight,
+    transform = TRUE, size = 0.7
+  ) +
+  xlab("Mean of weights (kg)") +
+  ylab("Measured / Self-reported weight")
 }

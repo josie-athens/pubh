@@ -138,19 +138,16 @@ prop_or <- function(p2, or) {
 
 #' Function to calculate OR using Wald CI, and plot trend.
 #'
-#' \code{odds_trend} calculates the odds ratio with confidence intervals (Wald) for different levels
-#' (three or more) of the exposure variable, constructs the corresponding plot and calculates if the trend is
-#' significant or not.
-#'
+#' \code{odds_trend} calculates the odds ratio with confidence intervals (Wald) for different levels.
+#' (three or more) of the exposure variable.
 #' @details \code{odds_trend} is a wrap function that calls \code{oddsratio} from package \code{epitools}.
-#' @param formula A formula with shape: outcome ~ exposure.
-#' @param data A data frame where the variables in the \code{formula} can be found.
-#' @param angle Angle of for the x labels (default = 45).
-#' @param hjust Horizontal adjustment for x labels (default = 1).
+#' @param data A data frame.
+#' @param x A variable in the data frame.
+#' @param y A variable in the data frame.
 #' @param method Method for calculating confidence interval around odds ratio.
 #' @param ... Passes optional arguments to \code{oddsratio}.
 #' @details Additional methods for confidence intervals include: \code{"midp"}, \code{"fisher"}, and \code{"small"}.
-#' @return A list with components \code{df} a data frame with the results and \code{fig} corresponding plot.
+#' @return A data frame.
 #' @seealso \code{\link[epitools]{oddsratio}}.
 #' @examples
 #' ## A cross-sectional study looked at the association between obesity and a biopsy resulting
@@ -172,15 +169,19 @@ prop_or <- function(p2, or) {
 #'   Weight = "Weight group"
 #' )
 #'
-#' odds_trend(Biopsy ~ Weight, data = breast)$df
-#' odds_trend(Biopsy ~ Weight, data = breast)$fig
+#' breast |>
+#'   odds_trend(x = Weight, y = Biopsy)
+#'
+#' breast |>
+#'   odds_trend(x = Weight, y = Biopsy) |>
+#'   effect_plot(x = OR, y = Exposure)
 #' @export
-odds_trend <- function(formula, data, angle = 45,
-                       hjust = 1, method = "wald", ...) {
-  vars <- all.vars(formula)
-  x <- vars[2]
-  outcome <- data[[vars[1]]]
-  exposure <- data[[vars[2]]]
+odds_trend <- function(
+    data, x, y,
+    method = "wald", ...
+) {
+  exposure <- data[[deparse(substitute(x))]]
+  outcome <- data[[deparse(substitute(y))]]
   orwald <- epitools::oddsratio(exposure, outcome, method = method, ...)
   n <- nrow(orwald$measure)
   or.df <- data.frame(
@@ -190,15 +191,9 @@ odds_trend <- function(formula, data, angle = 45,
   )
   names(or.df)[5:6] <- c("chi.square", "fisher.exact")
   names(or.df)[1:2] <- c("Exposure", "OR")
+  names(or.df)[3:4] <- c("CI_low", "CI_high")
   nam <- row.names(or.df)
   or.df$Exposure <- factor(or.df$Exposure, labels = nam)
   or.df <- data.frame(or.df, row.names = NULL)
-  df <- or.df
-  df2 <- df[-1, ]
-  fig <- df2 |>
-    gf_pointrange(OR + lower + upper ~ Exposure) |>
-    gf_labs(x = get_label(exposure)) |>
-    gf_theme(axis.text.x = ggplot2::element_text(angle = angle, hjust = hjust))
-  res <- list(df = df, fig = fig)
-  res
+  or.df
 }

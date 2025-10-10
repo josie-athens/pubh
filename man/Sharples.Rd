@@ -27,7 +27,9 @@ Life In New Zealand Survey.
 }
 \examples{
 Sharples |>
-  bland_altman(srweight ~ weight, transform = TRUE) |>
-  gf_labs(x = "Mean of weights (kg)", y = "Measured weight / Self-reported weight")
+  bland_altman(x = weight, y = srweight,
+  transform = TRUE, size = 0.7) +
+  xlab("Mean of weights (kg)") +
+  ylab("Measured / Self-reported weight")
 }
 \keyword{datasets}

@@ -106,7 +106,6 @@ Some examples. We start by loading packages.
 rm(list = ls())
 library(dplyr)
 library(rstatix)
-library(crosstable)
 library(pubh)
 library(sjlabelled)
 ```
@@ -118,26 +117,17 @@ data(Oncho)
 Oncho |> head()
 ```
 
-```{r}
-crosstable_options(
-  total = "row",
-  percent_pattern="{n} ({p_col})",
-  percent_digits = 1,
-  funs = c("Mean (std)" = meansd, "Median [IQR]" = mediqr)
-)
-```
-
 A two-by-two contingency table:
 
 ```{r}
 Oncho |>
-  select(mf, area) |>
   mutate(
     mf = relevel(mf, ref = "Infected")
   ) |>
   copy_labels(Oncho) |>
-  crosstable(by = area) |>
-  ctf()
+  select(mf, area) |> 
+  cross_tbl(by = "area") |>
+  theme_pubh(2)
 ```
 
 Table with all descriptive statistics except `id` and `mfload`:
@@ -149,8 +139,8 @@ Oncho |>
     mf = relevel(mf, ref = "Infected")
   ) |>
   copy_labels(Oncho) |>
-  crosstable(by = area) |>
-  ctf()
+  cross_tbl(by = "area") |>
+  theme_pubh(2)
 ```
 
 Next, we use a data set about blood counts of T cells from patients in remission from Hodgkin's disease or in remission from disseminated malignancies. We generate the new variable `Ratio` and add labels to the variables.
@@ -198,8 +188,9 @@ Hodgkin |>
     Group = relevel(Group, ref = "Hodgkin")
   ) |>
   copy_labels(Hodgkin) |>
-  crosstable(by = Group) |>
-  ctf()
+  cross_tbl(by = "Group", bold = FALSE) |>
+  theme_pubh(2) |>
+  add_footnote("Median (IQR)", font_size = 9)
 ```
 
 
@@ -217,7 +208,8 @@ What about normality? We can look at the QQ-plots against the standard Normal di
 
 ```{r}
 Hodgkin |>
-  qq_plot(~ Ratio|Group) 
+  qq_plot(y = Ratio) +
+  facet_grid(cols = vars(Group))
 ```
 
 Let's say we choose a non-parametric test to compare the groups:
@@ -237,12 +229,12 @@ For our current example:
 
 ```{r}
 Hodgkin |>
-  strip_error(Ratio ~ Group)
+  strip_error(x = Group, y = Ratio)
 ```
 
 The error bars represent 95% confidence intervals around mean values.
 
-Adding a line on top is relatively easy to show that the two groups are significantly different. The function `gf_star` needs the reference point on how to draw an horizontal line to display statistical differences or to annotate a plot; in summary, `gf_star`:
+Adding a line on top is relatively easy to show that the two groups are significantly different. The function `gg_star` needs the reference point on how to draw an horizontal line to display statistical differences or to annotate a plot; in summary, `gg_star`:
 
 - Draws an horizontal line from $(x1, y2)$ to $(x2, y2)$.
 - Draws a vertical line from $(x1, y1)$ to $(x1, y1)$.
@@ -258,9 +250,11 @@ $$
 In our current example:
 
 ```{r}
-Hodgkin |>
-  strip_error(Ratio ~ Group) |>
-  gf_star(x1 = 1, y1 = 4, x2 = 2, y2 = 4.05, y3 = 4.1, "**")
+p1 <- Hodgkin |>
+  strip_error(x = Group, y = Ratio)
+
+gg_star(p1, x1 = 1, y1 = 4, x2 = 2, y2 = 4.05, y3 = 4.1, "**") +
+  ylim(0, 4.2)
 ```
 
 For larger samples we could use bar charts with error bars. For example:
@@ -282,48 +276,22 @@ birthwt <- birthwt |>
 
 
 ```{r}
-birthwt |>
-  bar_error(bwt ~ smoke)
-```
-
-Quick normality check:
-
-```{r}
-birthwt |>
-  qq_plot(~ bwt|smoke)
-```
-
-The (unadjusted) $t$-test:
-
-```{r}
 birthwt |> 
-  t_test(bwt ~ smoke, detailed = TRUE) |> 
-  as.data.frame()
-```
-
-The final plot with annotation to highlight statistical difference (unadjusted):
-
-```{r}
-birthwt |>
-  bar_error(bwt ~ smoke) |>
-  gf_star(x1 = 1, x2 = 2, y1 = 3400, y2 = 3500, y3 = 3550, "**")
+  bar_error(x = smoke, y = bwt)
 ```
 
 Both `strip_error` and `bar_error` can generate plots stratified by a third variable, for example:
 
 ```{r}
 birthwt |>
-  bar_error(bwt ~ smoke, fill = ~ Race) 
+  bar_error(x = smoke, y = bwt) +
+  facet_grid(cols = vars(Race))
 ```
 
 ```{r}
 birthwt |>
-  bar_error(bwt ~ smoke|Race)
-```
-
-```{r}
-birthwt |>
-  strip_error(bwt ~ smoke, pch = ~ Race, col = ~ Race)
+  strip_error(x = smoke, y = bwt) +
+  facet_grid(cols = vars(Race))
 ```
 
 # Regression models
@@ -344,15 +312,13 @@ model_bwt |>
 In the last table of coefficients, confidence intervals and p-values for race levels are not adjusted for multiple comparisons. We can use functions from the `emmeans` package to make the corrections.
 
 ```{r}
-multiple(model_bwt, ~ race)$df
+multiple(model_bwt, ~ race)
 ```
 
 ```{r}
-multiple(model_bwt, ~ race)$fig_ci |>
-  gf_labs(x = "Difference in birth weights (g)")
-```
-
-```{r}
-multiple(model_bwt, ~ race)$fig_pval |>
-  gf_labs(y = " ")
+multiple(model_bwt, ~ race) |>
+  effect_plot(x = estimate, y = contrast, orientation = "y") +
+  geom_vline(xintercept = 0, lty = 2, col = bmj[2]) +
+  xlab("Difference in birth weight (g)") + 
+  ylab("")
 ```

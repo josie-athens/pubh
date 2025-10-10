@@ -1,20 +1,19 @@
 ## ----eval=FALSE---------------------------------------------------------------
-#  y ~ x, data = my_data
+# y ~ x, data = my_data
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  y ~ x|z, data = my_data
+# y ~ x|z, data = my_data
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  data |>
-#    f1(...) |>
-#    f2(...) |>
-#    f3(...)
+# data |>
+#   f1(...) |>
+#   f2(...) |>
+#   f3(...)
 
 ## ----message=FALSE, results='hide'--------------------------------------------
 rm(list = ls())
 library(dplyr)
 library(rstatix)
-library(crosstable)
 library(pubh)
 library(sjlabelled)
 
@@ -23,22 +22,14 @@ data(Oncho)
 Oncho |> head()
 
 ## -----------------------------------------------------------------------------
-crosstable_options(
-  total = "row",
-  percent_pattern="{n} ({p_col})",
-  percent_digits = 1,
-  funs = c("Mean (std)" = meansd, "Median [IQR]" = mediqr)
-)
-
-## -----------------------------------------------------------------------------
 Oncho |>
-  select(mf, area) |>
   mutate(
     mf = relevel(mf, ref = "Infected")
   ) |>
   copy_labels(Oncho) |>
-  crosstable(by = area) |>
-  ctf()
+  select(mf, area) |> 
+  cross_tbl(by = "area") |>
+  theme_pubh(2)
 
 ## -----------------------------------------------------------------------------
 Oncho |>
@@ -47,8 +38,8 @@ Oncho |>
     mf = relevel(mf, ref = "Infected")
   ) |>
   copy_labels(Oncho) |>
-  crosstable(by = area) |>
-  ctf()
+  cross_tbl(by = "area") |>
+  theme_pubh(2)
 
 ## -----------------------------------------------------------------------------
 data(Hodgkin)
@@ -74,27 +65,31 @@ Hodgkin |>
     Group = relevel(Group, ref = "Hodgkin")
   ) |>
   copy_labels(Hodgkin) |>
-  crosstable(by = Group) |>
-  ctf()
+  cross_tbl(by = "Group", bold = FALSE) |>
+  theme_pubh(2) |>
+  add_footnote("Median (IQR)", font_size = 9)
 
 ## -----------------------------------------------------------------------------
 var.test(Ratio ~ Group, data = Hodgkin)
 
 ## -----------------------------------------------------------------------------
 Hodgkin |>
-  qq_plot(~ Ratio|Group) 
+  qq_plot(y = Ratio) +
+  facet_grid(cols = vars(Group))
 
 ## -----------------------------------------------------------------------------
 wilcox.test(Ratio ~ Group, data = Hodgkin)
 
 ## -----------------------------------------------------------------------------
 Hodgkin |>
-  strip_error(Ratio ~ Group)
+  strip_error(x = Group, y = Ratio)
 
 ## -----------------------------------------------------------------------------
-Hodgkin |>
-  strip_error(Ratio ~ Group) |>
-  gf_star(x1 = 1, y1 = 4, x2 = 2, y2 = 4.05, y3 = 4.1, "**")
+p1 <- Hodgkin |>
+  strip_error(x = Group, y = Ratio)
+
+gg_star(p1, x1 = 1, y1 = 4, x2 = 2, y2 = 4.05, y3 = 4.1, "**") +
+  ylim(0, 4.2)
 
 ## -----------------------------------------------------------------------------
 data(birthwt, package = "MASS")
@@ -111,34 +106,18 @@ birthwt <- birthwt |>
   )
 
 ## -----------------------------------------------------------------------------
-birthwt |>
-  bar_error(bwt ~ smoke)
-
-## -----------------------------------------------------------------------------
-birthwt |>
-  qq_plot(~ bwt|smoke)
-
-## -----------------------------------------------------------------------------
 birthwt |> 
-  t_test(bwt ~ smoke, detailed = TRUE) |> 
-  as.data.frame()
+  bar_error(x = smoke, y = bwt)
 
 ## -----------------------------------------------------------------------------
 birthwt |>
-  bar_error(bwt ~ smoke) |>
-  gf_star(x1 = 1, x2 = 2, y1 = 3400, y2 = 3500, y3 = 3550, "**")
+  bar_error(x = smoke, y = bwt) +
+  facet_grid(cols = vars(Race))
 
 ## -----------------------------------------------------------------------------
 birthwt |>
-  bar_error(bwt ~ smoke, fill = ~ Race) 
-
-## -----------------------------------------------------------------------------
-birthwt |>
-  bar_error(bwt ~ smoke|Race)
-
-## -----------------------------------------------------------------------------
-birthwt |>
-  strip_error(bwt ~ smoke, pch = ~ Race, col = ~ Race)
+  strip_error(x = smoke, y = bwt) +
+  facet_grid(cols = vars(Race))
 
 ## -----------------------------------------------------------------------------
 model_bwt <- lm(bwt ~ smoke + race, data = birthwt)
@@ -148,13 +127,12 @@ model_bwt |>
   glm_coef(labels = model_labels(model_bwt))
 
 ## -----------------------------------------------------------------------------
-multiple(model_bwt, ~ race)$df
+multiple(model_bwt, ~ race)
 
 ## -----------------------------------------------------------------------------
-multiple(model_bwt, ~ race)$fig_ci |>
-  gf_labs(x = "Difference in birth weights (g)")
-
-## -----------------------------------------------------------------------------
-multiple(model_bwt, ~ race)$fig_pval |>
-  gf_labs(y = " ")
+multiple(model_bwt, ~ race) |>
+  effect_plot(x = estimate, y = contrast, orientation = "y") +
+  geom_vline(xintercept = 0, lty = 2, col = bmj[2]) +
+  xlab("Difference in birth weight (g)") + 
+  ylab("")
 
