@@ -5,7 +5,7 @@ Authors@R: c(
     person("Josie", "Athens", email = "josie.athens@gmail.com", role = c("aut", "cre")),
     person("Frank", "Harell", email = "f.harrell@vanderbilt.edu", role = "ctb"),
     person("John", "Fox", email = "jfox@mcmaster.ca", role = "ctb"),
-    person("R-Core", role="ctb"))
+    person("R-core", email = "R-core@R-project.org", role="ctb"))
 Maintainer: Josie Athens <josie.athens@gmail.com>
 Description: A toolbox for making R functions and capabilities more
     accessible to students and professionals from Epidemiology and
